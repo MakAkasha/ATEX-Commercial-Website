@@ -20,15 +20,10 @@
             </div>
           </div>
 
-          <div class="solutionsPage__heroMedia" aria-hidden="true">
+          <div class="solutionsPage__heroMedia solutionsPage__heroMedia--single" aria-hidden="true">
             <figure class="solutionsPage__heroPrimary">
               <img src="<%= solution.primaryImage %>" alt="<%= solution.title %>" loading="lazy" />
             </figure>
-            <div class="solutionsPage__heroStack">
-              <% (solution.supportImages || []).slice(0, 2).forEach(function(imgPath){ %>
-                <figure><img src="<%= imgPath %>" alt="<%= solution.title %>" loading="lazy" /></figure>
-              <% }) %>
-            </div>
           </div>
         </div>
       </section>
@@ -36,25 +31,34 @@
       <section class="section" id="solution-detail-content">
         <div class="container">
           <article class="solutionsPage__detail" aria-labelledby="solution-detail-title">
-            <div class="solutionsPage__detailMedia">
-              <figure class="solutionsPage__detailMain">
-                <img src="<%= solution.primaryImage %>" alt="<%= solution.title %>" loading="lazy" />
-              </figure>
-              <div class="solutionsPage__detailSupport">
-                <% (solution.supportImages || []).forEach(function(imgPath){ %>
-                  <figure><img src="<%= imgPath %>" alt="<%= solution.title %>" loading="lazy" /></figure>
-                <% }) %>
-              </div>
-            </div>
-
             <div class="solutionsPage__detailBody">
               <div class="solutionsPage__detailHeader">
                 <p class="solutionsPage__detailKicker" dir="ltr">Solution Detail</p>
                 <h3 id="solution-detail-title"><%= solution.title %></h3>
+                <div class="solutionsPage__useCases">
+                  <% (solution.useCases || []).slice(0, 3).forEach(function(u){ %>
+                    <span><%= u %></span>
+                  <% }) %>
+                </div>
               </div>
 
-              <p class="solutionsPage__detailSummary"><%= solution.summary %></p>
-              <p class="solutionsPage__detailText"><%= solution.details %></p>
+              <div class="solutionsPage__detailIntro">
+                <p class="solutionsPage__detailSummary"><%= solution.summary %></p>
+                <p class="solutionsPage__detailText"><%= solution.details %></p>
+              </div>
+
+              <% if (Array.isArray(solution.benefits) && solution.benefits.length) { %>
+                <div class="solutionsPage__detailMeta">
+                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                    <h4>القيمة المضافة</h4>
+                    <div class="solutionsPage__useCases">
+                      <% solution.benefits.forEach(function(item){ %>
+                        <span><%= item %></span>
+                      <% }) %>
+                    </div>
+                  </section>
+                </div>
+              <% } %>
 
               <div class="solutionsPage__detailMeta">
                 <section class="solutionsPage__metaBlock">
@@ -76,8 +80,38 @@
                 </section>
               </div>
 
+              <% if (solution.pageGoal || solution.longIntro) { %>
+                <div class="solutionsPage__detailMeta">
+                  <% if (solution.pageGoal) { %>
+                    <section class="solutionsPage__metaBlock">
+                      <h4>هدف الحل</h4>
+                      <p class="solutionsPage__detailText"><%= solution.pageGoal %></p>
+                    </section>
+                  <% } %>
+                  <% if (solution.longIntro) { %>
+                    <section class="solutionsPage__metaBlock">
+                      <h4>نظرة أوسع</h4>
+                      <p class="solutionsPage__detailText"><%= solution.longIntro %></p>
+                    </section>
+                  <% } %>
+                </div>
+              <% } %>
+
+              <% if (Array.isArray(solution.faqs) && solution.faqs.length) { %>
+                <div class="solutionsPage__detailMeta">
+                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                    <h4>أسئلة شائعة</h4>
+                    <ul>
+                      <% solution.faqs.forEach(function(item){ %>
+                        <li><strong><%= item.q %></strong><br /><%= item.a %></li>
+                      <% }) %>
+                    </ul>
+                  </section>
+                </div>
+              <% } %>
+
               <div class="solutionsPage__detailActions">
-                <a class="btn btn--primary btn--small" href="/contact-us">اطلب عرضاً لهذا الحل</a>
+                <a class="btn btn--primary btn--small" href="/contact-us"><%= solution.ctaLabel || 'اطلب عرضاً لهذا الحل' %></a>
                 <a class="btn btn--ghost btn--small" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
               </div>
             </div>

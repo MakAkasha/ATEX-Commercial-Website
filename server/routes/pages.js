@@ -8,6 +8,7 @@ const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml } = require("./customPages");
 const { loadAnalyticsSettings } = require("./settings");
 const { solutions } = require("../data/solutions");
+const { industries } = require("../data/industries");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -217,6 +218,28 @@ router.get("/solutions/:slug", (req, res) => {
     meta: {
       title: `ATEX | ${solution.title}`,
       description: solution.summary,
+    },
+  });
+});
+
+router.get("/industries/:slug", (req, res) => {
+  const content = loadHomeContent();
+  const slug = String(req.params.slug || "").toLowerCase();
+  const industry = industries.find((s) => s.slug === slug);
+
+  if (!industry) {
+    return res
+      .status(404)
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+  }
+
+  return res.render("industry-detail", {
+    content,
+    industry,
+    ...baseRenderData(req),
+    meta: {
+      title: `ATEX | ${industry.title}`,
+      description: industry.metaDescription || industry.intro,
     },
   });
 });

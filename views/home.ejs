@@ -147,23 +147,9 @@
             <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
           </div>
 
-          <% const solutionIcons = [
-            'https://cdn.lordicon.com/msoeawqm.json',
-            'https://cdn.lordicon.com/eszyyflr.json',
-            'https://cdn.lordicon.com/fikcyfpp.json',
-            'https://cdn.lordicon.com/lenjvibx.json',
-            'https://cdn.lordicon.com/hrjifpbq.json',
-            'https://cdn.lordicon.com/dxjqoygy.json',
-            'https://cdn.lordicon.com/rsvfayfn.json',
-            'https://cdn.lordicon.com/ueoydrft.json'
-          ]; %>
-
           <div class="grid grid--cards">
-            <% __pageSolutions.forEach(function(c, idx){ %>
+            <% __pageSolutions.forEach(function(c){ %>
               <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage %>')" aria-label="عرض تفاصيل <%= c.title %>">
-                <div class="card__icon">
-                  <lord-icon class="icon-lord icon-lord--card" src="<%= solutionIcons[idx % solutionIcons.length] %>" trigger="hover" colors="primary:#002b44,secondary:#ff9933" aria-hidden="true"></lord-icon>
-                </div>
                 <h3 class="card__title"><%= c.title %></h3>
                 <p class="card__desc"><%= c.summary %></p>
               </a>
@@ -187,7 +173,7 @@
                 <li><lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#d97800,secondary:#ff9933" aria-hidden="true"></lord-icon> لوحات قابلة للتخصيص لكل فريق</li>
               </ul>
               <div class="platformSection__actions">
-                <a class="btn btn--primary" href="#products"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
+                <a class="btn btn--primary" href="/solutions"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
                 <a class="btn btn--ghost" href="/contact-us"><%= content?.platform?.ctaSecondary || 'ناقش مشروعك' %></a>
               </div>
             </div>
@@ -218,20 +204,20 @@
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
             <% const industryItems = [
-              { label: 'القطاع السكني', bg: '/assets/solutions/residential.png' },
-              { label: 'القطاع التجاري', bg: '/assets/solutions/commence.png' },
-              { label: 'القطاع الحكومي', bg: '/assets/solutions/governmental.png' },
-              { label: 'القطاع الصناعي', bg: '/assets/solutions/industrial.png' },
-              { label: 'قطاع الرعاية الصحية', bg: '/assets/solutions/health.png' },
-              { label: 'قطاع التعليم', bg: '/assets/solutions/educational.png' },
-              { label: 'قطاع المدن الذكية', bg: '/assets/solutions/smart-cities.png' }
+              { label: 'القطاع السكني', slug: 'residential', bg: '/assets/solutions/residential.png' },
+              { label: 'القطاع التجاري', slug: 'commercial', bg: '/assets/solutions/commence.png' },
+              { label: 'القطاع الحكومي', slug: 'government', bg: '/assets/solutions/governmental.png' },
+              { label: 'القطاع الصناعي', slug: 'industrial', bg: '/assets/solutions/industrial.png' },
+              { label: 'قطاع الرعاية الصحية', slug: 'healthcare', bg: '/assets/solutions/health.png' },
+              { label: 'قطاع التعليم', slug: 'education', bg: '/assets/solutions/educational.png' },
+              { label: 'قطاع المدن الذكية', slug: 'smart-cities', bg: '/assets/solutions/smart-cities.png' }
             ]; %>
             <div class="industriesShowcase__grid">
               <% industryItems.forEach(function(item, idx){ %>
-                <article class="industriesShowcase__card" data-tilt style="--industry-bg:url('<%= item.bg %>')">
+                <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.bg %>')" aria-label="عرض تفاصيل <%= item.label %>">
                   <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
                   <h3><%= item.label %></h3>
-                </article>
+                </a>
               <% }) %>
             </div>
 

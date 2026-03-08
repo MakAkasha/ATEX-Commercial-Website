@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <%- include('partials/head', { meta }) %>
+  </head>
+  <body>
+    <%- include('partials/site-header', { content }) %>
+
+    <main class="solutionsPage solutionDetailPage">
+      <section class="section solutionsPage__hero" aria-label="تفاصيل القطاع">
+        <div class="container solutionsPage__heroInner">
+          <div class="solutionsPage__heroCopy">
+            <span class="solutionsPage__eyebrow">ATEX Industry</span>
+            <h1 class="solutionsPage__title"><%= industry.heroTitle %></h1>
+            <p class="solutionsPage__desc"><%= industry.intro %></p>
+
+            <div class="solutionsPage__heroActions">
+              <a class="btn btn--primary" href="/contact-us"><%= industry.ctaLabel || 'اطلب استشارة' %></a>
+              <a class="btn btn--ghost" href="/#industries">العودة إلى القطاعات</a>
+            </div>
+
+            <ul class="solutionsPage__heroBadges" aria-label="مزايا القطاع">
+              <% (industry.benefits || []).forEach(function(item){ %>
+                <li><%= item %></li>
+              <% }) %>
+            </ul>
+          </div>
+
+          <div class="solutionsPage__heroMedia" aria-hidden="true">
+            <figure class="solutionsPage__heroPrimary">
+              <img src="<%= industry.image %>" alt="<%= industry.title %>" loading="lazy" />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="industry-detail-content">
+        <div class="container">
+          <article class="solutionsPage__detail" aria-labelledby="industry-detail-title">
+            <div class="solutionsPage__detailBody">
+              <div class="solutionsPage__detailHeader">
+                <p class="solutionsPage__detailKicker" dir="ltr"><%= industry.englishTitle %></p>
+                <h3 id="industry-detail-title"><%= industry.title %></h3>
+                <div class="solutionsPage__useCases">
+                  <% (industry.benefits || []).forEach(function(item){ %>
+                    <span><%= item %></span>
+                  <% }) %>
+                </div>
+              </div>
+
+              <div class="solutionsPage__detailIntro">
+                <p class="solutionsPage__detailSummary"><%= industry.intro %></p>
+              </div>
+
+              <div class="solutionsPage__detailMeta">
+                <section class="solutionsPage__metaBlock">
+                  <h4>تحديات القطاع</h4>
+                  <ul>
+                    <% (industry.challenges || []).forEach(function(item){ %>
+                      <li><%= item %></li>
+                    <% }) %>
+                  </ul>
+                </section>
+
+                <section class="solutionsPage__metaBlock">
+                  <h4>الحلول الموصى بها</h4>
+                  <ul>
+                    <% (industry.solutions || []).forEach(function(item){ %>
+                      <li><%= item %></li>
+                    <% }) %>
+                  </ul>
+                </section>
+              </div>
+
+              <% if (Array.isArray(industry.faqs) && industry.faqs.length) { %>
+                <div class="solutionsPage__detailMeta">
+                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                    <h4>الأسئلة الشائعة</h4>
+                    <ul>
+                      <% industry.faqs.forEach(function(item){ %>
+                        <li><strong><%= item.q %></strong><br /><%= item.a %></li>
+                      <% }) %>
+                    </ul>
+                  </section>
+                </div>
+              <% } %>
+
+              <div class="solutionsPage__detailActions">
+                <a class="btn btn--primary btn--small" href="/contact-us">اطلب حلاً لهذا القطاع</a>
+                <a class="btn btn--ghost btn--small" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/site-footer', { content }) %>
+  </body>
+  </html>
