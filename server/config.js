@@ -65,6 +65,8 @@ function getConfig() {
     globalRateLimitLimit: parseIntSafe(process.env.GLOBAL_RATE_LIMIT_LIMIT, 300),
     contactRateLimitWindowMs: parseIntSafe(process.env.CONTACT_RATE_LIMIT_WINDOW_MS, 60 * 1000),
     contactRateLimitLimit: parseIntSafe(process.env.CONTACT_RATE_LIMIT_LIMIT, 20),
+    contactEmailForwardEnabled: parseBool(process.env.CONTACT_EMAIL_FORWARD_ENABLED, true),
+    contactEmailTo: String(process.env.CONTACT_EMAIL_TO || "atexksa.iot@gmail.com").trim(),
 
     cspReportOnly: parseBool(process.env.CSP_REPORT_ONLY, false),
     cspDirectives: buildCspDirectives(),

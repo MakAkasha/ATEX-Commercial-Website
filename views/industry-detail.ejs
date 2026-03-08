@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <%- include('partials/head', { meta }) %>
+  </head>
+  <body>
+    <%- include('partials/site-header', { content }) %>
+
+    <main class="solutionsPage solutionDetailPage">
+      <section class="section solutionsPage__hero" aria-label="تفاصيل القطاع">
+        <div class="container solutionsPage__heroInner">
+          <div class="solutionsPage__heroCopy">
+            <nav class="breadcrumbs" aria-label="مسار الصفحة">
+              <a href="/">الرئيسية</a>
+              <span>/</span>
+              <strong><%= industry.title %></strong>
+            </nav>
+            <span class="solutionsPage__eyebrow">ATEX Industry</span>
+            <h1 class="solutionsPage__title"><%= industry.heroTitle %></h1>
+            <p class="solutionsPage__desc"><%= industry.intro %></p>
+
+            <div class="solutionsPage__heroActions">
+              <a class="btn btn--primary" href="/contact-us"><%= industry.ctaLabel || 'اطلب استشارة' %></a>
+              <a class="btn btn--ghost" href="/#industries">العودة إلى القطاعات</a>
+            </div>
+
+            <ul class="solutionsPage__heroBadges" aria-label="مزايا القطاع">
+              <% (industry.benefits || []).forEach(function(item){ %>
+                <li><%= item %></li>
+              <% }) %>
+            </ul>
+          </div>
+
+          <div class="solutionsPage__heroMedia" aria-hidden="true">
+            <figure class="solutionsPage__heroPrimary">
+              <img src="<%= industry.image %>" alt="<%= industry.title %>" loading="lazy" />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="industry-detail-content">
+        <div class="container">
+          <article class="solutionsPage__detail" aria-labelledby="industry-detail-title">
+            <div class="solutionsPage__detailBody">
+              <div class="solutionsPage__detailHeader">
+                <p class="solutionsPage__detailKicker" dir="ltr"><%= industry.englishTitle %></p>
+                <h3 id="industry-detail-title"><%= industry.title %></h3>
+                <div class="solutionsPage__useCases">
+                  <% (industry.benefits || []).forEach(function(item){ %>
+                    <span><%= item %></span>
+                  <% }) %>
+                </div>
+              </div>
+
+              <div class="solutionsPage__detailIntro">
+                <p class="solutionsPage__detailSummary"><%= industry.intro %></p>
+              </div>
+
+              <div class="solutionsPage__detailMeta">
+                <section class="solutionsPage__metaBlock">
+                  <h4>تحديات القطاع</h4>
+                  <ul>
+                    <% (industry.challenges || []).forEach(function(item){ %>
+                      <li><%= item %></li>
+                    <% }) %>
+                  </ul>
+                </section>
+
+                <section class="solutionsPage__metaBlock">
+                  <h4>الحلول الموصى بها</h4>
+                  <ul>
+                    <% (industry.solutions || []).forEach(function(item){ %>
+                      <li><%= item %></li>
+                    <% }) %>
+                  </ul>
+                </section>
+              </div>
+
+              <% if (Array.isArray(industry.faqs) && industry.faqs.length) { %>
+                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                    <h4>الأسئلة الشائعة</h4>
+                    <ul>
+                      <% industry.faqs.forEach(function(item){ %>
+                        <li><strong><%= item.q %></strong><br /><%= item.a %></li>
+                      <% }) %>
+                    </ul>
+                  </section>
+              <% } %>
+
+              <div class="solutionsPage__detailActions">
+                <a class="btn btn--primary btn--small" href="/contact-us">اطلب حلاً لهذا القطاع</a>
+                <a class="btn btn--ghost btn--small" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <% if (Array.isArray(relatedSolutions) && relatedSolutions.length) { %>
+        <section class="section" aria-label="حلول مناسبة لهذا القطاع">
+          <div class="container">
+            <div class="section__head">
+              <p class="solutionsPage__sectionKicker">RECOMMENDED SOLUTIONS</p>
+              <h2>حلول مناسبة لهذا القطاع</h2>
+            </div>
+            <div class="solutionsPage__catalogGrid">
+              <% relatedSolutions.forEach(function(solution){ %>
+                <article class="solutionsPage__catalogCard">
+                  <a class="solutionsPage__catalogMedia" href="/solutions/<%= solution.slug %>"><img src="<%= solution.primaryImage %>" alt="<%= solution.title %>" loading="lazy" /></a>
+                  <div class="solutionsPage__catalogBody">
+                    <h3><a href="/solutions/<%= solution.slug %>"><%= solution.title %></a></h3>
+                    <p class="solutionsPage__catalogSummary"><%= solution.summary %></p>
+                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/solutions/<%= solution.slug %>">عرض الحل</a></div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+      <% } %>
+
+      <% if (Array.isArray(relatedIndustries) && relatedIndustries.length) { %>
+        <section class="section" aria-label="قطاعات ذات صلة">
+          <div class="container">
+            <div class="section__head">
+              <p class="solutionsPage__sectionKicker">RELATED INDUSTRIES</p>
+              <h2>قطاعات أخرى ذات صلة</h2>
+            </div>
+            <div class="solutionsPage__catalogGrid">
+              <% relatedIndustries.forEach(function(item){ %>
+                <article class="solutionsPage__catalogCard">
+                  <a class="solutionsPage__catalogMedia" href="/industries/<%= item.slug %>"><img src="<%= item.image %>" alt="<%= item.title %>" loading="lazy" /></a>
+                  <div class="solutionsPage__catalogBody">
+                    <h3><a href="/industries/<%= item.slug %>"><%= item.title %></a></h3>
+                    <p class="solutionsPage__catalogSummary"><%= item.intro %></p>
+                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/industries/<%= item.slug %>">عرض القطاع</a></div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+      <% } %>
+    </main>
+
+    <%- include('partials/site-footer', { content }) %>
+  </body>
+  </html>

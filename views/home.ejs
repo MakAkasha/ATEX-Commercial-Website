@@ -9,6 +9,7 @@
 
     <% 
       const __heroVideoCfg = content?.heroVideo || {};
+      const __pageSolutions = Array.isArray(pageSolutions) ? pageSolutions : [];
       const __heroVideoSourceType = __heroVideoCfg.sourceType === 'upload' ? 'upload' : 'youtube';
       const __heroVideoYoutubeUrl = __heroVideoCfg.youtubeUrl || 'https://www.youtube.com/watch?v=xwYbULh3aRE';
       const __heroVideoUploadedUrl = __heroVideoCfg.uploadedVideoUrl || '';
@@ -53,7 +54,7 @@
             <p class="heroVideo__kicker">IoT Solutions</p>
             <h2 class="heroVideo__title">حلول إنترنت الأشياء للشركات</h2>
             <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
-            <a class="btn btn--primary" href="#contact">ابدأ مشروعك الآن</a>
+            <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن</a>
           </div>
         </div>
       </section>
@@ -146,30 +147,12 @@
             <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
           </div>
 
-          <% const solutionCards = [
-            { iconSrc: 'https://cdn.lordicon.com/msoeawqm.json', bg: '/assets/solutions/smart-home.jpg', title: 'أنظمة المنازل الذكية', desc: 'رفاهية، أمان، وكفاءة عبر أتمتة متكاملة للمنزل.' },
-            { iconSrc: 'https://cdn.lordicon.com/eszyyflr.json', bg: '/assets/solutions/smart-office.jpg', title: 'أنظمة المكاتب الذكية', desc: 'بيئة عمل ملهمة ومنتِجة مع تحكم ذكي وتشغيل مرن.' },
-            { iconSrc: 'https://cdn.lordicon.com/fikcyfpp.json', bg: '/assets/solutions/smart-hotel.jpg', title: 'أنظمة الفنادق الذكية', desc: 'تجربة ضيافة استثنائية مع حلول إدارة وتشغيل حديثة.' },
-            { iconSrc: 'https://cdn.lordicon.com/lenjvibx.json', bg: '/assets/solutions/smart-parking.jpg', title: 'أنظمة مواقف السيارات الذكية', desc: 'تنظيم الحركة وتسهيل إدارة المواقف بكفاءة أعلى.' },
-            { iconSrc: 'https://cdn.lordicon.com/hrjifpbq.json', bg: '/assets/solutions/smart-building.jpg', title: 'أنظمة إدارة المباني (BMS)', desc: 'تحكم ومراقبة مركزية لأنظمة المبنى لتحسين الأداء.' },
-            { iconSrc: 'https://cdn.lordicon.com/dxjqoygy.json', bg: '/assets/solutions/smart-ligting.jpg', title: 'أنظمة إضاءة الواجهات الخارجية', desc: 'حلول إضاءة واجهات احترافية تُبرز الهوية المعمارية.' },
-            { iconSrc: 'https://cdn.lordicon.com/rsvfayfn.json', bg: '/assets/solutions/central-vacuum.jpg', title: 'نظام المكنسة المركزية', desc: 'تنظيف أكثر راحة وكفاءة عبر نظام مركزي عملي.' },
-            { iconSrc: 'https://cdn.lordicon.com/ueoydrft.json', bg: '/assets/solutions/smart-led-screen.jpg', title: 'شاشات LED الداخلية والخارجية', desc: 'شاشات عرض عالية التأثير للاستخدام الداخلي والخارجي.' },
-            { iconSrc: 'https://cdn.lordicon.com/fikcyfpp.json', bg: '/assets/solutions/ev-charging.jpg', title: 'أنظمة شحن المركبات الكهربائية (EV Chargers)', desc: 'بنية شحن موثوقة وقابلة للتوسع للمركبات الكهربائية.' },
-            { iconSrc: 'https://cdn.lordicon.com/hrjifpbq.json', bg: '/assets/solutions/ICT-Systems.jpg', title: 'أنظمة تقنية المعلومات والاتصالات ICT Systems', desc: 'بنية اتصالات وشبكات مؤسسية متكاملة تدعم التشغيل الذكي.' },
-            { iconSrc: 'https://cdn.lordicon.com/dxjqoygy.json', bg: '/assets/solutions/smart-ligting.jpg', title: 'أنظمة التحكم بالإضاءة الداخلية', desc: 'إدارة ذكية لمشاهد الإضاءة وتوفير الطاقة عبر جداول وأتمتة (DMX - Dali).' },
-            { iconSrc: 'https://cdn.lordicon.com/lenjvibx.json', bg: '/assets/solutions/security-Systems.jpg', title: 'الأنظمة الأمنية (Security Systems)', desc: 'مراقبة وحماية متقدمة مع تكامل أنظمة الإنذار والتحكم بالوصول.' }
-          ]; %>
-
           <div class="grid grid--cards">
-            <% solutionCards.forEach(function(c){ %>
-              <article class="card solutionCard" data-tilt style="--solution-bg:url('<%= c.bg %>')">
-                <div class="card__icon">
-                  <lord-icon class="icon-lord icon-lord--card" src="<%= c.iconSrc %>" trigger="hover" colors="primary:#002b44,secondary:#ff9933" aria-hidden="true"></lord-icon>
-                </div>
+            <% __pageSolutions.forEach(function(c){ %>
+              <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage %>')" aria-label="عرض تفاصيل <%= c.title %>">
                 <h3 class="card__title"><%= c.title %></h3>
-                <p class="card__desc"><%= c.desc %></p>
-              </article>
+                <p class="card__desc"><%= c.summary %></p>
+              </a>
             <% }) %>
           </div>
         </div>
@@ -190,8 +173,8 @@
                 <li><lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#d97800,secondary:#ff9933" aria-hidden="true"></lord-icon> لوحات قابلة للتخصيص لكل فريق</li>
               </ul>
               <div class="platformSection__actions">
-                <a class="btn btn--primary" href="#products"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
-                <a class="btn btn--ghost" href="#contact"><%= content?.platform?.ctaSecondary || 'ناقش مشروعك' %></a>
+                <a class="btn btn--primary" href="/solutions"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
+                <a class="btn btn--ghost" href="/contact-us"><%= content?.platform?.ctaSecondary || 'ناقش مشروعك' %></a>
               </div>
             </div>
             <div class="platformSection__panel" aria-label="مؤشرات المنصة">
@@ -220,21 +203,13 @@
           </div>
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
-            <% const industryItems = [
-              { label: 'القطاع السكني', bg: '/assets/solutions/smart-home.jpg' },
-              { label: 'القطاع التجاري', bg: '/assets/solutions/smart-office.jpg' },
-              { label: 'القطاع الحكومي', bg: '/assets/solutions/smart-building.jpg' },
-              { label: 'القطاع الصناعي', bg: '/assets/solutions/central-vacuum.jpg' },
-              { label: 'قطاع الرعاية الصحية', bg: '/assets/solutions/smart-hotel.jpg' },
-              { label: 'قطاع التعليم', bg: '/assets/solutions/smart-led-screen.jpg' },
-              { label: 'قطاع المدن الذكية', bg: '/assets/solutions/smart-parking.jpg' }
-            ]; %>
+            <% const industryItems = Array.isArray(pageIndustries) ? pageIndustries : []; %>
             <div class="industriesShowcase__grid">
               <% industryItems.forEach(function(item, idx){ %>
-                <article class="industriesShowcase__card" data-tilt style="--industry-bg:url('<%= item.bg %>')">
+                <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.image %>')" aria-label="عرض تفاصيل <%= item.title %>">
                   <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
-                  <h3><%= item.label %></h3>
-                </article>
+                  <h3><%= item.title %></h3>
+                </a>
               <% }) %>
             </div>
 
@@ -244,7 +219,7 @@
             </div>
 
             <div class="industriesShowcase__foot">
-              <a class="btn btn--ghost" href="#contact">اطلب استشارة للقطاع المناسب</a>
+              <a class="btn btn--ghost" href="/contact-us">اطلب استشارة للقطاع المناسب</a>
             </div>
           </div>
         </div>

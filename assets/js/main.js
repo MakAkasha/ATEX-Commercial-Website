@@ -454,7 +454,7 @@ function renderProducts(items) {
         <h3 class="item__title">${p.title}</h3>
         <p class="item__desc">${p.description}</p>
         <div class="item__actions">
-          <a class="btn btn--primary btn--small" href="#contact">اطلب عرضاً</a>
+          <a class="btn btn--primary btn--small" href="/contact-us">اطلب عرضاً</a>
           <a class="btn btn--ghost btn--small" href="#" aria-disabled="true" tabindex="-1">تحميل كتيّب (قريباً)</a>
         </div>
       </div>
@@ -481,7 +481,7 @@ function renderPosts(items) {
         <h3 class="item__title">${p.title}</h3>
         <p class="item__desc">${p.excerpt}</p>
         <div class="item__actions">
-          <a class="btn btn--ghost btn--small" href="#contact">اقرأ المزيد (عبر تواصل)</a>
+          <a class="btn btn--ghost btn--small" href="/contact-us">اقرأ المزيد (عبر تواصل)</a>
         </div>
       </div>
     `;

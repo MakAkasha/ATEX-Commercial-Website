@@ -22,7 +22,46 @@ function normalizeText(value, maxLen) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLen);
 }
 
-router.post("/", contactLimiter, (req, res) => {
+async function forwardContactEmail(payload) {
+  if (!config.contactEmailForwardEnabled || !config.contactEmailTo) {
+    return { attempted: false, ok: false };
+  }
+
+  const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(config.contactEmailTo)}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        _subject: "ATEX Contact Form Submission",
+        _template: "table",
+        _captcha: "false",
+        name: payload.name,
+        email: payload.email,
+        message: payload.message,
+        ip: payload.ip,
+        user_agent: payload.userAgent,
+        source: payload.source,
+      }),
+    });
+
+    if (!res.ok) {
+      return { attempted: true, ok: false, status: res.status };
+    }
+
+    return { attempted: true, ok: true };
+  } catch (err) {
+    return { attempted: true, ok: false, error: err && err.message ? err.message : "FORWARD_FAILED" };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+router.post("/", contactLimiter, async (req, res) => {
   const name = normalizeText(nonEmptyString(req.body?.name) || "", 120);
   const email = normalizeText(nonEmptyString(req.body?.email) || "", 160).toLowerCase();
   const message = normalizeText(nonEmptyString(req.body?.message) || "", 3000);
@@ -41,17 +80,34 @@ router.post("/", contactLimiter, (req, res) => {
   }
 
   const db = getDb();
+  const ip = String(req.ip || "");
+  const userAgent = String(req.headers["user-agent"] || "");
+
   db.prepare(
     "INSERT INTO contact_submissions (name, email, message, ip, user_agent) VALUES (?, ?, ?, ?, ?)"
-  ).run(
+  ).run(name, email, message, ip, userAgent);
+
+  const forward = await forwardContactEmail({
     name,
     email,
     message,
-    String(req.ip || ""),
-    String(req.headers["user-agent"] || "")
-  );
+    ip,
+    userAgent,
+    source: String(req.headers.host || "").trim() || "atex.sa",
+  });
 
-  return res.json({ ok: true });
+  if (forward.attempted && !forward.ok) {
+    console.error(
+      JSON.stringify({
+        ts: new Date().toISOString(),
+        level: "warn",
+        type: "contact_email_forward_failed",
+        detail: forward,
+      })
+    );
+  }
+
+  return res.json({ ok: true, email_forwarded: !!forward.ok });
 });
 
 module.exports = router;
