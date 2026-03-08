@@ -10,6 +10,13 @@
       <section class="section solutionsPage__hero" aria-label="تفاصيل الحل">
         <div class="container solutionsPage__heroInner">
           <div class="solutionsPage__heroCopy">
+            <nav class="breadcrumbs" aria-label="مسار الصفحة">
+              <a href="/">الرئيسية</a>
+              <span>/</span>
+              <a href="/solutions">الحلول</a>
+              <span>/</span>
+              <strong><%= solution.title %></strong>
+            </nav>
             <span class="solutionsPage__eyebrow">ATEX Solution Detail</span>
             <h1 class="solutionsPage__title"><%= solution.title %></h1>
             <p class="solutionsPage__desc"><%= solution.summary %></p>
@@ -98,16 +105,17 @@
               <% } %>
 
               <% if (Array.isArray(solution.faqs) && solution.faqs.length) { %>
-                <div class="solutionsPage__detailMeta">
-                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
-                    <h4>أسئلة شائعة</h4>
-                    <ul>
-                      <% solution.faqs.forEach(function(item){ %>
-                        <li><strong><%= item.q %></strong><br /><%= item.a %></li>
-                      <% }) %>
-                    </ul>
-                  </section>
-                </div>
+                <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                  <h4>أسئلة شائعة</h4>
+                  <div class="faq" role="list">
+                    <% solution.faqs.forEach(function(item){ %>
+                      <div class="faq__item" role="listitem">
+                        <button class="faq__q" type="button"><%= item.q %> <span class="faq__icon">+</span></button>
+                        <div class="faq__a"><%= item.a %></div>
+                      </div>
+                    <% }) %>
+                  </div>
+                </section>
               <% } %>
 
               <div class="solutionsPage__detailActions">
@@ -118,6 +126,29 @@
           </article>
         </div>
       </section>
+
+      <% if (Array.isArray(relatedIndustries) && relatedIndustries.length) { %>
+        <section class="section" aria-label="قطاعات مرتبطة">
+          <div class="container">
+            <div class="section__head">
+              <p class="solutionsPage__sectionKicker">RELATED INDUSTRIES</p>
+              <h2>قطاعات يرتبط بها هذا الحل</h2>
+            </div>
+            <div class="solutionsPage__catalogGrid">
+              <% relatedIndustries.forEach(function(industry){ %>
+                <article class="solutionsPage__catalogCard">
+                  <a class="solutionsPage__catalogMedia" href="/industries/<%= industry.slug %>"><img src="<%= industry.image %>" alt="<%= industry.title %>" loading="lazy" /></a>
+                  <div class="solutionsPage__catalogBody">
+                    <h3><a href="/industries/<%= industry.slug %>"><%= industry.title %></a></h3>
+                    <p class="solutionsPage__catalogSummary"><%= industry.intro %></p>
+                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/industries/<%= industry.slug %>">عرض القطاع</a></div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+      <% } %>
 
       <% if (Array.isArray(relatedSolutions) && relatedSolutions.length) { %>
         <section class="section" aria-label="حلول ذات صلة">

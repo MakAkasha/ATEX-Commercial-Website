@@ -10,6 +10,11 @@
       <section class="section solutionsPage__hero" aria-label="تفاصيل القطاع">
         <div class="container solutionsPage__heroInner">
           <div class="solutionsPage__heroCopy">
+            <nav class="breadcrumbs" aria-label="مسار الصفحة">
+              <a href="/">الرئيسية</a>
+              <span>/</span>
+              <strong><%= industry.title %></strong>
+            </nav>
             <span class="solutionsPage__eyebrow">ATEX Industry</span>
             <h1 class="solutionsPage__title"><%= industry.heroTitle %></h1>
             <p class="solutionsPage__desc"><%= industry.intro %></p>
@@ -73,7 +78,6 @@
               </div>
 
               <% if (Array.isArray(industry.faqs) && industry.faqs.length) { %>
-                <div class="solutionsPage__detailMeta">
                   <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
                     <h4>الأسئلة الشائعة</h4>
                     <ul>
@@ -82,7 +86,6 @@
                       <% }) %>
                     </ul>
                   </section>
-                </div>
               <% } %>
 
               <div class="solutionsPage__detailActions">
@@ -93,6 +96,52 @@
           </article>
         </div>
       </section>
+
+      <% if (Array.isArray(relatedSolutions) && relatedSolutions.length) { %>
+        <section class="section" aria-label="حلول مناسبة لهذا القطاع">
+          <div class="container">
+            <div class="section__head">
+              <p class="solutionsPage__sectionKicker">RECOMMENDED SOLUTIONS</p>
+              <h2>حلول مناسبة لهذا القطاع</h2>
+            </div>
+            <div class="solutionsPage__catalogGrid">
+              <% relatedSolutions.forEach(function(solution){ %>
+                <article class="solutionsPage__catalogCard">
+                  <a class="solutionsPage__catalogMedia" href="/solutions/<%= solution.slug %>"><img src="<%= solution.primaryImage %>" alt="<%= solution.title %>" loading="lazy" /></a>
+                  <div class="solutionsPage__catalogBody">
+                    <h3><a href="/solutions/<%= solution.slug %>"><%= solution.title %></a></h3>
+                    <p class="solutionsPage__catalogSummary"><%= solution.summary %></p>
+                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/solutions/<%= solution.slug %>">عرض الحل</a></div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+      <% } %>
+
+      <% if (Array.isArray(relatedIndustries) && relatedIndustries.length) { %>
+        <section class="section" aria-label="قطاعات ذات صلة">
+          <div class="container">
+            <div class="section__head">
+              <p class="solutionsPage__sectionKicker">RELATED INDUSTRIES</p>
+              <h2>قطاعات أخرى ذات صلة</h2>
+            </div>
+            <div class="solutionsPage__catalogGrid">
+              <% relatedIndustries.forEach(function(item){ %>
+                <article class="solutionsPage__catalogCard">
+                  <a class="solutionsPage__catalogMedia" href="/industries/<%= item.slug %>"><img src="<%= item.image %>" alt="<%= item.title %>" loading="lazy" /></a>
+                  <div class="solutionsPage__catalogBody">
+                    <h3><a href="/industries/<%= item.slug %>"><%= item.title %></a></h3>
+                    <p class="solutionsPage__catalogSummary"><%= item.intro %></p>
+                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/industries/<%= item.slug %>">عرض القطاع</a></div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        </section>
+      <% } %>
     </main>
 
     <%- include('partials/site-footer', { content }) %>

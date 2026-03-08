@@ -2199,6 +2199,21 @@ body.has-hero-video .header.is-scrolled {
   max-width: 640px;
 }
 
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  color: rgba(11, 31, 42, 0.66);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.breadcrumbs a:hover {
+  color: var(--primary);
+}
+
 .solutionsPage__eyebrow {
   display: inline-flex;
   align-items: center;

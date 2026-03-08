@@ -2,6 +2,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title><%= meta?.title || "ATEX" %></title>
 <meta name="description" content="<%= meta?.description || "" %>" />
+<meta property="og:title" content="<%= meta?.ogTitle || meta?.title || 'ATEX' %>" />
+<meta property="og:description" content="<%= meta?.ogDescription || meta?.description || '' %>" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="<%= meta?.ogImage || '/assets/ATEX-logo.svg' %>" />
+<meta property="og:url" content="<%= meta?.canonical || '' %>" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="<%= meta?.ogTitle || meta?.title || 'ATEX' %>" />
+<meta name="twitter:description" content="<%= meta?.ogDescription || meta?.description || '' %>" />
+<meta name="twitter:image" content="<%= meta?.ogImage || '/assets/ATEX-logo.svg' %>" />
+<% if (meta?.canonical) { %><link rel="canonical" href="<%= meta.canonical %>" /><% } %>
 
 <link rel="icon" href="data:," />
 

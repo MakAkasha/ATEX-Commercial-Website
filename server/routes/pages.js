@@ -7,8 +7,7 @@ const { getDb } = require("../db");
 const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml } = require("./customPages");
 const { loadAnalyticsSettings } = require("./settings");
-const { solutions } = require("../data/solutions");
-const { industries } = require("../data/industries");
+const { getSolutions, getIndustries } = require("../data/contentRegistry");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -89,12 +88,27 @@ function baseRenderData(req) {
   };
 }
 
+function absoluteUrl(req, pathname = "/") {
+  const origin = `${req.protocol}://${req.get("host")}`;
+  return new URL(pathname, origin).toString();
+}
+
+function withMeta(req, meta) {
+  return {
+    ...meta,
+    canonical: meta?.canonical || absoluteUrl(req, req.originalUrl || "/"),
+  };
+}
+
 // Home (SSR)
 router.get("/", (req, res) => {
+  const solutions = getSolutions();
+  const industries = getIndustries();
   const content = loadHomeContent();
   const db = getDb();
   const socialLogos = loadPartnerLogos();
   const pageSolutions = solutions;
+  const pageIndustries = industries;
   const latestPosts = db
     .prepare(
       "SELECT id, slug, title, excerpt, cover_image, created_at FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3"
@@ -103,14 +117,16 @@ router.get("/", (req, res) => {
   return res.render("home", {
     content,
     pageSolutions,
+    pageIndustries,
     socialLogos,
     latestPosts,
     ...baseRenderData(req),
-    meta: {
+    meta: withMeta(req, {
       title: "ATEX | حلول إنترنت الأشياء في السعودية",
       description:
         "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
-    },
+      ogImage: absoluteUrl(req, "/assets/ATEX-logo.svg"),
+    }),
   });
 });
 
@@ -183,21 +199,25 @@ router.get("/blog/:slug", (req, res) => {
 
 // Solutions page
 router.get("/solutions", (req, res) => {
+  const solutions = getSolutions();
   const content = loadHomeContent();
   return res.render("solutions", {
     content,
     pageSolutions: solutions,
     ...baseRenderData(req),
-    meta: {
+    meta: withMeta(req, {
       title: "ATEX | الأنظمة والحلول",
       description:
         "صفحة الأنظمة والحلول من ATEX: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
-    },
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+    }),
   });
 });
 
 // Single solution page
 router.get("/solutions/:slug", (req, res) => {
+  const solutions = getSolutions();
+  const industries = getIndustries();
   const content = loadHomeContent();
   const slug = String(req.params.slug || "").toLowerCase();
   const solution = solutions.find((s) => s.slug === slug);
@@ -208,21 +228,35 @@ router.get("/solutions/:slug", (req, res) => {
       .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
   }
 
-  const relatedSolutions = solutions.filter((s) => s.slug !== solution.slug).slice(0, 3);
+  const relatedSolutions = solutions
+    .filter((s) => s.slug !== solution.slug)
+    .sort((a, b) => {
+      const aScore = (a.industrySlugs || []).filter((i) => (solution.industrySlugs || []).includes(i)).length;
+      const bScore = (b.industrySlugs || []).filter((i) => (solution.industrySlugs || []).includes(i)).length;
+      return bScore - aScore;
+    })
+    .slice(0, 3);
+  const relatedIndustries = industries.filter((i) => (solution.industrySlugs || []).includes(i.slug)).slice(0, 3);
 
   return res.render("solution-detail", {
     content,
     solution,
     relatedSolutions,
+    relatedIndustries,
     ...baseRenderData(req),
-    meta: {
+    meta: withMeta(req, {
       title: `ATEX | ${solution.title}`,
       description: solution.summary,
-    },
+      ogTitle: solution.title,
+      ogDescription: solution.summary,
+      ogImage: absoluteUrl(req, solution.primaryImage),
+    }),
   });
 });
 
 router.get("/industries/:slug", (req, res) => {
+  const industries = getIndustries();
+  const solutions = getSolutions();
   const content = loadHomeContent();
   const slug = String(req.params.slug || "").toLowerCase();
   const industry = industries.find((s) => s.slug === slug);
@@ -233,14 +267,29 @@ router.get("/industries/:slug", (req, res) => {
       .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
   }
 
+  const relatedSolutions = solutions.filter((s) => (industry.solutionSlugs || []).includes(s.slug)).slice(0, 4);
+  const relatedIndustries = industries
+    .filter((i) => i.slug !== industry.slug)
+    .sort((a, b) => {
+      const aScore = (a.solutionSlugs || []).filter((s) => (industry.solutionSlugs || []).includes(s)).length;
+      const bScore = (b.solutionSlugs || []).filter((s) => (industry.solutionSlugs || []).includes(s)).length;
+      return bScore - aScore;
+    })
+    .slice(0, 3);
+
   return res.render("industry-detail", {
     content,
     industry,
+    relatedSolutions,
+    relatedIndustries,
     ...baseRenderData(req),
-    meta: {
+    meta: withMeta(req, {
       title: `ATEX | ${industry.title}`,
       description: industry.metaDescription || industry.intro,
-    },
+      ogTitle: industry.metaTitle || industry.title,
+      ogDescription: industry.metaDescription || industry.intro,
+      ogImage: absoluteUrl(req, industry.image),
+    }),
   });
 });
 

@@ -203,20 +203,12 @@
           </div>
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
-            <% const industryItems = [
-              { label: 'القطاع السكني', slug: 'residential', bg: '/assets/solutions/residential.png' },
-              { label: 'القطاع التجاري', slug: 'commercial', bg: '/assets/solutions/commence.png' },
-              { label: 'القطاع الحكومي', slug: 'government', bg: '/assets/solutions/governmental.png' },
-              { label: 'القطاع الصناعي', slug: 'industrial', bg: '/assets/solutions/industrial.png' },
-              { label: 'قطاع الرعاية الصحية', slug: 'healthcare', bg: '/assets/solutions/health.png' },
-              { label: 'قطاع التعليم', slug: 'education', bg: '/assets/solutions/educational.png' },
-              { label: 'قطاع المدن الذكية', slug: 'smart-cities', bg: '/assets/solutions/smart-cities.png' }
-            ]; %>
+            <% const industryItems = Array.isArray(pageIndustries) ? pageIndustries : []; %>
             <div class="industriesShowcase__grid">
               <% industryItems.forEach(function(item, idx){ %>
-                <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.bg %>')" aria-label="عرض تفاصيل <%= item.label %>">
+                <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.image %>')" aria-label="عرض تفاصيل <%= item.title %>">
                   <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
-                  <h3><%= item.label %></h3>
+                  <h3><%= item.title %></h3>
                 </a>
               <% }) %>
             </div>

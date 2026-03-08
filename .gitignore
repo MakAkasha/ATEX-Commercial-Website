@@ -15,3 +15,7 @@ Thumbs.db
 
 # Local runtime logs
 server_run*.log
+
+# SQLite runtime files
+server/data.sqlite-shm
+server/data.sqlite-wal
