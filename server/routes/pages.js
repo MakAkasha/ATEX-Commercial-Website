@@ -93,6 +93,7 @@ router.get("/", (req, res) => {
   const content = loadHomeContent();
   const db = getDb();
   const socialLogos = loadPartnerLogos();
+  const pageSolutions = solutions;
   const latestPosts = db
     .prepare(
       "SELECT id, slug, title, excerpt, cover_image, created_at FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3"
@@ -100,6 +101,7 @@ router.get("/", (req, res) => {
     .all();
   return res.render("home", {
     content,
+    pageSolutions,
     socialLogos,
     latestPosts,
     ...baseRenderData(req),

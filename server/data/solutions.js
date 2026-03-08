@@ -1,3 +1,23 @@
+const fs = require("fs");
+const path = require("path");
+
+const SOLUTIONS_DIR = path.resolve(__dirname, "..", "..", "assets", "solutions");
+
+function preferPngAsset(assetPath) {
+  const normalized = String(assetPath || "").trim();
+  if (!normalized.startsWith("/assets/solutions/")) return normalized;
+
+  const parsed = path.parse(normalized);
+  const pngFileName = `${parsed.name}.png`;
+  const pngDiskPath = path.join(SOLUTIONS_DIR, pngFileName);
+
+  if (fs.existsSync(pngDiskPath)) {
+    return `/assets/solutions/${pngFileName}`;
+  }
+
+  return normalized;
+}
+
 const solutions = [
   {
     slug: "smart-home",
@@ -191,7 +211,13 @@ const solutions = [
     primaryImage: "/assets/solutions/security-Systems.jpg",
     supportImages: ["/assets/solutions/smart-building.jpg", "/assets/solutions/ICT-Systems.jpg"],
   },
-];
+].map((solution) => ({
+  ...solution,
+  primaryImage: preferPngAsset(solution.primaryImage),
+  supportImages: Array.isArray(solution.supportImages)
+    ? solution.supportImages.map(preferPngAsset)
+    : [],
+}));
 
 module.exports = {
   solutions,
