@@ -794,8 +794,21 @@ function initHeroVideoLazyLoad() {
   // Lazy load hero video and YouTube iframe after page is interactive
   const heroVideo = qs("#heroVideo");
   const heroYoutubeVideo = qs("#heroYoutubeVideo");
+  const loadingOverlay = qs("#loadingOverlay");
   
-  if (!heroVideo && !heroYoutubeVideo) return;
+  if (!heroVideo && !heroYoutubeVideo) {
+    // If no video, hide overlay immediately
+    if (loadingOverlay) {
+      loadingOverlay.classList.add("is-hidden");
+    }
+    return;
+  }
+
+  const hideLoadingOverlay = () => {
+    if (loadingOverlay) {
+      loadingOverlay.classList.add("is-hidden");
+    }
+  };
 
   const loadVideo = () => {
     // Load native video
@@ -807,18 +820,25 @@ function initHeroVideoLazyLoad() {
         heroVideo.src = videoSrc;
         heroVideo.load();
         
-        // Auto play after loading
+        // Hide overlay when video metadata is loaded and ready
         heroVideo.addEventListener("loadedmetadata", () => {
+          hideLoadingOverlay();
           heroVideo.play().catch(() => {
             // Auto-play may be blocked by browser policy
             console.log("Video autoplay blocked by browser policy");
           });
         });
+
+        // Fallback: hide overlay after 3 seconds even if video fails
+        setTimeout(hideLoadingOverlay, 3000);
         
         // Also update source src
         if (source) {
           source.src = videoSrc;
         }
+      } else {
+        // No video source, hide overlay
+        hideLoadingOverlay();
       }
     }
 
@@ -826,8 +846,22 @@ function initHeroVideoLazyLoad() {
     if (heroYoutubeVideo) {
       const iframeSrc = heroYoutubeVideo.getAttribute("data-src");
       if (iframeSrc) {
+        // Hide overlay when YouTube iframe loads
+        heroYoutubeVideo.addEventListener("load", () => {
+          // Give YouTube a moment to initialize
+          setTimeout(hideLoadingOverlay, 500);
+        });
+        
+        // Fallback: hide overlay after 3 seconds
+        setTimeout(hideLoadingOverlay, 3000);
+        
         heroYoutubeVideo.src = iframeSrc;
       }
+    }
+
+    // If neither video exists, hide overlay
+    if (!heroVideo && !heroYoutubeVideo) {
+      hideLoadingOverlay();
     }
   };
 

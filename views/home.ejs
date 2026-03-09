@@ -29,15 +29,23 @@
     %>
 
     <main>
+      <!-- Loading Overlay -->
+      <div class="loadingOverlay" id="loadingOverlay" aria-hidden="true">
+        <div class="loadingOverlay__spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+      </div>
+
       <!-- Hero (Video Loop) -->
       <section class="heroVideo" aria-label="IoT Hero">
         <div class="heroVideo__media" aria-hidden="true">
           <% if (__heroVideoSourceType === 'upload' && __heroVideoUploadedUrl) { %>
-            <video id="heroVideo" muted loop playsinline preload="none" data-src="<%= __heroVideoUploadedUrl %>" poster="/assets/hero/ac.png">
+            <video id="heroVideo" muted loop playsinline preload="none" data-src="<%= __heroVideoUploadedUrl %>">
               <source data-src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
             </video>
           <% } else if (__heroVideoYoutubeId) { %>
-            <div class="heroVideo__youtube-placeholder"></div>
             <iframe
               id="heroYoutubeVideo"
               data-src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
@@ -48,7 +56,7 @@
               allowfullscreen
               loading="lazy"></iframe>
           <% } else { %>
-            <video id="heroVideo" muted loop playsinline preload="none" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" poster="/assets/hero/ac.png">
+            <video id="heroVideo" muted loop playsinline preload="none" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
               <source data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />
             </video>
           <% } %>
@@ -89,7 +97,7 @@
       </section>
 
       <!-- ATEX Overview -->
-      <section class="hero" id="atex-overview" aria-label="ATEX Overview">
+      <section class="hero" id="atex-overview" aria-label="اتكس Overview">
         <div class="container hero__inner">
           <div class="hero__copy">
             <h1 class="hero__title"><%= content?.hero?.title || "أتكس… مباني أذكى" %></h1>
@@ -153,7 +161,7 @@
       <!-- Platform section -->
       <section class="section" id="platform">
         <div class="container">
-          <div class="platformSection" role="region" aria-label="وصف منصة ATEX">
+          <div class="platformSection" role="region" aria-label="وصف منصة اتكس">
             <div class="platformSection__bg" aria-hidden="true"></div>
             <div class="platformSection__content">
               <div class="platformSection__kicker"><%= content?.platform?.kicker || 'من جهاز إلى لوحة متابعة خلال وقت قياسي' %></div>
