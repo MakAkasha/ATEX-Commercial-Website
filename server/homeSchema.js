@@ -26,9 +26,9 @@ function getDefaultHomeContent() {
     },
 
     heroVideo: {
-      sourceType: "youtube", // youtube | upload
+      sourceType: "upload", // youtube | upload
       youtubeUrl: "https://www.youtube.com/watch?v=xwYbULh3aRE",
-      uploadedVideoUrl: "",
+      uploadedVideoUrl: "/assets/hero-video/hero.mp4",
     },
 
     solutions: {
