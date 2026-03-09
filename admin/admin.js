@@ -1010,7 +1010,16 @@
     return json.url;
   }
 
-  if (editorSurface && window.tinymce) {
+  // Initialize TinyMCE when DOM is ready and script is loaded
+  function initTinyMCE() {
+    if (!editorSurface) return;
+    if (!window.tinymce) {
+      console.error("TinyMCE not loaded");
+      return;
+    }
+    
+    console.log("Initializing TinyMCE...");
+    
     window.tinymce.init({
       selector: "#postEditorSurface",
       license_key: "gpl",
