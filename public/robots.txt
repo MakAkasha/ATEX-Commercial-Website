@@ -1,0 +1,15 @@
+# Robots.txt for ATEX Website
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /api/
+Disallow: /rec/
+
+# Sitemap location
+Sitemap: https://atex.sa/sitemap.xml
+
+# Crawl-delay (optional, if needed)
+# Crawl-delay: 1

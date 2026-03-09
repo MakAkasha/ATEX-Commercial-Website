@@ -1,0 +1,12 @@
+<%
+/**
+ * Structured Data (JSON-LD) for SEO
+ * Provides rich snippets for search engines
+ */
+%>
+
+<% if (typeof structuredData !== 'undefined' && structuredData) { %>
+<script type="application/ld+json">
+<%- JSON.stringify(structuredData, null, 2) %>
+</script>
+<% } %>

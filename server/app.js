@@ -109,6 +109,69 @@ app.get("/readyz", (req, res) => {
   }
 });
 
+// Sitemap.xml generator
+app.get("/sitemap.xml", (req, res) => {
+  try {
+    const db = getDb();
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    
+    // Get all static routes
+    const staticUrls = [
+      { loc: baseUrl, priority: "1.0", changefreq: "daily" },
+      { loc: `${baseUrl}/solutions`, priority: "0.9", changefreq: "weekly" },
+      { loc: `${baseUrl}/contact-us`, priority: "0.8", changefreq: "monthly" },
+      { loc: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
+      { loc: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
+      { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
+    ];
+    
+    // Get all solutions
+    const solutions = db.prepare("SELECT slug FROM solutions").all();
+    const solutionUrls = solutions.map(s => ({
+      loc: `${baseUrl}/solutions/${s.slug}`,
+      priority: "0.8",
+      changefreq: "weekly"
+    }));
+    
+    // Get all industries
+    const industries = db.prepare("SELECT slug FROM industries").all();
+    const industryUrls = industries.map(i => ({
+      loc: `${baseUrl}/industries/${i.slug}`,
+      priority: "0.8",
+      changefreq: "weekly"
+    }));
+    
+    // Get all published blog posts
+    const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
+    const postUrls = posts.map(p => ({
+      loc: `${baseUrl}/blog/${p.slug}`,
+      priority: "0.7",
+      changefreq: "weekly",
+      lastmod: p.updated_at || new Date().toISOString()
+    }));
+    
+    // Combine all URLs
+    const allUrls = [...staticUrls, ...solutionUrls, ...industryUrls, ...postUrls];
+    
+    // Generate XML
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls.map(url => `  <url>
+    <loc>${url.loc}</loc>
+    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''}
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+    
+    res.set("Content-Type", "application/xml");
+    res.send(xml);
+  } catch (err) {
+    console.error("Error generating sitemap:", err);
+    res.status(500).send("Error generating sitemap");
+  }
+});
+
 // Static public site
 app.use("/assets", express.static(path.join(ROOT_DIR, "assets")));
 app.use("/data", express.static(path.join(ROOT_DIR, "data")));

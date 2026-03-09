@@ -114,6 +114,61 @@ router.get("/", (req, res) => {
       "SELECT id, slug, title, excerpt, cover_image, created_at FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3"
     )
     .all();
+  
+  const siteUrl = absoluteUrl(req, "/");
+  
+  // JSON-LD Structured Data for Homepage
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}#organization`,
+        "name": "ATEX",
+        "url": siteUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": absoluteUrl(req, "/assets/ATEX-logo.svg")
+        },
+        "description": "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "SA",
+          "addressLocality": "الرياض"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+966580102121",
+          "contactType": "sales"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}#website`,
+        "url": siteUrl,
+        "name": "ATEX",
+        "description": "حلول إنترنت الأشياء في السعودية",
+        "inLanguage": "ar-SA",
+        "publisher": {
+          "@id": `${siteUrl}#organization`
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}#webpage`,
+        "url": siteUrl,
+        "name": "ATEX | حلول إنترنت الأشياء في السعودية",
+        "description": "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
+        "isPartOf": {
+          "@id": `${siteUrl}#website`
+        },
+        "about": {
+          "@id": `${siteUrl}#organization`
+        }
+      }
+    ]
+  };
+  
   return res.render("home", {
     content,
     pageSolutions,
@@ -121,6 +176,7 @@ router.get("/", (req, res) => {
     socialLogos,
     latestPosts,
     ...baseRenderData(req),
+    structuredData,
     meta: withMeta(req, {
       title: "ATEX | حلول إنترنت الأشياء في السعودية",
       description:

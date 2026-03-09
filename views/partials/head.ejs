@@ -1,25 +1,55 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Primary Meta Tags -->
 <title><%= meta?.title || "ATEX" %></title>
+<meta name="title" content="<%= meta?.title || "ATEX" %>" />
 <meta name="description" content="<%= meta?.description || "" %>" />
+<meta name="keywords" content="<%= meta?.keywords || "إنترنت الأشياء, IoT, السعودية, تقنية, حلول ذكية, أتمتة, تتبع الأصول, إدارة الأساطيل, المراقبة البيئية, العدادات والطاقة" %>" />
+<% if (meta?.author) { %><meta name="author" content="<%= meta.author %>" /><% } %>
+
+<!-- Robots Meta Tags -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow" />
+<meta name="bingbot" content="index, follow" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="<%= meta?.canonical || '' %>" />
 <meta property="og:title" content="<%= meta?.ogTitle || meta?.title || 'ATEX' %>" />
 <meta property="og:description" content="<%= meta?.ogDescription || meta?.description || '' %>" />
-<meta property="og:type" content="website" />
 <meta property="og:image" content="<%= meta?.ogImage || '/assets/ATEX-logo.svg' %>" />
-<meta property="og:url" content="<%= meta?.canonical || '' %>" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="ATEX - حلول إنترنت الأشياء" />
+<meta property="og:site_name" content="ATEX" />
+<meta property="og:locale" content="ar_SA" />
+
+<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="<%= meta?.canonical || '' %>" />
 <meta name="twitter:title" content="<%= meta?.ogTitle || meta?.title || 'ATEX' %>" />
 <meta name="twitter:description" content="<%= meta?.ogDescription || meta?.description || '' %>" />
 <meta name="twitter:image" content="<%= meta?.ogImage || '/assets/ATEX-logo.svg' %>" />
+<meta name="twitter:image:alt" content="ATEX - حلول إنترنت الأشياء" />
+
+<!-- Canonical URL -->
 <% if (meta?.canonical) { %><link rel="canonical" href="<%= meta.canonical %>" /><% } %>
 
+<!-- Favicon -->
 <link rel="icon" href="data:," />
+<link rel="icon" type="image/svg+xml" href="/assets/ATEX-logo.svg" />
+
+<!-- Preconnect and Preload Critical Resources -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 
 <!-- Preload critical fonts -->
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" as="style" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+<!-- Stylesheets -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <link rel="stylesheet" href="/assets/css/styles.css" />
 
