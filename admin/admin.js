@@ -1315,6 +1315,13 @@
   $("#savePostBtn")?.addEventListener("click", () => savePost().catch((e) => alert(e.message)));
   $("#deletePostBtn")?.addEventListener("click", () => deletePost().catch(console.error));
 
+  // Initialize TinyMCE after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTinyMCE);
+  } else {
+    initTinyMCE();
+  }
+
   // Initial load
   loadHome().catch(console.error);
   loadPosts().catch(() => {});
