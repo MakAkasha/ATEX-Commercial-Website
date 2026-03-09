@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const express = require("express");
 
-const { requireAdminPage } = require("../auth");
+const { requireAdminPage, isAdminSession } = require("../auth");
 const { getDb } = require("../db");
 const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml } = require("./customPages");
@@ -311,7 +311,9 @@ router.get("/rec/:slug", (req, res) => {
   const slug = String(req.params.slug || "");
   const db = getDb();
   const content = loadHomeContent();
-  const row = db.prepare("SELECT * FROM custom_pages WHERE slug = ? AND published = 1").get(slug);
+  const row = isAdminSession(req)
+    ? db.prepare("SELECT * FROM custom_pages WHERE slug = ?").get(slug)
+    : db.prepare("SELECT * FROM custom_pages WHERE slug = ? AND published = 1").get(slug);
   if (!row)
     return res
       .status(404)
@@ -326,6 +328,7 @@ router.get("/rec/:slug", (req, res) => {
     // JS is only allowed when unsafe_js is enabled for that page.
     js_code: row.unsafe_js ? String(row.js_code || "") : "",
     unsafe_js: !!row.unsafe_js,
+    published: !!row.published,
   };
 
   return res.render("custom-page", {

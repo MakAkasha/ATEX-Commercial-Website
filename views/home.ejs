@@ -37,7 +37,7 @@
             </video>
           <% } else if (__heroVideoYoutubeId) { %>
             <iframe
-              src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0"
+              src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
               title="IoT background video"
               frameborder="0"
               allow="autoplay; encrypted-media; picture-in-picture"
@@ -63,33 +63,21 @@
       <section class="trustStrip" aria-label="مؤشرات الثقة">
         <div class="container trustStrip__inner">
           <article class="trustStrip__item" data-tilt>
-            <span class="trustStrip__icon" aria-hidden="true">
-              <lord-icon class="icon-lord" src="https://cdn.lordicon.com/msoeawqm.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933"></lord-icon>
-            </span>
             <strong>+43</strong>
             <span>مشروع تم تنفيذه بنجاح</span>
           </article>
 
           <article class="trustStrip__item" data-tilt>
-            <span class="trustStrip__icon" aria-hidden="true">
-              <lord-icon class="icon-lord" src="https://cdn.lordicon.com/abfverha.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933"></lord-icon>
-            </span>
             <strong>24/7</strong>
             <span>متابعة وتشغيل ودعم مستمر</span>
           </article>
 
           <article class="trustStrip__item" data-tilt>
-            <span class="trustStrip__icon" aria-hidden="true">
-              <lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933"></lord-icon>
-            </span>
             <strong>+4</strong>
             <span>سنوات خبرة ميدانية في المملكة</span>
           </article>
 
           <article class="trustStrip__item" data-tilt>
-            <span class="trustStrip__icon" aria-hidden="true">
-              <lord-icon class="icon-lord" src="https://cdn.lordicon.com/fikcyfpp.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933"></lord-icon>
-            </span>
             <strong>100%</strong>
             <span>التزام واضح بجودة مستوى الخدمة</span>
           </article>
@@ -106,9 +94,9 @@
             </p>
 
             <div class="hero__trust" aria-label="مزايا سريعة">
-              <div class="pill"><lord-icon class="icon-lord" src="https://cdn.lordicon.com/ueoydrft.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933" aria-hidden="true"></lord-icon> أمان مؤسسي</div>
-              <div class="pill"><lord-icon class="icon-lord" src="https://cdn.lordicon.com/hrjifpbq.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933" aria-hidden="true"></lord-icon> تكاملات API</div>
-              <div class="pill"><lord-icon class="icon-lord" src="https://cdn.lordicon.com/lenjvibx.json" trigger="hover" colors="primary:#002b44,secondary:#ff9933" aria-hidden="true"></lord-icon> تنفيذ داخل المملكة</div>
+              <div class="pill"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> أمان مؤسسي</div>
+              <div class="pill"><i class="fa-solid fa-plug-circle-bolt" aria-hidden="true"></i> تكاملات API</div>
+              <div class="pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> تنفيذ داخل المملكة</div>
             </div>
           </div>
 
@@ -168,9 +156,9 @@
               <h2 class="platformSection__title"><%= content?.platform?.title || 'منصة واحدة للأجهزة والاتصال والبيانات' %></h2>
               <p class="platformSection__desc"><%= content?.platform?.desc || 'نوفّر طبقة إدارة أجهزة، قواعد تنبيهات، لوحات، وتقارير—مع إمكانيات تكامل عبر واجهات برمجية.' %></p>
               <ul class="platformSection__points" aria-label="مزايا المنصة">
-                <li><lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#d97800,secondary:#ff9933" aria-hidden="true"></lord-icon> مراقبة لحظية + تنبيهات فورية</li>
-                <li><lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#d97800,secondary:#ff9933" aria-hidden="true"></lord-icon> تكاملات API مع أنظمة المؤسسة</li>
-                <li><lord-icon class="icon-lord" src="https://cdn.lordicon.com/rsvfayfn.json" trigger="hover" colors="primary:#d97800,secondary:#ff9933" aria-hidden="true"></lord-icon> لوحات قابلة للتخصيص لكل فريق</li>
+                <li><i class="fa-solid fa-bolt" aria-hidden="true"></i> مراقبة لحظية + تنبيهات فورية</li>
+                <li><i class="fa-solid fa-code-branch" aria-hidden="true"></i> تكاملات API مع أنظمة المؤسسة</li>
+                <li><i class="fa-solid fa-table-columns" aria-hidden="true"></i> لوحات قابلة للتخصيص لكل فريق</li>
               </ul>
               <div class="platformSection__actions">
                 <a class="btn btn--primary" href="/solutions"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
@@ -376,45 +364,48 @@
         </section>
       <% } %>
 
-      <!-- Blog teaser -->
-      <section class="section" id="blog">
-        <div class="container">
-          <div class="section__head">
-            <h2><%= content?.blogTeaser?.heading || 'المدونة' %></h2>
-            <p><%= content?.blogTeaser?.subheading || 'آخر المقالات وأفضل الممارسات في إنترنت الأشياء.' %></p>
-          </div>
+      <% const showBlogSection = content?.sections?.blogEnabled === true; %>
+      <% if (showBlogSection) { %>
+        <!-- Blog teaser -->
+        <section class="section" id="blog">
+          <div class="container">
+            <div class="section__head">
+              <h2><%= content?.blogTeaser?.heading || 'المدونة' %></h2>
+              <p><%= content?.blogTeaser?.subheading || 'آخر المقالات وأفضل الممارسات في إنترنت الأشياء.' %></p>
+            </div>
 
-          <% if ((latestPosts || []).length) { %>
-            <div class="grid grid--posts" aria-label="آخر المقالات">
-              <% latestPosts.forEach(function(p){ %>
-                <article class="item" data-tilt>
-                  <div class="item__media">
-                    <% if (p.cover_image) { %>
-                      <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
-                    <% } %>
-                  </div>
-                  <div class="item__body">
-                    <div class="item__tag" dir="ltr">/<%= p.slug %></div>
-                    <h3 class="item__title"><%= p.title %></h3>
-                    <p class="item__desc"><%= p.excerpt || '' %></p>
-                    <div class="item__actions">
-                      <a class="btn btn--primary btn--small" href="/blog/<%= p.slug %>">اقرأ المزيد</a>
-                      <a class="btn btn--ghost btn--small" href="/blog">كل المقالات</a>
+            <% if ((latestPosts || []).length) { %>
+              <div class="grid grid--posts" aria-label="آخر المقالات">
+                <% latestPosts.forEach(function(p){ %>
+                  <article class="item" data-tilt>
+                    <div class="item__media">
+                      <% if (p.cover_image) { %>
+                        <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
+                      <% } %>
                     </div>
-                  </div>
-                </article>
-              <% }) %>
-            </div>
-          <% } else { %>
-            <div class="item" style="padding:16px">
-              <p style="margin:0; font-weight:800">لا توجد مقالات منشورة حالياً. يمكنك نشر مقالات من لوحة الإدارة.</p>
-              <div style="margin-top:10px">
-                <a class="btn btn--primary btn--small" href="<%= content?.blogTeaser?.ctaHref || '/blog' %>"><%= content?.blogTeaser?.ctaText || 'فتح المدونة' %></a>
+                    <div class="item__body">
+                      <div class="item__tag" dir="ltr">/<%= p.slug %></div>
+                      <h3 class="item__title"><%= p.title %></h3>
+                      <p class="item__desc"><%= p.excerpt || '' %></p>
+                      <div class="item__actions">
+                        <a class="btn btn--primary btn--small" href="/blog/<%= p.slug %>">اقرأ المزيد</a>
+                        <a class="btn btn--ghost btn--small" href="/blog">كل المقالات</a>
+                      </div>
+                    </div>
+                  </article>
+                <% }) %>
               </div>
-            </div>
-          <% } %>
-        </div>
-      </section>
+            <% } else { %>
+              <div class="item" style="padding:16px">
+                <p style="margin:0; font-weight:800">لا توجد مقالات منشورة حالياً. يمكنك نشر مقالات من لوحة الإدارة.</p>
+                <div style="margin-top:10px">
+                  <a class="btn btn--primary btn--small" href="<%= content?.blogTeaser?.ctaHref || '/blog' %>"><%= content?.blogTeaser?.ctaText || 'فتح المدونة' %></a>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </section>
+      <% } %>
 
       <!-- Social proof -->
       <section class="section socialProof" id="social-proof">

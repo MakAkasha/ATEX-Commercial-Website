@@ -31,7 +31,6 @@ function buildCspDirectives() {
       "'unsafe-inline'",
       "https://cdn.jsdelivr.net",
       "https://cdnjs.cloudflare.com",
-      "https://cdn.lordicon.com",
       "https://www.googletagmanager.com",
       "https://www.google-analytics.com",
     ],

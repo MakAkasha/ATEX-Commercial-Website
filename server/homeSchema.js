@@ -161,6 +161,7 @@ function getDefaultHomeContent() {
 
     sections: {
       productsEnabled: true,
+      blogEnabled: false,
     },
 
     contact: {
@@ -301,6 +302,7 @@ function normalizeHomeContent(input) {
 
   if (src.sections && typeof src.sections === "object") {
     out.sections.productsEnabled = asBoolean(src.sections.productsEnabled, out.sections.productsEnabled);
+    out.sections.blogEnabled = asBoolean(src.sections.blogEnabled, out.sections.blogEnabled);
   }
 
   if (src.contact && typeof src.contact === "object") {

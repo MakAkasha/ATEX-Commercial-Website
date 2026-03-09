@@ -63,34 +63,14 @@
   const loginForm = $("#loginForm");
   if (loginForm) {
     const errorBox = $("#errorBox");
-    const loginInfo = $("#loginInfo");
     const passwordInput = $("#password");
     const togglePassword = $("#togglePassword");
-    const capsHint = $("#capsHint");
     const submitBtn = $('button[type="submit"]', loginForm);
 
     if (togglePassword && passwordInput) {
       togglePassword.addEventListener("change", () => {
         passwordInput.type = togglePassword.checked ? "text" : "password";
       });
-    }
-
-    if (passwordInput && capsHint) {
-      const checkCaps = (e) => {
-        if (!e || typeof e.getModifierState !== "function") return;
-        capsHint.hidden = !e.getModifierState("CapsLock");
-      };
-      passwordInput.addEventListener("keydown", checkCaps);
-      passwordInput.addEventListener("keyup", checkCaps);
-      passwordInput.addEventListener("blur", () => {
-        capsHint.hidden = true;
-      });
-    }
-
-    const params = new URLSearchParams(location.search || "");
-    const reason = params.get("reason") || (location.hash || "").replace("#", "");
-    if (loginInfo && reason && /(timeout|expired|session)/i.test(reason)) {
-      loginInfo.textContent = "انتهت الجلسة، الرجاء تسجيل الدخول مرة أخرى.";
     }
 
     loginForm.addEventListener("submit", async (e) => {
@@ -150,17 +130,17 @@
   };
 
   const ROUTE_LABELS = {
-    dashboard: "Dashboard",
-    home: "تحرير الصفحة الرئيسية",
+    dashboard: "الرئيسية",
+    home: "الصفحة الرئيسية",
     blog: "المدونة",
-    "custom-pages": "Custom Pages",
-    analytics: "Analytics",
-    "website-stats": "Website Stats",
-    leads: "Leads",
-    products: "Products",
-    categories: "Categories",
-    settings: "Settings",
-    users: "Users / Roles",
+    "custom-pages": "الصفحات المخصصة",
+    analytics: "التحليلات والتتبع",
+    "website-stats": "إحصائيات الموقع",
+    leads: "العملاء المحتملون",
+    products: "المنتجات",
+    categories: "التصنيفات",
+    settings: "الإعدادات العامة",
+    users: "المستخدمون والصلاحيات",
   };
 
   const dirtyState = {
@@ -179,6 +159,9 @@
   function setDirty(section, value = true) {
     if (!(section in dirtyState)) return;
     dirtyState[section] = !!value;
+    if (section === "home" && $("#homeSaveIndicator")) {
+      $("#homeSaveIndicator").textContent = value ? "غير محفوظ" : "جاهز";
+    }
   }
 
   function routeHref(route) {
@@ -298,7 +281,7 @@
     })),
     {
       key: "action:new-post",
-      label: "Action: مقال جديد",
+      label: "إجراء: مقال جديد",
       run: () => {
         location.hash = "#/blog";
         setTimeout(() => $("#newPostBtn")?.click(), 60);
@@ -306,7 +289,7 @@
     },
     {
       key: "action:new-custom-page",
-      label: "Action: إنشاء صفحة مخصصة",
+      label: "إجراء: إنشاء صفحة مخصصة",
       run: () => {
         location.hash = "#/custom-pages";
         setTimeout(() => $("#createCustomPageBtn")?.click(), 60);
@@ -314,7 +297,7 @@
     },
     {
       key: "action:save-current",
-      label: "Action: حفظ الصفحة الحالية",
+      label: "إجراء: حفظ الصفحة الحالية",
       run: () => {
         const r = activeRoute;
         if (r === "home") $("#saveHomeBtn")?.click();
@@ -394,9 +377,9 @@
         a.textContent = text;
         quickActions.appendChild(a);
       };
-      if (route === 'leads') addLink('#/leads', 'Create Lead');
-      if (route === 'products') addLink('#/products', 'Add Product');
-      if (route === 'custom-pages') addLink('#/custom-pages', 'Create Custom Page');
+      if (route === 'leads') addLink('#/leads', 'إضافة عميل محتمل');
+      if (route === 'products') addLink('#/products', 'إضافة منتج');
+      if (route === 'custom-pages') addLink('#/custom-pages', 'إنشاء صفحة مخصصة');
     }
   }
 
@@ -770,6 +753,8 @@
     $("#processSubheading").value = homeDraft.process?.subheading || "";
     const productsToggle = $("#sectionsProductsEnabled");
     if (productsToggle) productsToggle.checked = homeDraft.sections?.productsEnabled !== false;
+    const blogToggle = $("#sectionsBlogEnabled");
+    if (blogToggle) blogToggle.checked = homeDraft.sections?.blogEnabled === true;
 
     // Integrations
     $("#integrationsHeading").value = homeDraft.integrations?.heading || "";
@@ -842,6 +827,8 @@
     homeDraft.process.subheading = $("#processSubheading").value.trim();
     const productsToggle = $("#sectionsProductsEnabled");
     homeDraft.sections.productsEnabled = productsToggle ? !!productsToggle.checked : homeDraft.sections.productsEnabled !== false;
+    const blogToggle = $("#sectionsBlogEnabled");
+    homeDraft.sections.blogEnabled = blogToggle ? !!blogToggle.checked : homeDraft.sections.blogEnabled === true;
 
     // Integrations
     homeDraft.integrations.heading = $("#integrationsHeading").value.trim();
@@ -903,12 +890,14 @@
     const status = $("#homeStatus");
     const productsToggle = $("#sectionsProductsEnabled");
     const productsEnabled = productsToggle ? !!productsToggle.checked : true;
+    const blogToggle = $("#sectionsBlogEnabled");
+    const blogEnabled = blogToggle ? !!blogToggle.checked : false;
 
     status.textContent = "جارٍ الحفظ...";
     await api("/api/content/home/sections", {
       method: "PATCH",
       body: JSON.stringify({
-        sections: { productsEnabled },
+        sections: { productsEnabled, blogEnabled },
       }),
     });
     status.textContent = "تم الحفظ";
@@ -918,6 +907,17 @@
   }
 
   $("#sectionsProductsEnabled")?.addEventListener("change", async () => {
+    setDirty("home", true);
+    try {
+      await saveHomeSectionsPatch();
+    } catch (err) {
+      const status = $("#homeStatus");
+      status.textContent = err?.status === 401 ? "انتهت الجلسة، سجّل الدخول مرة أخرى" : "فشل حفظ إعدادات الأقسام";
+      showToast(status.textContent, "error");
+    }
+  });
+
+  $("#sectionsBlogEnabled")?.addEventListener("change", async () => {
     setDirty("home", true);
     try {
       await saveHomeSectionsPatch();
@@ -969,28 +969,36 @@
     }
   });
 
-  // Blog editor
-  let quill;
-  const editorEl = $("#quillEditor");
-  if (editorEl && window.Quill) {
-    quill = new window.Quill("#quillEditor", {
-      theme: "snow",
-      modules: {
-        toolbar: {
-          container: [
-            [{ header: [1, 2, 3, false] }],
-            ["bold", "italic", "underline"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["link", "image"],
-            ["clean"],
-          ],
-          handlers: {
-            image: () => selectLocalImage(),
-          },
-        },
-      },
-    });
-    quill.on("text-change", () => setDirty("blog", true));
+  // Blog editor (TinyMCE self-hosted)
+  const editorSurface = $("#postEditorSurface");
+  let blogEditorReady = false;
+  let pendingEditorHtml = "";
+
+  function getTinyEditor() {
+    return window.tinymce?.get("postEditorSurface") || null;
+  }
+
+  function focusEditorSurface() {
+    const editor = getTinyEditor();
+    if (editor) editor.focus();
+    else editorSurface?.focus();
+  }
+
+  function getEditorHtml() {
+    const editor = getTinyEditor();
+    if (editor) return String(editor.getContent() || "").trim();
+    return String(editorSurface?.value || pendingEditorHtml || "").trim();
+  }
+
+  function setEditorHtml(html) {
+    const normalized = String(html || "").trim();
+    pendingEditorHtml = normalized;
+    const editor = getTinyEditor();
+    if (editor) {
+      editor.setContent(normalized);
+      return;
+    }
+    if (editorSurface) editorSurface.value = normalized;
   }
 
   async function uploadImage(file) {
@@ -1000,6 +1008,42 @@
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || "UPLOAD_FAILED");
     return json.url;
+  }
+
+  if (editorSurface && window.tinymce) {
+    window.tinymce.init({
+      selector: "#postEditorSurface",
+      license_key: "gpl",
+      menubar: false,
+      promotion: false,
+      branding: false,
+      directionality: "rtl",
+      height: 520,
+      placeholder: "اكتب محتوى المقال هنا...",
+      skin_url: "/vendor/tinymce/skins/ui/oxide",
+      content_css: "/vendor/tinymce/skins/content/default/content.min.css",
+      plugins: "lists link image table code autoresize directionality",
+      toolbar:
+        "undo redo | blocks fontsize | bold italic underline | alignright aligncenter alignleft | bullist numlist | link image table | removeformat code",
+      block_formats: "فقرة=p; عنوان رئيسي=h2; عنوان فرعي=h3; عنوان صغير=h4",
+      fontsize_formats: "12px 14px 16px 18px 20px 24px 28px 32px",
+      automatic_uploads: false,
+      images_upload_handler: async (blobInfo) => {
+        const file = blobInfo.blob();
+        return uploadImage(file);
+      },
+      content_style:
+        'body { font-family: Cairo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; direction: rtl; text-align: right; font-size: 15px; line-height: 1.95; margin: 16px; color: #1d2939; } img { max-width: 100%; height: auto; border-radius: 14px; }',
+      setup: (editor) => {
+        editor.on("init", () => {
+          blogEditorReady = true;
+          if (pendingEditorHtml) editor.setContent(pendingEditorHtml);
+        });
+        editor.on("change input undo redo setcontent", () => {
+          if (blogEditorReady) setDirty("blog", true);
+        });
+      },
+    });
   }
 
   async function importProductsCsv(file) {
@@ -1029,12 +1073,14 @@
     input.onchange = async () => {
       const file = input.files && input.files[0];
       if (!file) return;
-      const range = quill.getSelection(true);
-      quill.insertText(range.index, "جارٍ رفع الصورة...", { italic: true });
       try {
         const url = await uploadImage(file);
-        quill.deleteText(range.index, "جارٍ رفع الصورة...".length);
-        quill.insertEmbed(range.index, "image", url, "user");
+        const editor = getTinyEditor();
+        if (editor) {
+          editor.focus();
+          editor.insertContent(`<img src="${url}" alt="" />`);
+        }
+        setDirty("blog", true);
       } catch (e) {
         console.error(e);
         alert("فشل رفع الصورة");
@@ -1043,6 +1089,7 @@
   }
 
   let currentPostId = null;
+  let postsCache = [];
 
   function slugifyArabic(s) {
     return String(s || "")
@@ -1054,35 +1101,100 @@
       .replace(/^\-+|\-+$/g, "");
   }
 
-  async function loadPosts() {
+  function normalizeTagsInput(value) {
+    return String(value || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  function updatePostCoverPreview(url) {
+    const img = $("#postCoverPreview");
+    const empty = $("#postCoverEmpty");
+    const normalized = String(url || "").trim();
+    if (!img || !empty) return;
+    if (!normalized) {
+      img.hidden = true;
+      img.removeAttribute("src");
+      empty.hidden = false;
+      return;
+    }
+    img.src = normalized;
+    img.hidden = false;
+    empty.hidden = true;
+  }
+
+  function updateBlogStats() {
+    const total = postsCache.length;
+    const published = postsCache.filter((p) => !!p.published).length;
+    const drafts = total - published;
+    const selected = currentPostId ? postsCache.find((p) => Number(p.id) === Number(currentPostId)) : null;
+    if ($("#blogTotalPosts")) $("#blogTotalPosts").textContent = String(total);
+    if ($("#blogPublishedPosts")) $("#blogPublishedPosts").textContent = String(published);
+    if ($("#blogDraftPosts")) $("#blogDraftPosts").textContent = String(drafts);
+    if ($("#blogSelectedPost")) $("#blogSelectedPost").textContent = selected?.title || "—";
+  }
+
+  function updatePostEditorMeta(post) {
+    const meta = $("#postEditorMeta");
+    if (!meta) return;
+    if (!post?.id) {
+      meta.textContent = "تعمل الآن على مسودة جديدة غير محفوظة";
+      return;
+    }
+    meta.textContent = `المقال الحالي: ${post.title} • آخر تحديث: ${formatDateTime(post.updated_at || post.created_at)}`;
+  }
+
+  function renderPostsList() {
     const list = $("#postsList");
-    list.textContent = "جارٍ التحميل...";
-    const { posts } = await api("/api/posts");
+    const summary = $("#postsListSummary");
+    if (!list) return;
+    const q = String($("#postsFilter")?.value || "").trim().toLowerCase();
+    const rows = postsCache.filter((p) => {
+      if (!q) return true;
+      return String(p.title || "").toLowerCase().includes(q) || String(p.slug || "").toLowerCase().includes(q);
+    });
+    if (summary) summary.textContent = rows.length ? `عدد النتائج: ${rows.length}` : "لا توجد نتائج مطابقة";
     list.innerHTML = "";
-    posts.forEach((p) => {
+    rows.forEach((p) => {
       const el = document.createElement("div");
-      el.className = "postItem";
+      el.className = `postItem${Number(currentPostId) === Number(p.id) ? " is-active" : ""}`;
       el.innerHTML = `
         <div class="postItem__title">${p.title}</div>
-        <div class="postItem__meta" dir="ltr">/${p.slug} • ${p.published ? "Published" : "Draft"}</div>
+        <div class="postItem__meta" dir="ltr">/${p.slug}</div>
+        <div class="postItem__badges">
+          <span class="pill ${p.published ? "pill--pub" : "pill--draft"}">${p.published ? "منشور" : "مسودة"}</span>
+          <span class="pill pill--draft">${formatDateTime(p.updated_at || p.created_at)}</span>
+        </div>
       `;
-      el.addEventListener("click", () => selectPost(p, el));
+      el.addEventListener("click", () => selectPost(p));
       list.appendChild(el);
     });
   }
 
-  function selectPost(p, el) {
-    $$(".postItem").forEach((x) => x.classList.remove("is-active"));
-    el.classList.add("is-active");
+  async function loadPosts() {
+    const list = $("#postsList");
+    if (list) list.textContent = "جارٍ التحميل...";
+    const { posts } = await api("/api/posts");
+    postsCache = Array.isArray(posts) ? posts : [];
+    renderPostsList();
+    updateBlogStats();
+  }
 
+  function selectPost(p) {
     currentPostId = p.id;
     $("#postTitle").value = p.title || "";
     $("#postSlug").value = p.slug || "";
     $("#postExcerpt").value = p.excerpt || "";
+    $("#postTags").value = Array.isArray(p.tags) ? p.tags.join(", ") : "";
     $("#postCover").value = p.cover_image || "";
     $("#postPublished").checked = !!p.published;
-    if (quill) quill.root.innerHTML = p.content_html || "";
+    setEditorHtml(p.content_html || "");
+    updatePostCoverPreview(p.cover_image || "");
+    updatePostEditorMeta(p);
     setDirty("blog", false);
+    renderPostsList();
+    updateBlogStats();
   }
 
   function newPost() {
@@ -1090,10 +1202,15 @@
     $("#postTitle").value = "";
     $("#postSlug").value = "";
     $("#postExcerpt").value = "";
+    $("#postTags").value = "";
     $("#postCover").value = "";
     $("#postPublished").checked = false;
-    if (quill) quill.root.innerHTML = "";
+    setEditorHtml("");
+    updatePostCoverPreview("");
+    updatePostEditorMeta(null);
     setDirty("blog", false);
+    renderPostsList();
+    updateBlogStats();
   }
 
   bindDirtyInputs('[data-page="home"]', 'home');
@@ -1103,6 +1220,45 @@
 
   $("#newPostBtn")?.addEventListener("click", newPost);
   $("#refreshPostsBtn")?.addEventListener("click", () => loadPosts().catch(console.error));
+  $("#clearPostBtn")?.addEventListener("click", newPost);
+  $("#insertEditorImageBtn")?.addEventListener("click", selectLocalImage);
+  $("#postsFilter")?.addEventListener("input", renderPostsList);
+  $("#postCover")?.addEventListener("input", (e) => updatePostCoverPreview(e.target.value));
+  $("#postCoverClearBtn")?.addEventListener("click", () => {
+    $("#postCover").value = "";
+    updatePostCoverPreview("");
+    setDirty("blog", true);
+  });
+  $("#postCoverUploadBtn")?.addEventListener("click", async () => {
+    const status = $("#postCoverStatus");
+    const fileInput = $("#postCoverFile");
+    const file = fileInput?.files?.[0];
+    if (!file) {
+      if (status) status.textContent = "اختر صورة أولاً";
+      return;
+    }
+    if (status) status.textContent = "جارٍ رفع الصورة...";
+    try {
+      const url = await uploadImage(file);
+      $("#postCover").value = url;
+      if (fileInput) fileInput.value = "";
+      updatePostCoverPreview(url);
+      setDirty("blog", true);
+      if (status) status.textContent = "تم رفع صورة الغلاف";
+      showToast("تم رفع صورة الغلاف");
+      setTimeout(() => {
+        if (status) status.textContent = "";
+      }, 1500);
+    } catch {
+      if (status) status.textContent = "فشل رفع الصورة";
+      showToast("فشل رفع صورة الغلاف", "error");
+    }
+  });
+  $("#openPostBtn")?.addEventListener("click", () => {
+    const slug = String($("#postSlug")?.value || "").trim();
+    if (!slug) return;
+    window.open(`/blog/${encodeURIComponent(slug)}`, "_blank", "noopener");
+  });
 
   $("#postTitle")?.addEventListener("input", (e) => {
     const slugInput = $("#postSlug");
@@ -1118,8 +1274,8 @@
       title: $("#postTitle").value.trim(),
       excerpt: $("#postExcerpt").value.trim(),
       cover_image: $("#postCover").value.trim(),
-      content_html: quill ? quill.root.innerHTML : "",
-      tags: [],
+      content_html: getEditorHtml(),
+      tags: normalizeTagsInput($("#postTags").value),
       published: $("#postPublished").checked,
     };
 
@@ -1132,6 +1288,8 @@
       currentPostId = res.id;
     }
     await loadPosts();
+    const saved = postsCache.find((p) => Number(p.id) === Number(currentPostId));
+    if (saved) selectPost(saved);
     status.textContent = "تم الحفظ";
     setDirty("blog", false);
     showToast("تم حفظ المقال");
@@ -1187,14 +1345,14 @@
     if (statusEl) {
       statusEl.textContent = enabled
         ? hasId
-          ? "Connection status: ready"
-          : "Connection status: missing tracking IDs"
-        : "Connection status: disabled";
+          ? "حالة الاتصال: جاهز"
+          : "حالة الاتصال: معرّفات التتبع غير مكتملة"
+        : "حالة الاتصال: معطّل";
     }
 
     const effective = $("#analyticsEffective");
     if (effective) {
-      effective.textContent = `الحالة الفعّالة: ${source === "env" ? "Env override" : "DB"} • Enabled=${enabled ? "true" : "false"}`;
+      effective.textContent = `الحالة الفعّالة: ${source === "env" ? "تجاوز عبر البيئة" : "قاعدة البيانات"} • التفعيل: ${enabled ? "نعم" : "لا"}`;
     }
 
     const snippetEl = $("#analyticsSnippet");
@@ -1251,7 +1409,7 @@
       status.textContent = "تم الحفظ";
       updateAnalyticsMeta(res.effective || payload);
       setDirty("analytics", false);
-      showToast("تم حفظ إعدادات Analytics");
+      showToast("تم حفظ إعدادات التحليلات");
       setTimeout(() => (status.textContent = ""), 1500);
     } catch (err) {
       status.textContent =
@@ -1371,7 +1529,7 @@
 
     body.innerHTML = slice
       .map((p) => {
-        const status = p.published ? `<span class="pill pill--pub">Published</span>` : `<span class="pill pill--draft">Draft</span>`;
+        const status = p.published ? `<span class="pill pill--pub">منشورة</span>` : `<span class="pill pill--draft">مسودة</span>`;
         const updated = (p.updated_at || '').replace('T', ' ').slice(0, 16);
         return `
           <tr data-id="${p.id}" class="customRow">
@@ -1446,7 +1604,7 @@
       return;
     }
     const state = currentCustomPage.published ? 'منشورة' : 'مسودة';
-    elMeta.textContent = `الحالة: ${state} • أُنشئت: ${formatDateTime(currentCustomPage.created_at)} • آخر تحديث: ${formatDateTime(
+      elMeta.textContent = `الحالة: ${state} • أُنشئت: ${formatDateTime(currentCustomPage.created_at)} • آخر تحديث: ${formatDateTime(
       currentCustomPage.updated_at
     )}`;
   }
@@ -1632,6 +1790,7 @@
   let productsPage = 1;
   const productsPageSize = 8;
   let currentProduct = null;
+  let currentCategoryName = null;
 
   function filteredProducts() {
     const q = String($("#productsFilter")?.value || "").trim().toLowerCase();
@@ -1662,7 +1821,7 @@
     body.innerHTML =
       slice
         .map((p) => {
-          const status = p.published ? `<span class="pill pill--pub">Published</span>` : `<span class="pill pill--draft">Draft</span>`;
+          const status = p.published ? `<span class="pill pill--pub">منشور</span>` : `<span class="pill pill--draft">مسودة</span>`;
           return `<tr class="productRow" data-id="${p.id}"><td>${Number(p.sort_order || 0)}</td><td>${p.title}</td><td>${p.category || "—"}</td><td dir="ltr">${p.slug}</td><td>${status}</td></tr>`;
         })
         .join("") || `<tr><td colspan="5" class="muted">لا توجد منتجات</td></tr>`;
@@ -1704,6 +1863,158 @@
     setDirty("products", false);
   }
 
+  function getCategoriesSummary() {
+    const map = new Map();
+    (products || []).forEach((p) => {
+      const name = String(p.category || "").trim();
+      if (!name) return;
+      map.set(name, (map.get(name) || 0) + 1);
+    });
+    return Array.from(map.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name, "ar"));
+  }
+
+  function renderCategoriesTable() {
+    const body = $("#categoriesTableBody");
+    if (!body) return;
+    const q = String($("#categoriesFilter")?.value || "").trim().toLowerCase();
+    const rows = getCategoriesSummary().filter((row) => !q || row.name.toLowerCase().includes(q));
+    body.innerHTML = rows.length
+      ? rows
+          .map(
+            (row) => `
+              <tr class="categoryRow" data-name="${encodeURIComponent(row.name)}">
+                <td>${row.name}</td>
+                <td>${row.count}</td>
+              </tr>
+            `
+          )
+          .join("")
+      : `<tr><td colspan="2" class="muted">لا توجد تصنيفات بعد</td></tr>`;
+
+    $$(".categoryRow", body).forEach((tr) => {
+      tr.addEventListener("click", () => {
+        const encoded = tr.getAttribute("data-name") || "";
+        showCategoryEditor(decodeURIComponent(encoded));
+      });
+    });
+  }
+
+  function showCategoryEditor(name = "") {
+    currentCategoryName = String(name || "").trim();
+    const form = $("#categoryEditor");
+    const empty = $("#categoryEmptyEditor");
+    if (form) form.hidden = false;
+    if (empty) empty.hidden = true;
+    if ($("#categoryOriginalName")) $("#categoryOriginalName").value = currentCategoryName;
+    if ($("#categoryName")) $("#categoryName").value = currentCategoryName;
+
+    const count = (products || []).filter((p) => String(p.category || "").trim() === currentCategoryName).length;
+    const summary = $("#categoryProductsSummary");
+    if (summary) {
+      summary.textContent = currentCategoryName
+        ? `عدد المنتجات المرتبطة بهذا التصنيف: ${count}`
+        : "تصنيف جديد غير مرتبط بأي منتج بعد.";
+    }
+    if ($("#categoryStatus")) $("#categoryStatus").textContent = "";
+  }
+
+  function clearCategoryEditor() {
+    currentCategoryName = null;
+    if ($("#categoryEditor")) $("#categoryEditor").hidden = true;
+    if ($("#categoryEmptyEditor")) $("#categoryEmptyEditor").hidden = false;
+    if ($("#categoryOriginalName")) $("#categoryOriginalName").value = "";
+    if ($("#categoryName")) $("#categoryName").value = "";
+  }
+
+  async function saveCategory(e) {
+    e?.preventDefault?.();
+    const status = $("#categoryStatus");
+    const oldName = String($("#categoryOriginalName")?.value || "").trim();
+    const newName = String($("#categoryName")?.value || "").trim();
+    if (!newName) {
+      if (status) status.textContent = "اسم التصنيف مطلوب";
+      return;
+    }
+    if (status) status.textContent = "جارٍ الحفظ...";
+
+    if (!oldName) {
+      showCategoryEditor(newName);
+      renderCategoriesTable();
+      if (status) status.textContent = "تم إنشاء التصنيف، ويمكنك الآن ربط المنتجات به";
+      showToast("تم إنشاء التصنيف");
+      return;
+    }
+
+    const rows = (products || []).filter((p) => String(p.category || "").trim() === oldName);
+    try {
+      await Promise.all(
+        rows.map((p) =>
+          api(`/api/products/${p.id}`, {
+            method: "PUT",
+            body: JSON.stringify({
+              title: p.title,
+              slug: p.slug,
+              category: newName,
+              description: p.description,
+              image: p.image,
+              brochure_url: p.brochure_url,
+              published: !!p.published,
+              sort_order: Number(p.sort_order || 0),
+            }),
+          })
+        )
+      );
+      await loadProducts();
+      showCategoryEditor(newName);
+      if (status) status.textContent = "تم حفظ التصنيف";
+      showToast("تم تحديث التصنيف");
+    } catch {
+      if (status) status.textContent = "فشل حفظ التصنيف";
+      showToast("فشل حفظ التصنيف", "error");
+    }
+  }
+
+  async function deleteCategory() {
+    const name = String($("#categoryOriginalName")?.value || "").trim();
+    const status = $("#categoryStatus");
+    if (!name) {
+      clearCategoryEditor();
+      renderCategoriesTable();
+      return;
+    }
+    if (!confirm(`حذف التصنيف "${name}" من جميع المنتجات؟`)) return;
+    const rows = (products || []).filter((p) => String(p.category || "").trim() === name);
+    if (status) status.textContent = "جارٍ الحذف...";
+    try {
+      await Promise.all(
+        rows.map((p) =>
+          api(`/api/products/${p.id}`, {
+            method: "PUT",
+            body: JSON.stringify({
+              title: p.title,
+              slug: p.slug,
+              category: "",
+              description: p.description,
+              image: p.image,
+              brochure_url: p.brochure_url,
+              published: !!p.published,
+              sort_order: Number(p.sort_order || 0),
+            }),
+          })
+        )
+      );
+      await loadProducts();
+      clearCategoryEditor();
+      renderCategoriesTable();
+      showToast("تم حذف التصنيف");
+    } catch {
+      if (status) status.textContent = "فشل حذف التصنيف";
+      showToast("فشل حذف التصنيف", "error");
+    }
+  }
+
   async function loadProducts() {
     const body = $("#productsTableBody");
     if (body) body.innerHTML = `<tr><td colspan="5" class="muted">جارٍ التحميل...</td></tr>`;
@@ -1711,10 +2022,12 @@
       const res = await api("/api/products");
       products = Array.isArray(res?.products) ? res.products : [];
       renderProductsTable();
+      renderCategoriesTable();
       if (currentProduct?.id) {
         const fresh = products.find((x) => Number(x.id) === Number(currentProduct.id));
         if (fresh) showProductEditor(fresh);
       }
+      if (currentCategoryName) showCategoryEditor(currentCategoryName);
     } catch {
       if (body) body.innerHTML = `<tr><td colspan="5" class="muted">فشل تحميل المنتجات</td></tr>`;
     }
@@ -1874,6 +2187,12 @@
     }
   });
 
+  $("#refreshCategoriesBtn")?.addEventListener("click", () => loadProducts());
+  $("#categoriesFilter")?.addEventListener("input", renderCategoriesTable);
+  $("#createCategoryBtn")?.addEventListener("click", () => showCategoryEditor(""));
+  $("#categoryEditor")?.addEventListener("submit", saveCategory);
+  $("#deleteCategoryBtn")?.addEventListener("click", () => deleteCategory());
+
   // --- General settings module ---
   function activateSettingsTab(tab) {
     $$(".settingsTab").forEach((btn) => btn.classList.toggle("is-active", btn.getAttribute("data-settings-tab") === tab));
@@ -1945,7 +2264,7 @@
     const items = [];
     (customPages || []).forEach((p) => {
       if (String(p.title || '').toLowerCase().includes(ql) || String(p.slug || '').toLowerCase().includes(ql)) {
-        items.push({ label: `Custom Page: ${p.title}`, route: '#/custom-pages', action: () => selectCustomPage(p.id) });
+        items.push({ label: `صفحة مخصصة: ${p.title}`, route: '#/custom-pages', action: () => selectCustomPage(p.id) });
       }
     });
     (products || []).forEach((p) => {
@@ -1954,14 +2273,14 @@
         String(p.slug || "").toLowerCase().includes(ql) ||
         String(p.category || "").toLowerCase().includes(ql)
       ) {
-        items.push({ label: `Product: ${p.title}`, route: "#/products", action: () => showProductEditor(p) });
+        items.push({ label: `منتج: ${p.title}`, route: "#/products", action: () => showProductEditor(p) });
       }
     });
     const postsEls = $$(".postItem");
     postsEls.forEach((el) => {
       const title = $(".postItem__title", el)?.textContent || '';
       if (title.toLowerCase().includes(ql)) {
-        items.push({ label: `Post: ${title}`, route: '#/blog', action: () => el.click() });
+        items.push({ label: `مقال: ${title}`, route: '#/blog', action: () => el.click() });
       }
     });
 

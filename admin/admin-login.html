@@ -11,52 +11,72 @@
     <link rel="stylesheet" href="/admin/admin.css" />
   </head>
   <body>
-    <main class="wrap">
-      <section class="card" aria-label="تسجيل الدخول للإدارة">
-        <div class="brand">
-          <div class="brand__logo"><span>AT</span><span class="accent">EX</span></div>
-          <div class="brand__tag">لوحة الإدارة</div>
+    <main class="wrap loginPage">
+      <section class="loginShell" aria-label="تسجيل الدخول للإدارة">
+        <div class="loginShell__aside">
+          <div class="loginBrandBadge">لوحة تحكم ATEX</div>
+          <div class="brand loginBrand">
+            <div class="brand__logo">
+              <img src="/assets/ATEX-logo.svg" alt="ATEX" class="brand__logoImg" />
+            </div>
+            <div class="brand__tag">إدارة المحتوى والتشغيل</div>
+          </div>
+          <h1 class="loginHero__title">وصول آمن وسريع إلى لوحة الإدارة</h1>
+          <p class="loginHero__desc">واجهة دخول محسّنة لإدارة الصفحة الرئيسية، المنتجات، المقالات، والصفحات المخصصة ضمن تجربة عربية نظيفة وواضحة.</p>
+
+          <div class="loginHighlights">
+            <div class="loginHighlights__item">
+              <strong>تحكم كامل</strong>
+              <span>إدارة المحتوى والبيانات من مكان واحد.</span>
+            </div>
+            <div class="loginHighlights__item">
+              <strong>تصميم واضح</strong>
+              <span>ألوان مريحة وهوية بصرية أقرب لطابع ATEX.</span>
+            </div>
+          </div>
         </div>
 
-        <h1 class="title">تسجيل الدخول</h1>
-        <p class="desc">الدخول مخصص لمسؤول الموقع لإدارة الصفحة الرئيسية والمحتوى.</p>
-        <p class="hint" id="loginInfo"></p>
+        <section class="card loginCard">
+          <div class="loginCard__head">
+            <p class="loginCard__eyebrow">مرحباً بعودتك</p>
+            <h2 class="title">تسجيل الدخول</h2>
+            <p class="desc">أدخل بياناتك للمتابعة إلى لوحة الإدارة.</p>
+          </div>
 
-        <form id="loginForm" class="form" autocomplete="on">
-          <label class="field">
-            <span class="field__label">اسم المستخدم</span>
-            <input
-              class="field__input"
-              id="username"
-              name="username"
-              type="text"
-              autocomplete="username"
-              placeholder="اكتب اسم المستخدم هنا"
-              autofocus
-              required
-            />
-          </label>
-          <label class="field">
-            <span class="field__label">كلمة المرور</span>
-            <input
-              class="field__input"
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              placeholder="اكتب كلمة المرور هنا"
-              required
-            />
-            <span class="hint" id="capsHint" hidden>تحذير: زر Caps Lock مفعّل</span>
-          </label>
-          <label class="toggle" style="margin-top:0">
-            <input type="checkbox" id="togglePassword" />
-            <span>إظهار كلمة المرور</span>
-          </label>
-          <button class="btn btn--primary" type="submit">دخول</button>
-          <p class="error" id="errorBox" hidden></p>
-          <p class="hint">إذا لم يتم إنشاء المستخدم بعد، شغّل سكربت إنشاء الأدمن محلياً.</p>
-        </form>
+          <form id="loginForm" class="form loginForm" autocomplete="on">
+            <label class="field">
+              <span class="field__label">اسم المستخدم</span>
+              <input
+                class="field__input"
+                id="username"
+                name="username"
+                type="text"
+                autocomplete="username"
+                placeholder="اسم المستخدم"
+                autofocus
+                required
+              />
+            </label>
+            <label class="field">
+              <span class="field__label">كلمة المرور</span>
+              <input
+                class="field__input"
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="كلمة المرور"
+                required
+              />
+            </label>
+            <label class="toggle loginToggle" style="margin-top:0">
+              <input type="checkbox" id="togglePassword" />
+              <span>إظهار كلمة المرور</span>
+            </label>
+            <button class="btn btn--primary loginSubmit" type="submit">دخول إلى اللوحة</button>
+            <p class="error" id="errorBox" hidden></p>
+          </form>
+        </section>
       </section>
     </main>
 

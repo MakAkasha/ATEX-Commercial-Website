@@ -30,8 +30,8 @@ router.patch("/home/sections", requireAdmin, (req, res) => {
     return res.status(400).json({ error: "INVALID_SECTIONS" });
   }
 
-  if (typeof sections.productsEnabled !== "boolean") {
-    return res.status(400).json({ error: "INVALID_PRODUCTS_ENABLED" });
+  if (typeof sections.productsEnabled !== "boolean" && typeof sections.blogEnabled !== "boolean") {
+    return res.status(400).json({ error: "INVALID_SECTIONS_PAYLOAD" });
   }
 
   const db = getDb();
@@ -39,7 +39,12 @@ router.patch("/home/sections", requireAdmin, (req, res) => {
   const content = safeJsonParse(row ? row.content_json : "", null);
   const normalized = normalizeHomeContent(content);
   normalized.sections = normalized.sections || {};
-  normalized.sections.productsEnabled = sections.productsEnabled;
+  if (typeof sections.productsEnabled === "boolean") {
+    normalized.sections.productsEnabled = sections.productsEnabled;
+  }
+  if (typeof sections.blogEnabled === "boolean") {
+    normalized.sections.blogEnabled = sections.blogEnabled;
+  }
 
   db.prepare("UPDATE home_content SET content_json = ? WHERE id = 1").run(JSON.stringify(normalized));
   res.json({ ok: true, sections: normalized.sections });

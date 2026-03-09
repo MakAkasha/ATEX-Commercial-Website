@@ -113,6 +113,7 @@ app.get("/readyz", (req, res) => {
 app.use("/assets", express.static(path.join(ROOT_DIR, "assets")));
 app.use("/data", express.static(path.join(ROOT_DIR, "data")));
 app.use("/uploads", express.static(path.join(ROOT_DIR, "uploads")));
+app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce")));
 
 // Admin static (disable directory redirect so /admin can be handled by router)
 app.use(
