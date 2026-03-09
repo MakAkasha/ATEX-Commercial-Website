@@ -131,7 +131,7 @@ router.get("/", (req, res) => {
           "@type": "ImageObject",
           "url": absoluteUrl(req, "/assets/ATEX-logo.svg")
         },
-        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات",
+        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "SA",
@@ -149,7 +149,7 @@ router.get("/", (req, res) => {
         "url": siteUrl,
         "name": "ATEX",
         "alternateName": "اتكس",
-        "description": "حلول إنترنت الأشياء في السعودية",
+        "description": "حلول إنترنت الأشياء في السعودية: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "inLanguage": "ar-SA",
         "publisher": {
           "@id": `${siteUrl}#organization`
@@ -159,9 +159,9 @@ router.get("/", (req, res) => {
         "@type": "WebPage",
         "@id": `${siteUrl}#webpage`,
         "url": siteUrl,
-        "name": "ATEX (اتكس) | حلول إنترنت الأشياء في السعودية",
-        "alternateName": "اتكس | حلول إنترنت الأشياء في السعودية",
-        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
+        "name": "ATEX (اتكس) | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
+        "alternateName": "اتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية",
+        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia",
         "isPartOf": {
           "@id": `${siteUrl}#website`
         },
@@ -181,9 +181,9 @@ router.get("/", (req, res) => {
     ...baseRenderData(req),
     structuredData,
     meta: withMeta(req, {
-      title: "ATEX (اتكس) | حلول إنترنت الأشياء في السعودية",
+      title: "ATEX (اتكس) | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
       description:
-        "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
+        "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
       ogImage: absoluteUrl(req, "/assets/ATEX-logo.svg"),
     }),
   });
