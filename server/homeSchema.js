@@ -214,10 +214,10 @@ function normalizeHomeContent(input) {
   }
 
   if (src.heroVideo && typeof src.heroVideo === "object") {
-    const sourceType = asString(src.heroVideo.sourceType).toLowerCase();
-    out.heroVideo.sourceType = sourceType === "upload" ? "upload" : "youtube";
+    // Preserve hero video configuration from database if provided
+    out.heroVideo.sourceType = asString(src.heroVideo.sourceType) || out.heroVideo.sourceType;
     out.heroVideo.youtubeUrl = asString(src.heroVideo.youtubeUrl) || out.heroVideo.youtubeUrl;
-    out.heroVideo.uploadedVideoUrl = asString(src.heroVideo.uploadedVideoUrl) || "";
+    out.heroVideo.uploadedVideoUrl = asString(src.heroVideo.uploadedVideoUrl) || out.heroVideo.uploadedVideoUrl;
   }
 
   if (src.solutions && typeof src.solutions === "object") {
