@@ -1020,8 +1020,6 @@
       directionality: "rtl",
       height: 520,
       placeholder: "اكتب محتوى المقال هنا...",
-      skin_url: "/vendor/tinymce/skins/ui/oxide",
-      content_css: "/vendor/tinymce/skins/content/default/content.min.css",
       plugins: "lists link image table code autoresize directionality",
       toolbar:
         "undo redo | blocks fontsize | bold italic underline | alignright aligncenter alignleft | bullist numlist | link image table | removeformat code",
