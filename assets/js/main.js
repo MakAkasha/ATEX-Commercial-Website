@@ -790,7 +790,61 @@ function initGsap() {
   }
 }
 
+function initHeroVideoLazyLoad() {
+  // Lazy load hero video and YouTube iframe after page is interactive
+  const heroVideo = qs("#heroVideo");
+  const heroYoutubeVideo = qs("#heroYoutubeVideo");
+  
+  if (!heroVideo && !heroYoutubeVideo) return;
+
+  const loadVideo = () => {
+    // Load native video
+    if (heroVideo) {
+      const videoSrc = heroVideo.getAttribute("data-src");
+      const source = qs("source", heroVideo);
+      
+      if (videoSrc) {
+        heroVideo.src = videoSrc;
+        heroVideo.load();
+        
+        // Auto play after loading
+        heroVideo.addEventListener("loadedmetadata", () => {
+          heroVideo.play().catch(() => {
+            // Auto-play may be blocked by browser policy
+            console.log("Video autoplay blocked by browser policy");
+          });
+        });
+        
+        // Also update source src
+        if (source) {
+          source.src = videoSrc;
+        }
+      }
+    }
+
+    // Load YouTube iframe
+    if (heroYoutubeVideo) {
+      const iframeSrc = heroYoutubeVideo.getAttribute("data-src");
+      if (iframeSrc) {
+        heroYoutubeVideo.src = iframeSrc;
+      }
+    }
+  };
+
+  // Load video after page becomes interactive (DOMContentLoaded + small delay)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      // Small delay to ensure page content is rendered first
+      setTimeout(loadVideo, 300);
+    });
+  } else {
+    // DOM already loaded
+    setTimeout(loadVideo, 300);
+  }
+}
+
 async function bootstrap() {
+  initHeroVideoLazyLoad();
   initHeaderMotion();
   initNav();
   initFaq();

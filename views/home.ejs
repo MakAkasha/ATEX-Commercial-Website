@@ -32,20 +32,23 @@
       <section class="heroVideo" aria-label="IoT Hero">
         <div class="heroVideo__media" aria-hidden="true">
           <% if (__heroVideoSourceType === 'upload' && __heroVideoUploadedUrl) { %>
-            <video autoplay muted loop playsinline preload="metadata">
-              <source src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
+            <video id="heroVideo" muted loop playsinline preload="none" data-src="<%= __heroVideoUploadedUrl %>" poster="/assets/hero/ac.png">
+              <source data-src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
             </video>
           <% } else if (__heroVideoYoutubeId) { %>
+            <div class="heroVideo__youtube-placeholder"></div>
             <iframe
-              src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
+              id="heroYoutubeVideo"
+              data-src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
               title="IoT background video"
               frameborder="0"
               allow="autoplay; encrypted-media; picture-in-picture"
               referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen></iframe>
+              allowfullscreen
+              loading="lazy"></iframe>
           <% } else { %>
-            <video autoplay muted loop playsinline preload="metadata">
-              <source src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />
+            <video id="heroVideo" muted loop playsinline preload="none" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" poster="/assets/hero/ac.png">
+              <source data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />
             </video>
           <% } %>
         </div>
