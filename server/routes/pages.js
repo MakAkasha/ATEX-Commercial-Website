@@ -125,12 +125,13 @@ router.get("/", (req, res) => {
         "@type": "Organization",
         "@id": `${siteUrl}#organization`,
         "name": "ATEX",
+        "alternateName": "اتكس",
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
           "url": absoluteUrl(req, "/assets/ATEX-logo.svg")
         },
-        "description": "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات",
+        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات",
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "SA",
@@ -147,6 +148,7 @@ router.get("/", (req, res) => {
         "@id": `${siteUrl}#website`,
         "url": siteUrl,
         "name": "ATEX",
+        "alternateName": "اتكس",
         "description": "حلول إنترنت الأشياء في السعودية",
         "inLanguage": "ar-SA",
         "publisher": {
@@ -157,8 +159,9 @@ router.get("/", (req, res) => {
         "@type": "WebPage",
         "@id": `${siteUrl}#webpage`,
         "url": siteUrl,
-        "name": "ATEX | حلول إنترنت الأشياء في السعودية",
-        "description": "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
+        "name": "ATEX (اتكس) | حلول إنترنت الأشياء في السعودية",
+        "alternateName": "اتكس | حلول إنترنت الأشياء في السعودية",
+        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
         "isPartOf": {
           "@id": `${siteUrl}#website`
         },
@@ -178,9 +181,9 @@ router.get("/", (req, res) => {
     ...baseRenderData(req),
     structuredData,
     meta: withMeta(req, {
-      title: "ATEX | حلول إنترنت الأشياء في السعودية",
+      title: "ATEX (اتكس) | حلول إنترنت الأشياء في السعودية",
       description:
-        "ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
+        "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات.",
       ogImage: absoluteUrl(req, "/assets/ATEX-logo.svg"),
     }),
   });
