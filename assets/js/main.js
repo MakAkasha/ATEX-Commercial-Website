@@ -45,6 +45,14 @@ function initNav() {
   const backdrop = qs("[data-nav-backdrop]");
   if (!toggle || !menu) return;
 
+  const syncNavTop = () => {
+    const header = qs(".header");
+    const topbar = qs(".topbar");
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 64;
+    const top = Math.max(0, Math.round(headerBottom));
+    document.documentElement.style.setProperty("--mobile-nav-top", `${top}px`);
+  };
+
   const close = () => {
     menu.classList.remove("is-open");
     document.body.classList.remove("nav-open");
@@ -52,6 +60,7 @@ function initNav() {
   };
 
   const open = () => {
+    syncNavTop();
     menu.classList.add("is-open");
     document.body.classList.add("nav-open");
     toggle.setAttribute("aria-expanded", "true");
@@ -430,8 +439,15 @@ function initContactForm() {
   });
 }
 
+const FALLBACK_IMG = "/assets/ATEX-logo.svg";
+
+function safeImg(src, alt) {
+  const s = src || FALLBACK_IMG;
+  return `<img src="${s}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_IMG}'" />`;
+}
+
 async function loadJson(path) {
-  const res = await fetch(path, { cache: "no-store" });
+  const res = await fetch(path, { cache: "default" });
   if (!res.ok) throw new Error(`فشل تحميل البيانات: ${path}`);
   return res.json();
 }
@@ -447,12 +463,12 @@ function renderProducts(items) {
     el.setAttribute("data-tilt", "");
     el.innerHTML = `
       <div class="item__media">
-        <img src="${p.image}" alt="${p.title}" loading="lazy" />
+        ${safeImg(p.image, p.title)}
       </div>
       <div class="item__body">
-        <div class="item__tag">${p.category}</div>
+        <div class="item__tag">${p.category || ""}</div>
         <h3 class="item__title">${p.title}</h3>
-        <p class="item__desc">${p.description}</p>
+        <p class="item__desc">${p.description || ""}</p>
         <div class="item__actions">
           <a class="btn btn--primary btn--small" href="/contact-us">اطلب عرضاً</a>
           <a class="btn btn--ghost btn--small" href="#" aria-disabled="true" tabindex="-1">تحميل كتيّب (قريباً)</a>
@@ -469,19 +485,23 @@ function renderPosts(items) {
   grid.innerHTML = "";
 
   items.forEach((p) => {
+    const slug = p.slug || "";
+    const href = slug ? `/blog/${encodeURIComponent(slug)}` : "/blog";
+    const img = p.cover_image || p.image || FALLBACK_IMG;
+    const tag = Array.isArray(p.tags) ? p.tags[0] : (p.meta || "");
     const el = document.createElement("article");
     el.className = "item";
     el.setAttribute("data-tilt", "");
     el.innerHTML = `
       <div class="item__media">
-        <img src="${p.image}" alt="${p.title}" loading="lazy" />
+        ${safeImg(img, p.title)}
       </div>
       <div class="item__body">
-        <div class="item__tag">${p.meta}</div>
+        <div class="item__tag">${tag}</div>
         <h3 class="item__title">${p.title}</h3>
-        <p class="item__desc">${p.excerpt}</p>
+        <p class="item__desc">${p.excerpt || ""}</p>
         <div class="item__actions">
-          <a class="btn btn--ghost btn--small" href="/contact-us">اقرأ المزيد (عبر تواصل)</a>
+          <a class="btn btn--ghost btn--small" href="${href}">اقرأ المزيد</a>
         </div>
       </div>
     `;
@@ -593,9 +613,10 @@ function initGsap() {
     });
   });
 
-  // Scroll reveal
+  // Generic reveal (kept light for non-specialized blocks)
   const sections = qsa(".section");
   sections.forEach((sec) => {
+    if (["process", "faq", "platform", "social-proof"].includes(sec.id)) return;
     const isWhySection = sec.id === "why";
     const items = isWhySection
       ? qsa(".section__head, .whyKeypoints__item", sec)
@@ -608,13 +629,38 @@ function initGsap() {
       duration: 0.9,
       ease: "power3.out",
       stagger: 0.06,
-      ...withScrollTrigger({
-        trigger: sec,
-        start: "top 78%",
-        once: true,
-      }),
+      ...withScrollTrigger({ trigger: sec, start: "top 78%", once: true }),
     });
   });
+
+  // Trust strip: stagger + subtle scale
+  const trustStrip = qs(".trustStrip");
+  if (trustStrip) {
+    const trustItems = qsa(".trustStrip__item", trustStrip);
+    if (trustItems.length) {
+      gsap.from(trustItems, {
+        opacity: 0,
+        scale: 0.9,
+        y: 14,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.08,
+        ...withScrollTrigger({ trigger: trustStrip, start: "top 88%", once: true }),
+      });
+    }
+  }
+
+  // Platform panel: slide from left
+  const platformPanel = qs(".platformSection__panel");
+  if (platformPanel) {
+    gsap.from(platformPanel, {
+      opacity: 0,
+      x: -28,
+      duration: 0.8,
+      ease: "power3.out",
+      ...withScrollTrigger({ trigger: platformPanel, start: "top 82%", once: true }),
+    });
+  }
 
   // Subtle button hover pop
   if (motion.finePointer) {
@@ -652,6 +698,7 @@ function initGsap() {
     gsap.from(items, {
       immediateRender: false,
       opacity: 0,
+      x: 14,
       y: 18,
       duration: 0.6,
       ease: "power2.out",
@@ -859,10 +906,6 @@ function initHeroVideoLazyLoad() {
       }
     }
 
-    // If neither video exists, hide overlay
-    if (!heroVideo && !heroYoutubeVideo) {
-      hideLoadingOverlay();
-    }
   };
 
   // Load video after page becomes interactive (DOMContentLoaded + small delay)
@@ -877,8 +920,53 @@ function initHeroVideoLazyLoad() {
   }
 }
 
+function initPlatformClock() {
+  const el = qs("#platformClock");
+  if (!el) return;
+  const tick = () => {
+    const d = new Date();
+    el.textContent = d.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
+function initScrollProgress() {
+  const el = qs("#scrollProgress");
+  if (!el) return;
+
+  const update = () => {
+    const doc = document.documentElement;
+    const scrollTop = window.scrollY || doc.scrollTop || 0;
+    const scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+    const pct = Math.min(100, Math.max(0, (scrollTop / scrollable) * 100));
+    el.style.width = `${pct}%`;
+  };
+
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+}
+
+function initHeroWordCycle() {
+  const words = qsa(".heroVideo__cycleWord");
+  if (words.length < 2) return;
+  let current = 0;
+  setInterval(() => {
+    words[current].classList.remove("is-visible");
+    words[current].classList.add("is-leaving");
+    const leaving = words[current];
+    setTimeout(() => leaving.classList.remove("is-leaving"), 450);
+    current = (current + 1) % words.length;
+    words[current].classList.add("is-visible");
+  }, 2800);
+}
+
 async function bootstrap() {
   initHeroVideoLazyLoad();
+  initScrollProgress();
+  initPlatformClock();
+  initHeroWordCycle();
   initHeaderMotion();
   initNav();
   initFaq();
@@ -888,14 +976,18 @@ async function bootstrap() {
 
   // Data-driven render
   try {
-    const [productsRes, posts] = await Promise.all([
-      fetch("/api/products/public", { cache: "no-store" }).then(async (r) => {
+    const [productsRes, postsRes] = await Promise.all([
+      fetch("/api/products/public", { cache: "default" }).then(async (r) => {
         if (!r.ok) throw new Error("PUBLIC_PRODUCTS_API_FAILED");
         return r.json();
       }),
-      loadJson("data/posts.json"),
+      fetch("/api/posts/public", { cache: "default" }).then(async (r) => {
+        if (!r.ok) throw new Error("PUBLIC_POSTS_API_FAILED");
+        return r.json();
+      }),
     ]);
     const products = Array.isArray(productsRes?.products) ? productsRes.products : [];
+    const posts = Array.isArray(postsRes?.posts) ? postsRes.posts : [];
     renderProducts(products);
     renderPosts(posts);
   } catch (e) {

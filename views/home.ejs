@@ -29,12 +29,12 @@
     %>
 
     <main>
+      <div class="scrollProgress" id="scrollProgress" aria-hidden="true"></div>
       <!-- Loading Overlay -->
       <div class="loadingOverlay" id="loadingOverlay" aria-hidden="true">
         <div class="loadingOverlay__spinner">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
+          <span class="spinner-arc" aria-hidden="true"></span>
+          <span class="spinner-wordmark">ATEX</span>
         </div>
       </div>
 
@@ -42,7 +42,7 @@
       <section class="heroVideo" aria-label="IoT Hero">
         <div class="heroVideo__media" aria-hidden="true">
           <% if (__heroVideoSourceType === 'upload' && __heroVideoUploadedUrl) { %>
-            <video id="heroVideo" muted loop playsinline preload="none" data-src="<%= __heroVideoUploadedUrl %>">
+            <video id="heroVideo" muted loop playsinline preload="none" poster="/assets/hero-video/video-keeper.png" data-src="<%= __heroVideoUploadedUrl %>">
               <source data-src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
             </video>
           <% } else if (__heroVideoYoutubeId) { %>
@@ -56,17 +56,28 @@
               allowfullscreen
               loading="lazy"></iframe>
           <% } else { %>
-            <video id="heroVideo" muted loop playsinline preload="none" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
+            <video id="heroVideo" muted loop playsinline preload="none" poster="/assets/hero-video/video-keeper.png" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
               <source data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />
             </video>
           <% } %>
         </div>
         <div class="container heroVideo__inner">
           <div class="heroVideo__content">
-            <p class="heroVideo__kicker">IoT Solutions</p>
-            <h2 class="heroVideo__title">حلول إنترنت الأشياء للشركات</h2>
+            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span>IoT Solutions — المملكة العربية السعودية</p>
+            <h2 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
+              <span class="heroVideo__titleStatic">حلول إنترنت الأشياء</span>
+              <span class="heroVideo__cycleWrap" aria-hidden="true">
+                <span class="heroVideo__cycleWord is-visible">للمنازل الذكية</span>
+                <span class="heroVideo__cycleWord">للفنادق الذكية</span>
+                <span class="heroVideo__cycleWord">للمكاتب الذكية</span>
+                <span class="heroVideo__cycleWord">للمباني الذكية</span>
+              </span>
+            </h2>
             <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
-            <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن</a>
+            <div class="heroVideo__actions">
+              <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
+              <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions">استكشف الحلول</a>
+            </div>
           </div>
         </div>
       </section>
@@ -118,9 +129,9 @@
             <div class="orb orb--b"></div>
             <div class="orb orb--c"></div>
 
-            <img class="hero__asset hero__asset--ac" src="/assets/hero/ac.png" alt="" loading="lazy" />
-            <img class="hero__asset hero__asset--cctv" src="/assets/hero/cctv.png" alt="" loading="lazy" />
-            <img class="hero__asset hero__asset--rooms" src="/assets/hero/rooms.png" alt="" loading="lazy" />
+            <img class="hero__asset hero__asset--ac" src="/assets/hero/ac.png" alt="" loading="lazy" width="200" height="200" />
+            <img class="hero__asset hero__asset--cctv" src="/assets/hero/cctv.png" alt="" loading="lazy" width="200" height="200" />
+            <img class="hero__asset hero__asset--rooms" src="/assets/hero/rooms.png" alt="" loading="lazy" width="200" height="200" />
 
             <div class="glass">
               <div class="glass__row">
@@ -148,10 +159,13 @@
           </div>
 
           <div class="grid grid--cards">
-            <% __pageSolutions.forEach(function(c){ %>
+            <% __pageSolutions.forEach(function(c, idx){ %>
               <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage %>')" aria-label="عرض تفاصيل <%= c.title %>">
-                <h3 class="card__title"><%= c.title %></h3>
-                <p class="card__desc"><%= c.summary %></p>
+                <span class="solutionCard__num" aria-hidden="true"><%= String(idx + 1).padStart(2, '0') %></span>
+                <div class="solutionCard__body">
+                  <h3 class="card__title"><%= c.title %></h3>
+                  <p class="card__desc"><%= c.summary %></p>
+                </div>
               </a>
             <% }) %>
           </div>
@@ -178,6 +192,11 @@
               </div>
             </div>
             <div class="platformSection__panel" aria-label="مؤشرات المنصة">
+              <div class="platformSection__panelHeader" aria-hidden="true">
+                <span class="platformSection__liveLabel"><span class="platformSection__liveDot"></span>LIVE</span>
+                <span class="platformSection__panelTitle">لوحة المتابعة</span>
+                <span class="platformSection__panelTime" id="platformClock"></span>
+              </div>
               <div class="platformSection__stats">
                 <% (content?.stats || []).forEach(function(s){ %>
                   <div class="stat" data-count="<%= s.value %>">
@@ -186,8 +205,15 @@
                   </div>
                 <% }) %>
               </div>
-              <div class="platformSection__miniTrend" aria-hidden="true">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <div class="platformSection__chartWrap" aria-hidden="true">
+                <div class="platformSection__chartLabel">استهلاك الطاقة — آخر 7 أيام</div>
+                <div class="platformSection__miniTrend">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="platformSection__statusRow" aria-hidden="true">
+                <span class="platformSection__statusBadge platformSection__statusBadge--ok"><i class="fa-solid fa-circle-check"></i> الأجهزة متصلة</span>
+                <span class="platformSection__statusBadge"><i class="fa-solid fa-bell"></i> 0 تنبيهات نشطة</span>
               </div>
             </div>
           </div>
@@ -303,18 +329,27 @@
 
           <% const defaultChips = ['Wi-Fi 7', 'WPA3', 'بلوتوث 5.4', 'Zigbee 3.0', 'Thread 1.4', 'Matter 1.5', 'LoRaWAN 1.1', 'NB-IoT', 'LTE-M / eMTC', 'MQTT 5.0', 'CoAP 1.0', 'HTTP/3', 'QUIC v1', 'RTSP 2.0', 'PoE IEEE 802.3bt', 'TLS 1.3']; %>
           <% const chips = (Array.isArray(content?.integrations?.chips) ? content.integrations.chips : defaultChips).map(function(c){ return String(c || '').trim(); }).filter(Boolean); %>
+          <% function integrationIcon(label){
+               const l = String(label || '').toLowerCase();
+               if (l.includes('wi-fi') || l.includes('wpa')) return 'wifi';
+               if (l.includes('بلوتوث') || l.includes('bluetooth')) return 'bluetooth';
+               if (l.includes('mqtt')) return 'mqtt';
+               if (l.includes('zigbee') || l.includes('thread') || l.includes('matter')) return 'mesh';
+               return 'chip';
+             }
+          %>
           <div class="marquee" data-marquee aria-label="شريط تكاملات">
             <div class="marquee__viewport" data-marquee-viewport>
               <div class="marquee__runner" data-marquee-runner>
                 <div class="marquee__content" data-marquee-content>
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><%= label %></span>
+                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>
                 <div class="marquee__content" data-marquee-static-clone aria-hidden="true">
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><%= label %></span>
+                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>
@@ -352,9 +387,13 @@
           <% const faqItems = (faqContentItems.length && !faqIsLegacy) ? faqContentItems : faqDefaults; %>
 
           <div class="faq" role="list">
-            <% faqItems.forEach(function(it){ %>
+            <% faqItems.forEach(function(it, idx){ %>
               <div class="faq__item" role="listitem">
-                <button class="faq__q" type="button"><%= it.q %> <span class="faq__icon">+</span></button>
+                <button class="faq__q" type="button">
+                  <span class="faq__num" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
+                  <span class="faq__qText"><%= it.q %></span>
+                  <span class="faq__icon">+</span>
+                </button>
                 <div class="faq__a"><%= it.a %></div>
               </div>
             <% }) %>
@@ -451,15 +490,24 @@
 
           <div class="grid grid--cards quotesGrid">
             <article class="card quoteCard" data-tilt>
+              <span class="quoteCard__mark" aria-hidden="true">“</span>
+              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
               <h3 class="card__title">"تنفيذ احترافي وسرعة استجابة ممتازة"</h3>
+              <span class="quoteCard__sector">الضيافة</span>
               <p class="card__desc">مدير مشروع – قطاع الضيافة</p>
             </article>
             <article class="card quoteCard" data-tilt>
+              <span class="quoteCard__mark" aria-hidden="true">“</span>
+              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
               <h3 class="card__title">"تحسن واضح في كفاءة التشغيل بعد التكامل"</h3>
+              <span class="quoteCard__sector">العقارات</span>
               <p class="card__desc">مدير تشغيل – قطاع العقارات</p>
             </article>
             <article class="card quoteCard" data-tilt>
+              <span class="quoteCard__mark" aria-hidden="true">“</span>
+              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
               <h3 class="card__title">"فريق داعم وخطة تنفيذ واضحة من البداية"</h3>
+              <span class="quoteCard__sector">السكني</span>
               <p class="card__desc">مالك مشروع – قطاع سكني</p>
             </article>
           </div>
@@ -473,13 +521,16 @@
             <div class="finalCta__main">
               <h2><%= content?.contact?.heading || 'جاهز لبدء مشروعك؟' %></h2>
               <p><%= content?.contact?.subheading || 'أرسل لنا استفسارك والفريق الفني سيقدم (حلول + أجهزة + تكامل) مع خطة تنفيذ واضحة.' %></p>
-              <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب الآن</a>
+              <span class="finalCta__badge">تم الرد في أقل من 24 ساعة</span>
             </div>
 
             <div class="finalCta__card" aria-label="حلول عند الطلب">
               <h3>هنالك دائماً حل عند الطلب</h3>
               <p>إذا لم تجد ما تبحث عنه، يمكنك الاتصال بنا مباشرة وسنقدّم لك استشارة مجانية لمساعدتك في اختيار الحل الأنسب.</p>
-              <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">+966 58 010 2121</a>
+              <div class="finalCta__actions">
+                <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">اتصال مباشر</a>
+                <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">واتساب</a>
+              </div>
             </div>
           </div>
         </div>

@@ -6,7 +6,6 @@ Allow: /
 Disallow: /admin
 Disallow: /admin-login
 Disallow: /api/
-Disallow: /rec/
 
 # Sitemap location
 Sitemap: https://atex.sa/sitemap.xml

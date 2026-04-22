@@ -2,20 +2,17 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
-    <style>
-      .legal { padding: 64px 0; }
-      .legal h1 { margin: 0 0 10px; }
-      .legal p, .legal li { color: rgba(11,31,42,0.82); font-weight: 700; }
-      .legal .box { border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.78); border-radius: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.06); padding: 18px; }
-      .legal a { text-decoration: underline; }
-    </style>
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="legal">
+    <main class="subpage">
       <div class="container">
-        <div class="box">
-          <h1>الشروط والأحكام</h1>
+        <header class="subpage__head">
+          <span class="subpage__kicker">TERMS</span>
+          <h1 class="subpage__title">الشروط والأحكام</h1>
+          <p class="subpage__desc">تنظم هذه الصفحة أسس استخدام الموقع والخدمات الرقمية المرتبطة به، لضمان تجربة واضحة وآمنة لجميع المستخدمين.</p>
+        </header>
+        <div class="subpage__panel richText">
           <p><strong>آخر تحديث:</strong> 2026-02-08</p>
           <p>باستخدامك لهذا الموقع، فإنك توافق على الشروط والأحكام التالية. هذه صياغة مبدئية لأغراض تشغيلية، ويُفضّل مراجعتها قانونياً.</p>
           <h2>الاستخدام المسموح</h2>

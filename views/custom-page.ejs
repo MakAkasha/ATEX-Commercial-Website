@@ -18,13 +18,16 @@
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="container" style="padding: 26px 0">
-      <article class="card" style="padding:16px">
-        <h1 style="margin:0 0 10px"><%= page?.title || 'صفحة' %></h1>
-        <div class="customPageBody">
+    <main class="subpage">
+      <div class="container">
+        <header class="subpage__head">
+          <span class="subpage__kicker">CUSTOM PAGE</span>
+          <h1 class="subpage__title"><%= page?.title || 'صفحة' %></h1>
+        </header>
+        <article class="subpage__panel richText customPageBody">
           <%- page?.html_code || '' %>
-        </div>
-      </article>
+        </article>
+      </div>
     </main>
 
     <%- include('partials/site-footer', { content }) %>

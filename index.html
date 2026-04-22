@@ -3,10 +3,46 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ff9933" />
     <title>ATEX | حلول إنترنت الأشياء في السعودية</title>
     <meta
       name="description"
       content="ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد مع منصة بيانات وتكاملات." />
+    <link rel="canonical" href="https://atex.sa/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://atex.sa/" />
+    <meta property="og:title" content="ATEX | حلول إنترنت الأشياء في السعودية" />
+    <meta
+      property="og:description"
+      content="ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد." />
+    <meta property="og:image" content="https://atex.sa/assets/ATEX-logo.svg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ATEX | حلول إنترنت الأشياء في السعودية" />
+    <meta
+      name="twitter:description"
+      content="ATEX مزود سعودي لحلول إنترنت الأشياء للشركات: تتبّع الأصول، إدارة الأساطيل، المراقبة البيئية، العدادات والطاقة، وسلسلة التبريد." />
+    <meta name="twitter:image" content="https://atex.sa/assets/ATEX-logo.svg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ATEX",
+        "url": "https://atex.sa/",
+        "logo": "https://atex.sa/assets/ATEX-logo.svg",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+966580102121",
+          "contactType": "sales",
+          "areaServed": "SA",
+          "availableLanguage": ["ar", "en"]
+        }
+      }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/assets/atex-icon.ico" />
@@ -25,7 +61,7 @@
       <div class="container topbar__inner">
         <div class="topbar__item">
           <i class="fa-solid fa-headset" aria-hidden="true"></i>
-          <span>الدعم والمبيعات: <strong dir="ltr">+966 11 000 0000</strong></span>
+          <span>الدعم والمبيعات: <strong dir="ltr">+966580102121</strong></span>
         </div>
         <div class="topbar__item">
           <span>حلول إنترنت الأشياء للشركات داخل المملكة</span>
@@ -37,12 +73,12 @@
     <!-- Navbar -->
     <header class="header" id="home">
       <div class="container header__inner">
-        <a class="brand" href="#home" aria-label="الانتقال إلى الرئيسية">
-          <span class="brand__mark" aria-hidden="true">AT</span><span class="brand__mark brand__mark--accent" aria-hidden="true">EX</span>
-          <span class="brand__tag">حلول إنترنت الأشياء</span>
+        <a class="brand" href="/" aria-label="الانتقال إلى الرئيسية">
+          <img class="brand__logoImg" src="/assets/ATEX-logo.svg" alt="ATEX" />
         </a>
 
         <nav class="nav" aria-label="التنقّل الرئيسي">
+          <div class="nav__backdrop" data-nav-backdrop aria-hidden="true"></div>
           <button
             class="nav__toggle"
             type="button"
@@ -53,12 +89,14 @@
           </button>
 
           <div class="nav__menu" id="navMenu">
-            <a class="nav__link" href="#solutions">الحلول</a>
-            <a class="nav__link" href="#platform">المنصة</a>
-            <a class="nav__link" href="#industries">القطاعات</a>
-            <a class="nav__link" href="#products">المنتجات</a>
-            <a class="nav__link" href="#blog">المدونة</a>
-            <a class="nav__link" href="#contact">تواصل معنا</a>
+            <a class="nav__link" data-route href="/">الرئيسية</a>
+            <a class="nav__link" data-route href="/solutions">الأنظمة والحلول</a>
+            <a class="nav__link" data-route href="/blog">المدونة</a>
+            <a class="nav__link" data-route href="/contact-us">تواصل معنا</a>
+            <a class="btn btn--primary btn--small" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" dir="rtl">
+              <span class="nav__extIcon" aria-hidden="true">↗</span>
+              <span>بوابة العملاء</span>
+            </a>
           </div>
         </nav>
       </div>
@@ -174,7 +212,6 @@
               <h2 class="banner__title">منصة واحدة للأجهزة والاتصال والبيانات</h2>
               <p class="banner__desc">
                 نوفّر طبقة إدارة أجهزة، قواعد تنبيهات، لوحات، وتقارير—مع إمكانيات تكامل عبر واجهات برمجية.
-                التصميم الحالي جاهز لربط منتجات ومدونة ولوحة تحكم لاحقاً.
               </p>
               <div class="banner__actions">
                 <a class="btn btn--primary" href="#products">استكشف المنتجات</a>
@@ -233,7 +270,7 @@
         <div class="container">
           <div class="section__head">
             <h2>منتجات جاهزة للتوسّع</h2>
-            <p>هذه بطاقات نموذجية تُولَّد من ملف بيانات—لتسهيل ربطها لاحقاً بمنتجات حقيقية ولوحة إدارة.</p>
+            <p>تشكيلة من الحلول العملية المصممة لتلبية احتياجات القطاعات المختلفة وقابلة للتوسّع.</p>
           </div>
 
           <div class="grid grid--products" id="productsGrid" aria-live="polite">
@@ -247,7 +284,7 @@
         <div class="container">
           <div class="section__head">
             <h2>المدونة</h2>
-            <p>محتوى يُولَّد من ملف بيانات—جاهز لربطه لاحقاً بمحتوى ديناميكي.</p>
+            <p>مقالات معرفية حول أفضل الممارسات والتطبيقات العملية في حلول إنترنت الأشياء.</p>
           </div>
 
           <div class="grid grid--posts" id="postsGrid" aria-live="polite">
@@ -270,7 +307,7 @@
                 <a class="btn btn--ghost" href="#home">العودة للأعلى</a>
               </div>
             </div>
-            <form class="cta__form" autocomplete="on" aria-label="نموذج تواصل (تجريبي)">
+            <form id="contactForm" class="cta__form" autocomplete="on" aria-label="نموذج تواصل">
               <label class="field">
                 <span class="field__label">الاسم</span>
                 <input class="field__input" name="name" type="text" placeholder="اكتب اسمك" />
@@ -283,8 +320,8 @@
                 <span class="field__label">وصف مختصر للمشروع</span>
                 <textarea class="field__input" name="message" rows="4" placeholder="تتبّع أصول / سلسلة تبريد / عدادات…"></textarea>
               </label>
-              <button class="btn btn--primary" type="button">إرسال (تجريبي)</button>
-              <p class="formNote">سيتم ربط الإرسال لاحقاً بخدمة بريد/نظام تذاكر أو لوحة الإدارة.</p>
+              <button class="btn btn--primary" type="submit" data-contact-submit>إرسال</button>
+              <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
             </form>
           </div>
         </div>
@@ -300,15 +337,16 @@
         </div>
         <div>
           <h3 class="footer__title">روابط</h3>
-          <a class="footer__link" href="#solutions">الحلول</a>
-          <a class="footer__link" href="#platform">المنصة</a>
-          <a class="footer__link" href="#products">المنتجات</a>
-          <a class="footer__link" href="#blog">المدونة</a>
+          <a class="footer__link" href="/solutions">الحلول</a>
+          <a class="footer__link" href="/blog">المدونة</a>
+          <a class="footer__link" href="/contact-us">تواصل معنا</a>
+          <a class="footer__link" href="/privacy">سياسة الخصوصية</a>
+          <a class="footer__link" href="/terms">الشروط والأحكام</a>
         </div>
         <div>
           <h3 class="footer__title">تواصل</h3>
           <a class="footer__link" href="mailto:info@atex.sa">info@atex.sa</a>
-          <span class="footer__link" dir="ltr">+966 11 000 0000</span>
+          <span class="footer__link" dir="ltr">+966580102121</span>
         </div>
       </div>
       <div class="footer__bottom">© 2026 ATEX. جميع الحقوق محفوظة.</div>

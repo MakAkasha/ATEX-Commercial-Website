@@ -2,128 +2,43 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
-    <style>
-      .page { padding: 44px 0 70px; }
-      .post {
-        border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 20px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.86));
-        box-shadow: 0 16px 36px rgba(0,0,0,0.08);
-        padding: 24px;
-      }
-      .post__head { display: grid; gap: 10px; margin-bottom: 18px; }
-      .post__title { margin: 0; font-weight: 900; line-height: 1.35; font-size: clamp(30px, 3.4vw, 42px); color: #082331; }
-      .post__meta {
-        display: inline-flex;
-        align-items: center;
-        width: fit-content;
-        padding: 7px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,153,51,0.35);
-        background: rgba(255,153,51,0.11);
-        color: rgba(11,31,42,0.82);
-        font-weight: 900;
-        font-size: 12px;
-      }
-      .post__cover {
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.08);
-        background: #eef2f6;
-        margin-bottom: 20px;
-      }
-      .post__cover img { width: 100%; height: min(52vw, 420px); object-fit: cover; display: block; }
-
-      .post__content {
-        color: rgba(11,31,42,0.92);
-        font-size: clamp(17px, 1.3vw, 19px);
-        line-height: 2;
-      }
-      .post__content > *:first-child { margin-top: 0; }
-      .post__content > *:last-child { margin-bottom: 0; }
-
-      .post__content h1,
-      .post__content h2,
-      .post__content h3,
-      .post__content h4 {
-        color: #082331;
-        line-height: 1.5;
-        margin-top: 1.35em;
-        margin-bottom: 0.55em;
-        font-weight: 900;
-      }
-      .post__content h1 { font-size: clamp(29px, 3vw, 38px); }
-      .post__content h2 {
-        font-size: clamp(24px, 2.3vw, 30px);
-        padding-inline-start: 12px;
-        border-inline-start: 4px solid rgba(255,153,51,0.82);
-      }
-      .post__content h3 { font-size: clamp(21px, 1.95vw, 25px); }
-      .post__content h4 { font-size: clamp(18px, 1.6vw, 21px); }
-
-      .post__content p { margin: 0 0 0.95em; font-weight: 700; }
-      .post__content ul,
-      .post__content ol {
-        margin: 0.35em 0 1.1em;
-        padding-inline-start: 1.3em;
-      }
-      .post__content li { margin-bottom: 0.45em; font-weight: 700; }
-
-      .post__content hr {
-        border: 0;
-        height: 1px;
-        margin: 1.6em 0;
-        background: linear-gradient(90deg, transparent, rgba(0,43,68,0.24), transparent);
-      }
-
-      .post__content blockquote {
-        margin: 1.2em 0;
-        padding: 14px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,153,51,0.3);
-        background: rgba(255,153,51,0.09);
-      }
-      .post__content blockquote p { margin: 0; font-weight: 800; }
-
-      .post__content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 14px;
-        border: 1px solid rgba(0,0,0,0.08);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-      }
-      .post__content a {
-        color: #0a5f89;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-        font-weight: 800;
-      }
-
-      .post__back { margin-top: 18px; }
-
-      @media (max-width: 760px) {
-        .post { padding: 14px; border-radius: 16px; }
-        .post__cover img { height: 220px; }
-      }
-    </style>
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="page">
+    <main class="subpage">
       <div class="container">
-        <div class="post">
-          <header class="post__head">
-            <h1 class="post__title"><%= post.title %></h1>
-            <div class="post__meta" dir="ltr"><%= post.created_at %></div>
+        <header class="subpage__head">
+          <span class="subpage__kicker">ARTICLE</span>
+          <h1 class="subpage__title"><%= post.title %></h1>
+          <div class="blogPostHeadMeta">
+            <div class="subpage__meta" dir="ltr"><%= post.created_at %></div>
+            <span class="blogPostHeadMeta__pill">ATEX Insight</span>
+          </div>
+        </header>
+        <article class="subpage__panel blogPostLayout">
+          <header class="blogPostLayout__intro">
+            <p class="subpage__desc">قراءة عملية من فريق اتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.</p>
           </header>
           <% if (post.cover_image) { %>
-            <div class="post__cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" /></div>
+            <div class="subpage__cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" /></div>
           <% } %>
-          <article class="post__content"><%- post.content_html %></article>
-          <div class="post__back">
-            <a class="btn btn--ghost btn--small" href="/blog">رجوع للمدونة</a>
-          </div>
-        </div>
+          <%
+            let articleHtml = post.content_html || '';
+            if (post.cover_image) {
+              const escapedSrc = String(post.cover_image).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+              const duplicateCoverImgRegex = new RegExp(`<img[^>]*src=["']${escapedSrc}["'][^>]*>`, 'i');
+              articleHtml = articleHtml.replace(duplicateCoverImgRegex, '');
+              articleHtml = articleHtml.replace(/<p>\s*<\/p>/gi, '');
+            }
+          %>
+          <div class="richText blogPostContent"><%- articleHtml %></div>
+          <footer class="blogPostFooter">
+            <div class="blogPostFooter__note">تم إعداد هذا المحتوى لمساعدة فرق التشغيل والهندسة على اتخاذ قرارات أكثر دقة.</div>
+            <div class="subpage__back">
+              <a class="btn btn--ghost btn--small" href="/blog">رجوع للمدونة</a>
+            </div>
+          </footer>
+        </article>
       </div>
     </main>
     <%- include('partials/site-footer') %>

@@ -2,19 +2,18 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
-    <style>
-      .page { padding: 70px 0; }
-      .box { border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.78); border-radius: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.06); padding: 18px; }
-    </style>
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="page">
+    <main class="subpage">
       <div class="container">
-        <div class="box">
-          <h1 style="margin:0 0 8px">الصفحة غير موجودة</h1>
-          <p style="margin:0; font-weight:800; color: rgba(11,31,42,0.72)">قد يكون الرابط غير صحيح أو تم نقل الصفحة.</p>
-          <div style="margin-top:12px">
+        <header class="subpage__head">
+          <span class="subpage__kicker">404</span>
+          <h1 class="subpage__title">الصفحة غير موجودة</h1>
+          <p class="subpage__desc">قد يكون الرابط غير صحيح أو تم نقل الصفحة. يمكنك الرجوع للرئيسية أو متابعة أحدث المقالات.</p>
+        </header>
+        <div class="subpage__panel">
+          <div class="contactQuickActions">
             <a class="btn btn--primary btn--small" href="/">العودة للرئيسية</a>
             <a class="btn btn--ghost btn--small" href="/blog">المدونة</a>
           </div>

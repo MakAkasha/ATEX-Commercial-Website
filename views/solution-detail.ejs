@@ -56,7 +56,7 @@
 
               <% if (Array.isArray(solution.benefits) && solution.benefits.length) { %>
                 <div class="solutionsPage__detailMeta">
-                  <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                  <section class="solutionsPage__metaBlock subpage__fullCol">
                     <h4>القيمة المضافة</h4>
                     <div class="solutionsPage__useCases">
                       <% solution.benefits.forEach(function(item){ %>
@@ -105,7 +105,7 @@
               <% } %>
 
               <% if (Array.isArray(solution.faqs) && solution.faqs.length) { %>
-                <section class="solutionsPage__metaBlock" style="grid-column: 1 / -1;">
+                <section class="solutionsPage__metaBlock subpage__fullCol">
                   <h4>أسئلة شائعة</h4>
                   <div class="faq" role="list">
                     <% solution.faqs.forEach(function(item){ %>

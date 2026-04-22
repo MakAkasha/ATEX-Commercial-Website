@@ -2,31 +2,19 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
-    <style>
-      .page { padding: 44px 0 70px; }
-      .contactBox {
-        border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 18px;
-        background: rgba(255,255,255,0.84);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.06);
-        padding: 18px;
-        display: grid;
-        gap: 12px;
-      }
-      .contactBox h2 { margin: 0; color: #002b44; }
-      .contactBox p { margin: 0; font-weight: 700; color: rgba(11,31,42,0.74); }
-      .contactActions { display: flex; gap: 10px; flex-wrap: wrap; }
-      .cta__form { margin-top: 6px; }
-    </style>
   </head>
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="page">
+    <main class="subpage">
       <div class="container">
-        <div class="contactBox">
-          <h2>تواصل معنا</h2>
-          <p>يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم.</p>
+        <header class="subpage__head">
+          <span class="subpage__kicker">CONTACT ATEX</span>
+          <h1 class="subpage__title">تواصل مع فريق اتكس</h1>
+          <p class="subpage__desc">يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم، مع تصور مبدئي واضح لمسار التنفيذ والمدة المتوقعة.</p>
+        </header>
+
+        <div class="subpage__panel">
           <form id="contactForm" class="cta__form" novalidate>
             <div class="field">
               <label class="field__label" for="contactName">الاسم</label>
@@ -43,7 +31,7 @@
             <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
             <button class="btn btn--primary" type="submit" data-contact-submit>إرسال</button>
           </form>
-          <div class="contactActions">
+          <div class="contactQuickActions">
             <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل عبر واتساب</a>
             <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">+966 58 010 2121</a>
             <a class="btn btn--ghost" href="mailto:contact@atex.sa" dir="ltr">contact@atex.sa</a>

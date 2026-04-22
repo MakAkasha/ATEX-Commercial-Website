@@ -2,41 +2,51 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
-    <style>
-      .page { padding: 44px 0 70px; }
-      .postGrid { display:grid; gap:16px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-      @media (max-width: 980px){ .postGrid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-      @media (max-width: 760px){ .postGrid { grid-template-columns: 1fr; } }
-      .postCard { border: 1px solid rgba(0,0,0,0.08); border-radius: 18px; overflow:hidden; background: rgba(255,255,255,0.8); box-shadow: 0 10px 24px rgba(0,0,0,0.06); }
-      .postCard__img { height: 170px; background:#eef2f6; }
-      .postCard__img img { width:100%; height:100%; object-fit:cover; }
-      .postCard__body { padding: 14px; display:grid; gap:10px; }
-      .postCard__title { margin:0; font-size: 18px; font-weight: 900; }
-      .postCard__desc { margin:0; font-weight: 700; color: rgba(11,31,42,0.72); }
-    </style>
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="page">
+    <main class="subpage">
       <div class="container">
-        <div class="section__head">
-          <h2>المدونة</h2>
-          <p>مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل السعودية.</p>
-        </div>
+        <header class="subpage__head">
+          <span class="subpage__kicker">ATEX INSIGHTS</span>
+          <h1 class="subpage__title">المدونة</h1>
+          <p class="subpage__desc">مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل السعودية، مع رؤى عملية تساعدكم على اتخاذ قرارات تقنية مدروسة.</p>
+        </header>
 
-        <div class="postGrid">
+        <section class="blogIntroPanel" aria-label="ملخص المدونة">
+          <div class="blogIntroPanel__item">
+            <strong>محتوى عملي</strong>
+            <span>مقالات مبنية على حالات تطبيق واقعية في المشاريع الذكية.</span>
+          </div>
+          <div class="blogIntroPanel__item">
+            <strong>رؤية تنفيذية</strong>
+            <span>تركيز على القرارات التي تخدم التشغيل والكفاءة والاستدامة.</span>
+          </div>
+          <div class="blogIntroPanel__item">
+            <strong>تحديثات مستمرة</strong>
+            <span>محتوى متجدد حول المنصات، التكاملات، وأفضل الممارسات.</span>
+          </div>
+        </section>
+
+        <div class="blogGrid">
           <% posts.forEach(function(p){ %>
-            <article class="postCard" data-tilt>
+            <article class="blogCard" data-tilt>
               <a href="/blog/<%= p.slug %>">
-                <div class="postCard__img">
+                <div class="blogCard__media">
                   <% if (p.cover_image) { %>
                     <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
+                  <% } else { %>
+                    <div class="blogCard__mediaFallback">ATEX</div>
                   <% } %>
                 </div>
-                <div class="postCard__body">
-                  <h3 class="postCard__title"><%= p.title %></h3>
-                  <p class="postCard__desc"><%= p.excerpt %></p>
-                  <div><span class="btn btn--ghost btn--small">اقرأ المقال</span></div>
+                <div class="blogCard__body">
+                  <div class="blogCard__meta">
+                    <span class="blogCard__pill">Insight</span>
+                    <% if (p.created_at) { %><time dir="ltr"><%= p.created_at %></time><% } %>
+                  </div>
+                  <h3 class="blogCard__title"><%= p.title %></h3>
+                  <p class="blogCard__desc"><%= p.excerpt %></p>
+                  <div class="blogCard__footer"><span class="btn btn--ghost btn--small">اقرأ المقال</span></div>
                 </div>
               </a>
             </article>
