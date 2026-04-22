@@ -23,3 +23,6 @@ server/data.sqlite-wal
 
 # Temp directories
 temp-blog-writer-review/
+
+# Local cloned external repositories
+tabler/
