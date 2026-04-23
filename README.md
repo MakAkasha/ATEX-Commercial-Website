@@ -1,6 +1,16 @@
 # ATEX New Website
 
-Official website project for **ATEX** — a Saudi technology company focused on delivering smart, scalable IoT and automation solutions.
+Informative website project for **ATEX Commercial (أتكس التجارية)**.
+
+- **Website version:** `0.4.3`
+- **Production URL:** https://atex.sa
+- **Purpose:** Corporate/informative presence that presents ATEX services, solutions, industries, and company profile.
+
+## About ATEX Commercial (أتكس التجارية)
+
+**ATEX Commercial** is a Saudi company delivering smart technology solutions across automation, low-current systems, and digital infrastructure. The company focuses on practical, scalable implementations that improve operations, safety, and user experience for residential, commercial, hospitality, governmental, and industrial environments.
+
+This website serves as the official public-facing information platform for the company, including key service offerings, sector-specific solutions, contact channels, and managed content pages.
 
 ## Stack
 
