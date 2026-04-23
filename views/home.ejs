@@ -426,23 +426,21 @@
             </div>
 
             <% if ((latestPosts || []).length) { %>
-              <div class="grid grid--posts" aria-label="آخر المقالات">
+              <div class="grid grid--posts homeBlogGrid" aria-label="آخر المقالات">
                 <% latestPosts.forEach(function(p){ %>
-                  <article class="item" data-tilt>
-                    <div class="item__media">
-                      <% if (p.cover_image) { %>
-                        <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
-                      <% } %>
-                    </div>
-                    <div class="item__body">
-                      <div class="item__tag" dir="ltr">/<%= p.slug %></div>
-                      <h3 class="item__title"><%= p.title %></h3>
-                      <p class="item__desc"><%= p.excerpt || '' %></p>
-                      <div class="item__actions">
-                        <a class="btn btn--primary btn--small" href="/blog/<%= p.slug %>">اقرأ المزيد</a>
-                        <a class="btn btn--ghost btn--small" href="/blog">كل المقالات</a>
+                  <article class="item homeBlogCard" data-tilt>
+                    <a class="item__link" href="/blog/<%= p.slug %>" aria-label="اقرأ المقال: <%= p.title %>">
+                      <div class="item__media homeBlogCard__media">
+                        <% if (p.cover_image) { %>
+                          <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
+                        <% } else { %>
+                          <div class="item__mediaFallback" aria-hidden="true">ATEX</div>
+                        <% } %>
                       </div>
-                    </div>
+                      <div class="homeBlogCard__body">
+                        <h3 class="homeBlogCard__title"><%= p.title %></h3>
+                      </div>
+                    </a>
                   </article>
                 <% }) %>
               </div>
