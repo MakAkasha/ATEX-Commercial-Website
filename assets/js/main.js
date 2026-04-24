@@ -313,10 +313,23 @@ function initContactForm() {
   const note = qs("[data-contact-note]", form);
   const submitBtn = qs("[data-contact-submit]", form);
   const nameInput = qs('input[name="name"]', form);
-  const emailInput = qs('input[name="email"]', form);
+  const companyNameInput = qs('input[name="companyName"]', form);
+  const commercialRegisterInput = qs('input[name="commercialRegister"]', form);
+  const whatsappInput = qs('input[name="whatsapp"]', form);
   const messageInput = qs('textarea[name="message"]', form);
 
-  const inputs = [nameInput, emailInput, messageInput].filter(Boolean);
+  const inputs = [nameInput, companyNameInput, commercialRegisterInput, whatsappInput, messageInput].filter(Boolean);
+  const iti =
+    whatsappInput && window.intlTelInput
+      ? window.intlTelInput(whatsappInput, {
+          initialCountry: "sa",
+          preferredCountries: ["sa", "ae", "kw", "bh", "qa", "om", "eg"],
+          separateDialCode: true,
+          nationalMode: true,
+          autoPlaceholder: "aggressive",
+          formatOnDisplay: true,
+        })
+      : null;
 
   const setNote = (text, type = "info") => {
     if (!note) return;
@@ -334,13 +347,23 @@ function initContactForm() {
     el.classList.add("is-invalid");
   };
 
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").toLowerCase());
+  const cleanCommercialRegister = (value) => String(value || "").replace(/\s+/g, "").trim();
+
+  const getWhatsappE164 = () => {
+    if (!whatsappInput) return "";
+    if (iti && typeof iti.getNumber === "function") {
+      return String(iti.getNumber() || "").trim();
+    }
+    return String(whatsappInput.value || "").trim();
+  };
 
   const validate = () => {
     clearInputState();
 
     const name = String(nameInput?.value || "").trim();
-    const email = String(emailInput?.value || "").trim();
+    const companyName = String(companyNameInput?.value || "").trim();
+    const commercialRegister = cleanCommercialRegister(commercialRegisterInput?.value || "");
+    const whatsapp = getWhatsappE164();
     const message = String(messageInput?.value || "").trim();
 
     if (name.length < 2) {
@@ -349,21 +372,23 @@ function initContactForm() {
       return null;
     }
 
-    if (!isValidEmail(email)) {
-      markInvalid(emailInput);
-      setNote("يرجى إدخال بريد إلكتروني صحيح.", "error");
+    if (commercialRegister.length < 5) {
+      markInvalid(commercialRegisterInput);
+      setNote("يرجى إدخال رقم سجل تجاري صحيح.", "error");
       return null;
     }
 
-    if (message.length < 10) {
-      markInvalid(messageInput);
-      setNote("يرجى كتابة وصف أوضح للمشروع (10 أحرف على الأقل).", "error");
+    if (!whatsapp || !/^\+\d{8,16}$/.test(whatsapp)) {
+      markInvalid(whatsappInput);
+      setNote("يرجى إدخال رقم واتساب صحيح مع مفتاح الدولة.", "error");
       return null;
     }
 
     return {
       name: name.slice(0, 120),
-      email: email.slice(0, 160),
+      companyName: companyName.slice(0, 160),
+      commercialRegister: commercialRegister.slice(0, 80),
+      whatsapp: whatsapp.slice(0, 20),
       message: message.slice(0, 3000),
     };
   };
@@ -374,8 +399,12 @@ function initContactForm() {
         return "يرجى تعبئة جميع الحقول المطلوبة.";
       case "INVALID_NAME":
         return "الاسم المدخل غير صالح.";
-      case "INVALID_EMAIL":
-        return "البريد الإلكتروني غير صالح.";
+      case "INVALID_COMPANY_NAME":
+        return "اسم الشركة المدخل غير صالح.";
+      case "INVALID_COMMERCIAL_REGISTER":
+        return "رقم السجل التجاري غير صالح.";
+      case "INVALID_WHATSAPP":
+        return "رقم الواتساب غير صالح.";
       case "MESSAGE_TOO_SHORT":
         return "الرسالة قصيرة جدًا. يرجى إضافة تفاصيل أكثر.";
       default:
@@ -417,6 +446,9 @@ function initContactForm() {
       }
 
       form.reset();
+      if (iti && typeof iti.setCountry === "function") {
+        iti.setCountry("sa");
+      }
       clearInputState();
       setNote("تم استلام طلبك بنجاح ✅ سنقوم بالتواصل معك قريباً.", "success");
     } catch {
@@ -583,15 +615,25 @@ function initGsap() {
   }
 
   // Intro
-  gsap.set([".hero__copy > *", ".hero__scene"], { opacity: 0, y: 22 });
-  gsap.to(".hero__copy > *", { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.08 });
-  gsap.to(".hero__scene", { opacity: 1, y: 0, duration: 1.0, ease: "power3.out", delay: 0.2 });
+  const heroCopyItems = qsa(".hero__copy > *");
+  const heroScene = qs(".hero__scene");
+  if (heroCopyItems.length) {
+    gsap.set(heroCopyItems, { opacity: 0, y: 22 });
+    gsap.to(heroCopyItems, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.08 });
+  }
+  if (heroScene) {
+    gsap.set(heroScene, { opacity: 0, y: 22 });
+    gsap.to(heroScene, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out", delay: 0.2 });
+  }
 
   // Ambient loops (desktop/fine pointer only)
   if (ambientMotion) {
-    gsap.to(".orb--a", { y: 12, x: -6, duration: 6.8, yoyo: true, repeat: -1, ease: "sine.inOut" });
-    gsap.to(".orb--b", { y: -14, x: 8, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
-    gsap.to(".orb--c", { y: 10, x: 6, duration: 6.2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    const orbA = qs(".orb--a");
+    const orbB = qs(".orb--b");
+    const orbC = qs(".orb--c");
+    if (orbA) gsap.to(orbA, { y: 12, x: -6, duration: 6.8, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    if (orbB) gsap.to(orbB, { y: -14, x: 8, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    if (orbC) gsap.to(orbC, { y: 10, x: 6, duration: 6.2, yoyo: true, repeat: -1, ease: "sine.inOut" });
   }
 
   // Counters (stats)

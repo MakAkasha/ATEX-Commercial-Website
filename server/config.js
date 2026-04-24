@@ -25,7 +25,7 @@ function buildCspDirectives() {
     frameAncestors: ["'self'"],
     imgSrc: ["'self'", "data:", "blob:", "https:"],
     fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
     scriptSrc: [
       "'self'",
       "'unsafe-inline'",

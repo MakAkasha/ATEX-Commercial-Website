@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/css/intlTelInput.css" />
   </head>
   <body>
     <%- include('partials/site-header', { content }) %>
@@ -14,29 +15,88 @@
           <p class="subpage__desc">يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم، مع تصور مبدئي واضح لمسار التنفيذ والمدة المتوقعة.</p>
         </header>
 
-        <div class="subpage__panel">
-          <form id="contactForm" class="cta__form" novalidate>
-            <div class="field">
-              <label class="field__label" for="contactName">الاسم</label>
-              <input class="field__input" id="contactName" name="name" type="text" placeholder="الاسم الكامل" required />
+        <section class="contactPage__layout" aria-label="نموذج التواصل مع اتكس">
+
+          <!-- Info panel -->
+          <aside class="contactPage__info" aria-label="معلومات التواصل">
+            <h2 class="contactPage__title">نبني حلولك معك خطوة بخطوة</h2>
+            <p class="contactPage__lead">أرسل لنا تفاصيل مشروعك وسنعود إليك بتصور تقني واضح يشمل الأجهزة والاتصال والمنصة والجدول الزمني.</p>
+
+            <ul class="contactPage__infoList">
+              <li>
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                <span><%= content?.contact?.phone || '+966580102121' %></span>
+                <a href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
+                   target="_blank" rel="noopener noreferrer" class="contactPage__infoLink">ابدأ محادثة</a>
+              </li>
+              <li>
+                <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+                <span><%= content?.contact?.email || 'contact@atex.sa' %></span>
+                <a href="mailto:<%= content?.contact?.email || 'contact@atex.sa' %>" class="contactPage__infoLink">راسلنا</a>
+              </li>
+              <li>
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                <span><%= content?.contact?.address || 'جدة، المملكة العربية السعودية' %></span>
+              </li>
+            </ul>
+          </aside>
+
+          <!-- Form panel -->
+          <div class="contactPage__formWrap" aria-label="نموذج التواصل">
+            <div class="contactPage__formHead">
+              <h2 class="contactPage__formTitle">أرسل طلبك</h2>
+              <p class="contactPage__formSubtitle">سنتواصل معك خلال يوم عمل واحد.</p>
             </div>
-            <div class="field">
-              <label class="field__label" for="contactEmail">البريد الإلكتروني</label>
-              <input class="field__input" id="contactEmail" name="email" type="email" placeholder="name@example.com" required dir="ltr" />
-            </div>
-            <div class="field">
-              <label class="field__label" for="contactMessage">الرسالة</label>
-              <textarea class="field__input" id="contactMessage" name="message" rows="5" placeholder="اكتب تفاصيل المشروع أو الاستفسار" required></textarea>
-            </div>
-            <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
-            <button class="btn btn--primary" type="submit" data-contact-submit>إرسال</button>
-          </form>
-          <div class="contactQuickActions">
-            <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل عبر واتساب</a>
-            <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">+966 58 010 2121</a>
-            <a class="btn btn--ghost" href="mailto:contact@atex.sa" dir="ltr">contact@atex.sa</a>
+
+            <form id="contactForm" class="cta__form contactPage__form" novalidate>
+              <div class="field">
+                <label class="field__label" for="contactName">الاسم الكامل</label>
+                <input class="field__input" id="contactName" name="name" type="text"
+                       placeholder="محمد العمري" autocomplete="name" required />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="contactCompanyName">اسم الشركة</label>
+                <input class="field__input" id="contactCompanyName" name="companyName" type="text"
+                       placeholder="شركة المستقبل للتقنية" autocomplete="organization" />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري</label>
+                <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
+                       type="text" placeholder="4030XXXXXX" required inputmode="numeric" />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="contactWhatsapp">رقم الواتساب</label>
+                <input
+                  class="field__input contactPhoneInput"
+                  id="contactWhatsapp"
+                  name="whatsapp"
+                  type="tel"
+                  placeholder="5XXXXXXXX"
+                  required
+                  dir="ltr"
+                  inputmode="tel"
+                  autocomplete="tel"
+                />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="contactMessage">تفاصيل المشروع</label>
+                <textarea class="field__input" id="contactMessage" name="message" rows="5"
+                          placeholder="صف باختصار ما تحتاجه: نوع المبنى، عدد الأجهزة المتوقع، والميزة الرئيسية التي تبحث عنها…"></textarea>
+              </div>
+
+              <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
+              <button class="btn btn--primary contactPage__submitBtn" type="submit" data-contact-submit>
+                إرسال الطلب
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+              </button>
+            </form>
           </div>
-        </div>
+
+        </section>
       </div>
     </main>
 

@@ -14,8 +14,12 @@ const contactLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").toLowerCase());
+function isValidWhatsapp(value) {
+  return /^\+\d{8,16}$/.test(String(value || "").trim());
+}
+
+function isValidCommercialRegister(value) {
+  return /^[0-9A-Za-z\-]{5,40}$/.test(String(value || "").trim());
 }
 
 function normalizeText(value, maxLen) {
@@ -63,17 +67,25 @@ async function forwardContactEmail(payload) {
 
 router.post("/", contactLimiter, async (req, res) => {
   const name = normalizeText(nonEmptyString(req.body?.name) || "", 120);
-  const email = normalizeText(nonEmptyString(req.body?.email) || "", 160).toLowerCase();
+  const companyName = normalizeText(nonEmptyString(req.body?.companyName) || "", 160);
+  const commercialRegister = normalizeText(nonEmptyString(req.body?.commercialRegister) || "", 80).replace(/\s+/g, "");
+  const whatsapp = normalizeText(nonEmptyString(req.body?.whatsapp) || "", 20);
   const message = normalizeText(nonEmptyString(req.body?.message) || "", 3000);
 
-  if (!name || !email || !message) {
+  if (!name || !companyName || !commercialRegister || !whatsapp || !message) {
     return res.status(400).json({ error: "MISSING_FIELDS" });
   }
   if (name.length < 2) {
     return res.status(400).json({ error: "INVALID_NAME" });
   }
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ error: "INVALID_EMAIL" });
+  if (companyName.length < 2) {
+    return res.status(400).json({ error: "INVALID_COMPANY_NAME" });
+  }
+  if (!isValidCommercialRegister(commercialRegister)) {
+    return res.status(400).json({ error: "INVALID_COMMERCIAL_REGISTER" });
+  }
+  if (!isValidWhatsapp(whatsapp)) {
+    return res.status(400).json({ error: "INVALID_WHATSAPP" });
   }
   if (message.length < 10) {
     return res.status(400).json({ error: "MESSAGE_TOO_SHORT" });
@@ -83,14 +95,25 @@ router.post("/", contactLimiter, async (req, res) => {
   const ip = String(req.ip || "");
   const userAgent = String(req.headers["user-agent"] || "");
 
+  const normalizedMessage = [
+    `Company: ${companyName}`,
+    `Commercial Register: ${commercialRegister}`,
+    `WhatsApp: ${whatsapp}`,
+    "",
+    message,
+  ].join("\n");
+
   db.prepare(
     "INSERT INTO contact_submissions (name, email, message, ip, user_agent) VALUES (?, ?, ?, ?, ?)"
-  ).run(name, email, message, ip, userAgent);
+  ).run(name, whatsapp, normalizedMessage, ip, userAgent);
 
   const forward = await forwardContactEmail({
     name,
-    email,
-    message,
+    email: "no-reply@atex.sa",
+    whatsapp,
+    companyName,
+    commercialRegister,
+    message: normalizedMessage,
     ip,
     userAgent,
     source: String(req.headers.host || "").trim() || "atex.sa",
