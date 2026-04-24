@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 
 const { migrate, getDb } = require("./db");
 const { getConfig } = require("./config");
+const SqliteStore = require("./sessionStore");
 const authRoutes = require("./routes/auth");
 const contentRoutes = require("./routes/content");
 const postsRoutes = require("./routes/posts");
@@ -86,6 +87,7 @@ app.use(
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
+    store: new SqliteStore({ ttl: config.sessionMaxAgeMs }),
     cookie: {
       httpOnly: true,
       sameSite: config.sessionSameSite,
@@ -125,21 +127,25 @@ app.get("/sitemap.xml", (req, res) => {
       { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
     ];
     
-    // Get all solutions
-    const solutions = db.prepare("SELECT slug FROM solutions").all();
-    const solutionUrls = solutions.map(s => ({
-      loc: `${baseUrl}/solutions/${s.slug}`,
-      priority: "0.8",
-      changefreq: "weekly"
-    }));
-    
-    // Get all industries
-    const industries = db.prepare("SELECT slug FROM industries").all();
-    const industryUrls = industries.map(i => ({
-      loc: `${baseUrl}/industries/${i.slug}`,
-      priority: "0.8",
-      changefreq: "weekly"
-    }));
+    // Get all solutions (table may not exist)
+    let solutionUrls = [];
+    try {
+      solutionUrls = db.prepare("SELECT slug FROM solutions").all().map(s => ({
+        loc: `${baseUrl}/solutions/${s.slug}`,
+        priority: "0.8",
+        changefreq: "weekly",
+      }));
+    } catch { /* table doesn't exist yet */ }
+
+    // Get all industries (table may not exist)
+    let industryUrls = [];
+    try {
+      industryUrls = db.prepare("SELECT slug FROM industries").all().map(i => ({
+        loc: `${baseUrl}/industries/${i.slug}`,
+        priority: "0.8",
+        changefreq: "weekly",
+      }));
+    } catch { /* table doesn't exist yet */ }
     
     // Get all published blog posts
     const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
@@ -170,6 +176,15 @@ ${allUrls.map(url => `  <url>
     console.error("Error generating sitemap:", err);
     res.status(500).send("Error generating sitemap");
   }
+});
+
+// robots.txt
+app.get("/robots.txt", (req, res) => {
+  const host = req.get("host") || "atex.sa";
+  const proto = req.protocol || "https";
+  res.type("text/plain").send(
+    `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${proto}://${host}/sitemap.xml\n`
+  );
 });
 
 // Static public site
