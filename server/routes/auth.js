@@ -45,4 +45,29 @@ router.post("/logout", (req, res) => {
   });
 });
 
+router.post("/change-password", (req, res) => {
+  if (!req.session?.admin) return res.status(401).json({ error: "UNAUTHORIZED" });
+
+  const { currentPassword, newPassword } = req.body || {};
+  const cleanCurrent = nonEmptyString(currentPassword);
+  const cleanNew = nonEmptyString(newPassword);
+  if (!cleanCurrent || !cleanNew) return res.status(400).json({ error: "MISSING_FIELDS" });
+  if (cleanNew.length < 8) return res.status(400).json({ error: "PASSWORD_TOO_SHORT" });
+
+  const db = getDb();
+  const admin = db.prepare("SELECT id, password_hash FROM admins WHERE id = ?").get(req.session.admin.id);
+  if (!admin) return res.status(404).json({ error: "NOT_FOUND" });
+
+  const ok = bcrypt.compareSync(cleanCurrent, admin.password_hash);
+  if (!ok) return res.status(401).json({ error: "WRONG_PASSWORD" });
+
+  const newHash = bcrypt.hashSync(cleanNew, 12);
+  db.prepare("UPDATE admins SET password_hash = ? WHERE id = ?").run(newHash, admin.id);
+
+  req.session.destroy(() => {
+    res.clearCookie("atex.sid");
+    return res.json({ ok: true });
+  });
+});
+
 module.exports = router;

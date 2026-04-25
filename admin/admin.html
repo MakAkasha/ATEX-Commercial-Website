@@ -876,11 +876,26 @@
                 </div>
               </section>
 
-              <!-- Users scaffold -->
+              <!-- Users -->
               <section class="page panel" data-page="users" hidden>
                 <h1 class="panel__title">المستخدمون والصلاحيات</h1>
-                <p class="panel__desc">هذه وحدة أولية فقط — نظام الصلاحيات المتقدم غير مطبق حالياً (يوجد دور المدير فقط).</p>
-                <div class="note">لا توجد إعدادات مستخدمين إضافية حالياً.</div>
+                <p class="panel__desc">تغيير كلمة المرور للحساب الحالي.</p>
+                <form id="changePasswordForm" class="formBlock" style="max-width:420px" novalidate>
+                  <div class="field">
+                    <label class="field__label" for="cpCurrent">كلمة المرور الحالية</label>
+                    <input class="field__input" id="cpCurrent" type="password" autocomplete="current-password" required />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="cpNew">كلمة المرور الجديدة</label>
+                    <input class="field__input" id="cpNew" type="password" autocomplete="new-password" required minlength="8" placeholder="8 أحرف على الأقل" />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="cpConfirm">تأكيد كلمة المرور</label>
+                    <input class="field__input" id="cpConfirm" type="password" autocomplete="new-password" required minlength="8" />
+                  </div>
+                  <p id="cpMsg" class="note" hidden></p>
+                  <button class="btn btn--primary" type="submit" id="cpSubmit">تغيير كلمة المرور</button>
+                </form>
               </section>
 
               <!-- Settings scaffold -->

@@ -663,6 +663,9 @@ a { color: inherit; text-decoration: none; }
   padding: 12px;
 }
 
+.note--error { border-color: #f87171; background: #fff5f5; color: #b91c1c; }
+.note--success { border-color: #6ee7b7; background: #f0fdf4; color: #065f46; }
+
 .tabBtn.is-active,
 .settingsTab.is-active {
   color: var(--brand-600);

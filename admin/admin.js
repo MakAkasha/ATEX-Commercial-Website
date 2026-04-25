@@ -439,6 +439,60 @@
 
   // (Tabs removed; routing now controls visibility)
 
+  // Change password form
+  const cpForm = $("#changePasswordForm");
+  if (cpForm) {
+    cpForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const currentPassword = $("#cpCurrent").value.trim();
+      const newPassword = $("#cpNew").value.trim();
+      const confirm = $("#cpConfirm").value.trim();
+      const msg = $("#cpMsg");
+
+      msg.hidden = true;
+      msg.className = "note";
+
+      if (newPassword !== confirm) {
+        msg.textContent = "كلمة المرور الجديدة وتأكيدها غير متطابقتين.";
+        msg.className = "note note--error";
+        msg.hidden = false;
+        return;
+      }
+      if (newPassword.length < 8) {
+        msg.textContent = "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل.";
+        msg.className = "note note--error";
+        msg.hidden = false;
+        return;
+      }
+
+      const submitBtn = $("#cpSubmit");
+      submitBtn.disabled = true;
+      try {
+        await api("/api/auth/change-password", {
+          method: "POST",
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        msg.textContent = "تم تغيير كلمة المرور. سيتم تسجيل خروجك الآن…";
+        msg.className = "note note--success";
+        msg.hidden = false;
+        cpForm.reset();
+        setTimeout(() => { window.location.href = "/admin-login"; }, 1500);
+      } catch (err) {
+        const code = err?.json?.error;
+        if (code === "WRONG_PASSWORD" || err?.status === 401) {
+          msg.textContent = "كلمة المرور الحالية غير صحيحة.";
+        } else if (code === "PASSWORD_TOO_SHORT" || code === "MISSING_FIELDS") {
+          msg.textContent = "تأكد من ملء جميع الحقول وأن كلمة المرور 8 أحرف على الأقل.";
+        } else {
+          msg.textContent = "حدث خطأ، حاول مرة أخرى.";
+        }
+        msg.className = "note note--error";
+        msg.hidden = false;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
   // Home editor
   let homeDraft = null;
   let heroVideosCache = [];
