@@ -6,8 +6,9 @@ const { requireAdminPage, isAdminSession } = require("../auth");
 const { getDb } = require("../db");
 const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml } = require("./customPages");
-const { loadAnalyticsSettings } = require("./settings");
+const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
+const { safeJsonParse } = require("../utils/safe");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -88,6 +89,23 @@ function baseRenderData(req) {
   };
 }
 
+// Merges admin-controlled page SEO overrides on top of server defaults.
+// Only non-empty values from the override win.
+function applyPageSeo(route, defaults) {
+  const allSeo = loadPageSeoSettings();
+  const override = allSeo[route] || {};
+  const result = { ...defaults };
+  if (override.title) result.title = override.title;
+  if (override.description) result.description = override.description;
+  if (override.ogDescription) result.ogDescription = override.ogDescription;
+  if (override.description && !result.ogDescription) result.ogDescription = override.description;
+  if (override.ogImage) result.ogImage = override.ogImage;
+  if (override.keywords) result.keywords = override.keywords;
+  if (override.robots) result.robots = override.robots;
+  if (override.canonical) result.canonical = override.canonical;
+  return result;
+}
+
 function absoluteUrl(req, pathname = "/") {
   const origin = `${req.protocol}://${req.get("host")}`;
   return new URL(pathname, origin).toString();
@@ -97,6 +115,42 @@ function withMeta(req, meta) {
   return {
     ...meta,
     canonical: meta?.canonical || absoluteUrl(req, req.originalUrl || "/"),
+  };
+}
+
+function estimateReadingTime(html) {
+  const text = String(html || "").replace(/<[^>]+>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+function formatArabicDate(dateStr) {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(String(dateStr).replace(" ", "T"));
+    return d.toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" });
+  } catch {
+    return String(dateStr);
+  }
+}
+
+function toISODate(dateStr) {
+  if (!dateStr) return "";
+  try {
+    return new Date(String(dateStr).replace(" ", "T")).toISOString();
+  } catch {
+    return "";
+  }
+}
+
+function processPost(post) {
+  return {
+    ...post,
+    tags: safeJsonParse(post.tags_json, []),
+    readingTime: estimateReadingTime(post.content_html || ""),
+    formattedDate: formatArabicDate(post.created_at),
+    isoPublished: toISODate(post.created_at),
+    isoModified: toISODate(post.updated_at || post.created_at),
   };
 }
 
@@ -180,12 +234,12 @@ router.get("/", (req, res) => {
     latestPosts,
     ...baseRenderData(req),
     structuredData,
-    meta: withMeta(req, {
-      title: "ATEX (اتكس) | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
+    meta: withMeta(req, applyPageSeo("/", {
+      title: "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
       description:
-        "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
-      ogImage: absoluteUrl(req, "/assets/ATEX-logo.svg"),
-    }),
+        "أتكس مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+    })),
   });
 });
 
@@ -204,7 +258,10 @@ router.get("/privacy", (req, res) => {
   res.render("privacy", {
     content,
     ...baseRenderData(req),
-    meta: { title: "ATEX | سياسة الخصوصية", description: "سياسة الخصوصية لموقع ATEX داخل المملكة العربية السعودية." },
+    meta: withMeta(req, applyPageSeo("/privacy", {
+      title: "أتكس | سياسة الخصوصية",
+      description: "سياسة الخصوصية لموقع أتكس داخل المملكة العربية السعودية.",
+    })),
   });
 });
 
@@ -213,7 +270,10 @@ router.get("/terms", (req, res) => {
   res.render("terms", {
     content,
     ...baseRenderData(req),
-    meta: { title: "ATEX | الشروط والأحكام", description: "الشروط والأحكام لاستخدام موقع ATEX داخل المملكة العربية السعودية." },
+    meta: withMeta(req, applyPageSeo("/terms", {
+      title: "أتكس | الشروط والأحكام",
+      description: "الشروط والأحكام لاستخدام موقع أتكس داخل المملكة العربية السعودية.",
+    })),
   });
 });
 
@@ -221,38 +281,130 @@ router.get("/terms", (req, res) => {
 router.get("/blog", (req, res) => {
   const db = getDb();
   const content = loadHomeContent();
-  const posts = db
+  const rawPosts = db
     .prepare(
-      "SELECT id, slug, title, excerpt, cover_image, created_at, updated_at FROM posts WHERE published = 1 ORDER BY created_at DESC"
+      "SELECT id, slug, title, excerpt, cover_image, tags_json, created_at, updated_at, content_html FROM posts WHERE published = 1 ORDER BY created_at DESC"
     )
     .all();
+  const posts = rawPosts.map(processPost);
+
+  const siteUrl = absoluteUrl(req, "/");
+  const blogUrl = absoluteUrl(req, "/blog");
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "المدونة", "item": blogUrl },
+        ],
+      },
+      {
+        "@type": "Blog",
+        "name": "مدونة أتكس",
+        "description": "مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل المملكة العربية السعودية.",
+        "url": blogUrl,
+        "inLanguage": "ar-SA",
+        "publisher": {
+          "@type": "Organization",
+          "name": "ATEX",
+          "logo": { "@type": "ImageObject", "url": absoluteUrl(req, "/assets/ATEX-logo.svg") },
+        },
+      },
+    ],
+  };
+
   res.render("blog-list", {
     posts,
     content,
+    structuredData,
     ...baseRenderData(req),
-    meta: {
-      title: "ATEX | المدونة",
-      description: "مدونة ATEX: مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل المملكة العربية السعودية.",
-    },
+    meta: withMeta(req, applyPageSeo("/blog", {
+      title: "أتكس | المدونة — حلول إنترنت الأشياء في السعودية",
+      description: "مدونة أتكس: مقالات وأفضل الممارسات في حلول إنترنت الأشياء، المنازل الذكية، المباني الذكية، وإدارة الطاقة داخل المملكة العربية السعودية.",
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+    })),
   });
 });
 
 router.get("/blog/:slug", (req, res) => {
   const db = getDb();
   const content = loadHomeContent();
-  const post = db.prepare("SELECT * FROM posts WHERE published = 1 AND slug = ?").get(req.params.slug);
-  if (!post)
+  const rawPost = db.prepare("SELECT * FROM posts WHERE published = 1 AND slug = ?").get(req.params.slug);
+  if (!rawPost)
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+
+  const post = processPost(rawPost);
+
+  // Related posts: prefer tag overlap, fallback to latest
+  const allOtherRaw = db
+    .prepare("SELECT id, slug, title, excerpt, cover_image, tags_json, created_at FROM posts WHERE published = 1 AND slug != ? ORDER BY created_at DESC LIMIT 20")
+    .all(req.params.slug);
+  const relatedPosts = allOtherRaw
+    .map((p) => {
+      const t = safeJsonParse(p.tags_json, []);
+      return { ...p, tags: t, formattedDate: formatArabicDate(p.created_at), score: t.filter((tag) => post.tags.includes(tag)).length };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  const siteUrl = absoluteUrl(req, "/");
+  const postUrl = absoluteUrl(req, `/blog/${post.slug}`);
+  const coverImage = post.cover_image || absoluteUrl(req, "/assets/solutions/smart-building.jpg");
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "المدونة", "item": absoluteUrl(req, "/blog") },
+          { "@type": "ListItem", "position": 3, "name": post.title, "item": postUrl },
+        ],
+      },
+      {
+        "@type": "Article",
+        "@id": `${postUrl}#article`,
+        "headline": post.title,
+        "description": post.excerpt || "",
+        "image": coverImage,
+        "url": postUrl,
+        "inLanguage": "ar-SA",
+        "datePublished": post.isoPublished,
+        "dateModified": post.isoModified,
+        "author": { "@type": "Organization", "name": "أتكس", "url": siteUrl },
+        "publisher": {
+          "@type": "Organization",
+          "name": "أتكس",
+          "logo": { "@type": "ImageObject", "url": absoluteUrl(req, "/assets/ATEX-logo.svg") },
+        },
+        "isPartOf": { "@type": "Blog", "url": absoluteUrl(req, "/blog") },
+        ...(post.tags.length ? { "keywords": post.tags.join(", ") } : {}),
+      },
+    ],
+  };
+
   res.render("blog-post", {
     post,
+    relatedPosts,
     content,
+    structuredData,
     ...baseRenderData(req),
-    meta: {
-      title: `ATEX | ${post.title}`,
+    meta: withMeta(req, {
+      title: `${post.title} | أتكس`,
       description: post.excerpt || "",
-    },
+      ogType: "article",
+      ogImage: coverImage,
+      articlePublishedTime: post.isoPublished,
+      articleModifiedTime: post.isoModified,
+      articleAuthor: "أتكس",
+      articleSection: "حلول إنترنت الأشياء",
+      articleTags: post.tags || [],
+    }),
   });
 });
 
@@ -264,12 +416,12 @@ router.get("/solutions", (req, res) => {
     content,
     pageSolutions: solutions,
     ...baseRenderData(req),
-    meta: withMeta(req, {
-      title: "ATEX | الأنظمة والحلول",
+    meta: withMeta(req, applyPageSeo("/solutions", {
+      title: "أتكس | الأنظمة والحلول",
       description:
-        "صفحة الأنظمة والحلول من ATEX: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
+        "صفحة الأنظمة والحلول من أتكس: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
       ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
-    }),
+    })),
   });
 });
 
@@ -284,7 +436,7 @@ router.get("/solutions/:slug", (req, res) => {
   if (!solution) {
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
   }
 
   const relatedSolutions = solutions
@@ -304,7 +456,7 @@ router.get("/solutions/:slug", (req, res) => {
     relatedIndustries,
     ...baseRenderData(req),
     meta: withMeta(req, {
-      title: `ATEX | ${solution.title}`,
+      title: `أتكس | ${solution.title}`,
       description: solution.summary,
       ogTitle: solution.title,
       ogDescription: solution.summary,
@@ -323,7 +475,7 @@ router.get("/industries/:slug", (req, res) => {
   if (!industry) {
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
   }
 
   const relatedSolutions = solutions.filter((s) => (industry.solutionSlugs || []).includes(s.slug)).slice(0, 4);
@@ -343,7 +495,7 @@ router.get("/industries/:slug", (req, res) => {
     relatedIndustries,
     ...baseRenderData(req),
     meta: withMeta(req, {
-      title: `ATEX | ${industry.title}`,
+      title: `أتكس | ${industry.title}`,
       description: industry.metaDescription || industry.intro,
       ogTitle: industry.metaTitle || industry.title,
       ogDescription: industry.metaDescription || industry.intro,
@@ -358,10 +510,10 @@ router.get("/contact-us", (req, res) => {
   return res.render("contact-us", {
     content,
     ...baseRenderData(req),
-    meta: {
+    meta: withMeta(req, applyPageSeo("/contact-us", {
       title: "ATEX | تواصل معنا",
       description: "تواصل مع فريق أتكس للحصول على استشارة وحلول تقنية تناسب مشروعك.",
-    },
+    })),
   });
 });
 
@@ -376,7 +528,7 @@ router.get("/rec/:slug", (req, res) => {
   if (!row)
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
 
   const page = {
     id: row.id,
@@ -403,7 +555,7 @@ router.get("/rec/:slug", (req, res) => {
 
 router.use((req, res) => {
   const content = loadHomeContent();
-  res.status(404).render("not-found", { content, ...baseRenderData(req), meta: { title: "ATEX | غير موجود" } });
+  res.status(404).render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
 });
 
 module.exports = router;

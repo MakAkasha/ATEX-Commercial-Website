@@ -7,6 +7,43 @@ const router = express.Router();
 
 const KEY_ANALYTICS = "analytics";
 const KEY_GENERAL = "general";
+const KEY_PAGE_SEO = "page_seo";
+
+const PAGE_SEO_ROUTES = ["/", "/solutions", "/contact-us", "/blog", "/privacy", "/terms"];
+
+function cleanPageSeoEntry(entry) {
+  return {
+    title: String(entry?.title || "").trim(),
+    description: String(entry?.description || "").trim(),
+    ogImage: String(entry?.ogImage || "").trim(),
+    keywords: String(entry?.keywords || "").trim(),
+    robots: String(entry?.robots || "").trim(),
+    canonical: String(entry?.canonical || "").trim(),
+  };
+}
+
+function loadPageSeoSettings() {
+  const db = getDb();
+  const row = db.prepare("SELECT value_json FROM settings WHERE key = ?").get(KEY_PAGE_SEO);
+  const parsed = safeJsonParse(row?.value_json || "", {});
+  const result = {};
+  PAGE_SEO_ROUTES.forEach((route) => {
+    result[route] = cleanPageSeoEntry(parsed?.[route] || {});
+  });
+  return result;
+}
+
+function savePageSeoSettings(next) {
+  const clean = {};
+  PAGE_SEO_ROUTES.forEach((route) => {
+    clean[route] = cleanPageSeoEntry(next?.[route] || {});
+  });
+  const db = getDb();
+  db.prepare(
+    "INSERT INTO settings (key, value_json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json"
+  ).run(KEY_PAGE_SEO, JSON.stringify(clean));
+  return clean;
+}
 
 function envAnalyticsOverride() {
   // Env overrides (highest precedence)
@@ -116,6 +153,15 @@ router.put("/general", requireAdmin, (req, res) => {
   return res.json({ ok: true, saved });
 });
 
+router.get("/page-seo", requireAdmin, (req, res) => {
+  return res.json({ settings: loadPageSeoSettings() });
+});
+
+router.put("/page-seo", requireAdmin, (req, res) => {
+  const saved = savePageSeoSettings(req.body || {});
+  return res.json({ ok: true, saved });
+});
+
 // Public effective read (for SSR injection)
 router.get("/public/analytics", (req, res) => {
   const s = loadAnalyticsSettings();
@@ -128,4 +174,5 @@ module.exports = {
   router,
   loadAnalyticsSettings,
   loadGeneralSettings,
+  loadPageSeoSettings,
 };

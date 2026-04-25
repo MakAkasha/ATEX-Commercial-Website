@@ -2,22 +2,44 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
   </head>
   <body>
     <%- include('partials/site-header') %>
     <main class="subpage">
       <div class="container">
+        <nav class="breadcrumbNav" aria-label="مسار التنقل">
+          <ol class="breadcrumbNav__list">
+            <li class="breadcrumbNav__item"><a href="/">الرئيسية</a></li>
+            <li class="breadcrumbNav__item"><a href="/blog">المدونة</a></li>
+            <li class="breadcrumbNav__item breadcrumbNav__item--current" aria-current="page"><%= post.title %></li>
+          </ol>
+        </nav>
+
         <header class="subpage__head">
           <span class="subpage__kicker">ARTICLE</span>
           <h1 class="subpage__title"><%= post.title %></h1>
           <div class="blogPostHeadMeta">
-            <div class="subpage__meta" dir="ltr"><%= post.created_at %></div>
-            <span class="blogPostHeadMeta__pill">ATEX Insight</span>
+            <% if (post.formattedDate) { %>
+              <time class="subpage__meta" datetime="<%= post.isoPublished || '' %>" dir="ltr"><%= post.formattedDate %></time>
+            <% } else if (post.created_at) { %>
+              <div class="subpage__meta" dir="ltr"><%= post.created_at %></div>
+            <% } %>
+            <% if (post.readingTime) { %>
+              <span class="blogReadingTime blogReadingTime--lg"><i class="fa-regular fa-clock" aria-hidden="true"></i> وقت القراءة: <%= post.readingTime %> دقيقة</span>
+            <% } %>
+            <span class="blogPostHeadMeta__pill">أتكس إنسايت</span>
+            <% if (post.tags && post.tags.length) { %>
+              <% post.tags.slice(0, 3).forEach(function(tag){ %>
+                <span class="blogPostHeadMeta__pill blogPostHeadMeta__pill--tag"><%= tag %></span>
+              <% }) %>
+            <% } %>
           </div>
         </header>
+
         <article class="subpage__panel blogPostLayout">
           <header class="blogPostLayout__intro">
-            <p class="subpage__desc">قراءة عملية من فريق اتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.</p>
+            <p class="subpage__desc"><%= post.excerpt || 'قراءة عملية من فريق أتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.' %></p>
           </header>
           <% if (post.cover_image) { %>
             <div class="subpage__cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" /></div>
@@ -32,6 +54,30 @@
             }
           %>
           <div class="richText blogPostContent"><%- articleHtml %></div>
+
+          <!-- Share buttons -->
+          <div class="blogShare">
+            <span class="blogShare__label">شارك المقال:</span>
+            <div class="blogShare__btns">
+              <button class="blogShare__btn blogShare__btn--native" id="blogShareNative" aria-label="مشاركة" title="مشاركة">
+                <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+                <span>مشاركة</span>
+              </button>
+              <a class="blogShare__btn blogShare__btn--wa" href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' — ' + (meta?.canonical || '')) %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة عبر واتساب">
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                <span>واتساب</span>
+              </a>
+              <a class="blogShare__btn blogShare__btn--li" href="https://www.linkedin.com/sharing/share-offsite/?url=<%= encodeURIComponent(meta?.canonical || '') %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة على لينكدإن">
+                <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+                <span>لينكدإن</span>
+              </a>
+              <button class="blogShare__btn blogShare__btn--copy" id="blogCopyUrl" aria-label="نسخ الرابط" title="نسخ الرابط">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                <span>نسخ الرابط</span>
+              </button>
+            </div>
+          </div>
+
           <footer class="blogPostFooter">
             <div class="blogPostFooter__note">تم إعداد هذا المحتوى لمساعدة فرق التشغيل والهندسة على اتخاذ قرارات أكثر دقة.</div>
             <div class="subpage__back">
@@ -39,8 +85,71 @@
             </div>
           </footer>
         </article>
+
+        <!-- Related posts -->
+        <% if (relatedPosts && relatedPosts.length) { %>
+          <section class="blogRelated" aria-labelledby="blogRelatedTitle">
+            <h2 class="blogRelated__title" id="blogRelatedTitle">مقالات ذات صلة</h2>
+            <div class="blogRelated__grid">
+              <% relatedPosts.forEach(function(rp){ %>
+                <article class="blogCard">
+                  <a href="/blog/<%= rp.slug %>">
+                    <div class="blogCard__media">
+                      <% if (rp.cover_image) { %>
+                        <img src="<%= rp.cover_image %>" alt="<%= rp.title %>" loading="lazy" />
+                      <% } else { %>
+                        <div class="blogCard__mediaFallback">ATEX</div>
+                      <% } %>
+                    </div>
+                    <div class="blogCard__body">
+                      <div class="blogCard__meta">
+                        <% if (rp.tags && rp.tags.length) { %>
+                          <span class="blogCard__pill"><%= rp.tags[0] %></span>
+                        <% } else { %>
+                          <span class="blogCard__pill">Insight</span>
+                        <% } %>
+                        <% if (rp.formattedDate) { %><time dir="ltr"><%= rp.formattedDate %></time><% } %>
+                      </div>
+                      <h3 class="blogCard__title"><%= rp.title %></h3>
+                      <p class="blogCard__desc"><%= rp.excerpt %></p>
+                      <div class="blogCard__footer"><span class="btn btn--ghost btn--small">اقرأ المقال</span></div>
+                    </div>
+                  </a>
+                </article>
+              <% }) %>
+            </div>
+          </section>
+        <% } %>
       </div>
     </main>
     <%- include('partials/site-footer') %>
+
+    <script>
+      (function() {
+        var url = '<%= (meta?.canonical || "").replace(/'/g, "\\'") %>';
+        var title = '<%= post.title.replace(/'/g, "\\'") %>';
+
+        var nativeBtn = document.getElementById('blogShareNative');
+        if (nativeBtn) {
+          if (navigator.share) {
+            nativeBtn.addEventListener('click', function() {
+              navigator.share({ title: title, url: url }).catch(function(){});
+            });
+          } else {
+            nativeBtn.style.display = 'none';
+          }
+        }
+
+        var copyBtn = document.getElementById('blogCopyUrl');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(url || location.href).then(function() {
+              var span = copyBtn.querySelector('span');
+              if (span) { var prev = span.textContent; span.textContent = 'تم النسخ!'; setTimeout(function(){ span.textContent = prev; }, 2000); }
+            }).catch(function(){});
+          });
+        }
+      })();
+    </script>
   </body>
 </html>

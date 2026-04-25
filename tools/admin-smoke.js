@@ -1,6 +1,7 @@
 const fs = require("fs");
 
-const base = "http://127.0.0.1:5173";
+const base = String(process.env.SMOKE_BASE || "http://127.0.0.1:5173").replace(/\/+$/, "");
+const sessionCookieName = String(process.env.SESSION_NAME || "atex.sid").trim() || "atex.sid";
 
 function parseNetscapeCookieJar(path) {
   try {
@@ -8,11 +9,11 @@ function parseNetscapeCookieJar(path) {
     const line = raw
       .split(/\r?\n/)
       .map((s) => s.trim())
-      .find((s) => s && !s.startsWith("#") && s.includes("\tatex.sid\t"));
+      .find((s) => s && !s.startsWith("#") && s.includes(`\t${sessionCookieName}\t`));
     if (!line) return "";
     const parts = line.split("\t");
     const value = parts[parts.length - 1] || "";
-    return value ? `atex.sid=${value}` : "";
+    return value ? `${sessionCookieName}=${value}` : "";
   } catch {
     return "";
   }
@@ -33,7 +34,7 @@ function getCookie() {
 
   for (const read of candidates) {
     const v = read();
-    if (v && v.startsWith("atex.sid=")) return v;
+    if (v && v.startsWith(`${sessionCookieName}=`)) return v;
   }
   return "";
 }
@@ -68,7 +69,7 @@ async function loginAndGetCookie(username, password) {
   const getSetCookie = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie.bind(res.headers) : null;
   const setCookieRaw = getSetCookie ? (getSetCookie()[0] || "") : res.headers.get("set-cookie") || "";
   const cookie = (setCookieRaw.split(";")[0] || "").trim();
-  if (!res.ok || !cookie.startsWith("atex.sid=")) return "";
+  if (!res.ok || !cookie.startsWith(`${sessionCookieName}=`)) return "";
   return cookie;
 }
 
@@ -193,7 +194,7 @@ async function main() {
   const trackEvent = await call("/api/track/event", {
     method: "POST",
     body: { name: "admin_smoke_event" },
-    cookie: "atex.consent=essential",
+    cookie,
   });
   push(checks, "track:event", trackEvent.ok, `status=${trackEvent.status}`);
 

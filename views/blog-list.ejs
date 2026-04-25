@@ -2,13 +2,21 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
   </head>
   <body>
     <%- include('partials/site-header') %>
     <main class="subpage">
       <div class="container">
+        <nav class="breadcrumbNav" aria-label="مسار التنقل">
+          <ol class="breadcrumbNav__list">
+            <li class="breadcrumbNav__item"><a href="/">الرئيسية</a></li>
+            <li class="breadcrumbNav__item breadcrumbNav__item--current" aria-current="page">المدونة</li>
+          </ol>
+        </nav>
+
         <header class="subpage__head">
-          <span class="subpage__kicker">ATEX INSIGHTS</span>
+          <span class="subpage__kicker">رؤى أتكس</span>
           <h1 class="subpage__title">المدونة</h1>
           <p class="subpage__desc">مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل السعودية، مع رؤى عملية تساعدكم على اتخاذ قرارات تقنية مدروسة.</p>
         </header>
@@ -41,17 +49,39 @@
                 </div>
                 <div class="blogCard__body">
                   <div class="blogCard__meta">
-                    <span class="blogCard__pill">Insight</span>
-                    <% if (p.created_at) { %><time dir="ltr"><%= p.created_at %></time><% } %>
+                    <% if (p.tags && p.tags.length) { %>
+                      <span class="blogCard__pill"><%= p.tags[0] %></span>
+                    <% } else { %>
+                      <span class="blogCard__pill">Insight</span>
+                    <% } %>
+                    <div class="blogCard__metaRight">
+                      <% if (p.readingTime) { %>
+                        <span class="blogReadingTime"><i class="fa-regular fa-clock" aria-hidden="true"></i> <%= p.readingTime %> د</span>
+                      <% } %>
+                      <% if (p.formattedDate) { %><time dir="ltr" datetime="<%= p.isoPublished || '' %>"><%= p.formattedDate %></time><% } %>
+                    </div>
                   </div>
                   <h3 class="blogCard__title"><%= p.title %></h3>
                   <p class="blogCard__desc"><%= p.excerpt %></p>
+                  <% if (p.tags && p.tags.length > 1) { %>
+                    <div class="blogTagChips">
+                      <% p.tags.slice(0, 4).forEach(function(tag){ %>
+                        <span class="blogTagChip"><%= tag %></span>
+                      <% }) %>
+                    </div>
+                  <% } %>
                   <div class="blogCard__footer"><span class="btn btn--ghost btn--small">اقرأ المقال</span></div>
                 </div>
               </a>
             </article>
           <% }) %>
         </div>
+
+        <% if (!posts || posts.length === 0) { %>
+          <div class="blogEmpty">
+            <p>لا توجد مقالات منشورة حالياً. تابعونا قريباً.</p>
+          </div>
+        <% } %>
       </div>
     </main>
     <%- include('partials/site-footer') %>

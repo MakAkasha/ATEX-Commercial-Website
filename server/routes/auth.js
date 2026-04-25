@@ -2,9 +2,11 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const rateLimit = require("express-rate-limit");
 const { getDb } = require("../db");
+const { getConfig } = require("../config");
 const { nonEmptyString } = require("../utils/safe");
 
 const router = express.Router();
+const config = getConfig();
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -40,7 +42,7 @@ router.post("/login", loginLimiter, (req, res) => {
 
 router.post("/logout", (req, res) => {
   req.session.destroy(() => {
-    res.clearCookie("atex.sid");
+    res.clearCookie(config.sessionName);
     return res.json({ ok: true });
   });
 });
@@ -65,7 +67,7 @@ router.post("/change-password", (req, res) => {
   db.prepare("UPDATE admins SET password_hash = ? WHERE id = ?").run(newHash, admin.id);
 
   req.session.destroy(() => {
-    res.clearCookie("atex.sid");
+    res.clearCookie(config.sessionName);
     return res.json({ ok: true });
   });
 });

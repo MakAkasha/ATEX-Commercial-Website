@@ -124,6 +124,18 @@
   const quickActions = $("#quickActions");
   const toastStack = $("#toastStack");
 
+  async function loadCurrentAdminUser() {
+    const nameEl = $("#navbarUsername");
+    if (!nameEl) return;
+    try {
+      const me = await api("/api/auth/me");
+      const username = String(me?.user?.username || me?.username || "").trim();
+      if (username) nameEl.textContent = username;
+    } catch {
+      // keep default navbar label
+    }
+  }
+
   const STORAGE_KEYS = {
     sideGroups: "admin.side.groups.v1",
     favorites: "admin.side.favorites.v1",
@@ -192,6 +204,15 @@
     const d = new Date(raw);
     if (Number.isNaN(d.getTime())) return String(isoLike);
     return d.toLocaleString("ar-SA", { hour12: false });
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   window.addEventListener("beforeunload", (e) => {
@@ -363,23 +384,34 @@
     });
     $$('[data-route]').forEach((a) => a.classList.toggle('is-active', a.getAttribute('data-route') === route));
 
+    const label = ROUTE_LABELS[route] || 'لوحة الإدارة';
+
     if (breadcrumbs) {
-      const label = ROUTE_LABELS[route] || 'لوحة الإدارة';
-      breadcrumbs.textContent = `لوحة الإدارة / ${label}`;
+      breadcrumbs.textContent = label;
+    }
+
+    const pageTitleEl = document.getElementById('pageTitle');
+    if (pageTitleEl) {
+      pageTitleEl.textContent = label;
     }
 
     if (quickActions) {
       quickActions.innerHTML = '';
-      const addLink = (href, text) => {
+      const addLink = (href, text, icon = 'ti-plus') => {
         const a = document.createElement('a');
-        a.className = 'btn btn--ghost';
+        a.className = 'btn btn-sm btn-primary';
         a.href = href;
-        a.textContent = text;
+        a.innerHTML = `<i class="ti ${icon} me-1"></i>${text}`;
         quickActions.appendChild(a);
       };
       if (route === 'leads') addLink('#/leads', 'إضافة عميل محتمل');
       if (route === 'products') addLink('#/products', 'إضافة منتج');
       if (route === 'custom-pages') addLink('#/custom-pages', 'إنشاء صفحة مخصصة');
+      if (route === 'blog') addLink('#/blog', 'مقال جديد', 'ti-pencil-plus');
+    }
+
+    if (route === 'dashboard') {
+      loadDashboardStats().catch(() => {});
     }
   }
 
@@ -827,6 +859,70 @@
     $("#contactBackToTopText").value = homeDraft.contact?.backToTopText || "";
   }
 
+  function setHomeSectionCollapsed(card, collapsed) {
+    if (!card) return;
+    const body = card.querySelector('.card-body');
+    if (!body) return;
+    body.hidden = !!collapsed;
+    card.classList.toggle('is-collapsed', !!collapsed);
+    const btn = card.querySelector('[data-home-toggle]');
+    if (btn) {
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      btn.innerHTML = collapsed ? '<i class="ti ti-chevron-down"></i>' : '<i class="ti ti-chevron-up"></i>';
+      btn.title = collapsed ? 'توسيع القسم' : 'طي القسم';
+    }
+  }
+
+  function initHomeSectionToggles() {
+    const homePage = document.querySelector('[data-page="home"]');
+    if (!homePage) return;
+
+    const cards = Array.from(homePage.querySelectorAll('.card.mb-3[id^="home-"]'));
+    cards.forEach((card) => {
+      const header = card.querySelector('.card-header');
+      if (!header) return;
+      if (!header.querySelector('[data-home-toggle]')) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-ghost-secondary';
+        btn.setAttribute('data-home-toggle', '1');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.innerHTML = '<i class="ti ti-chevron-up"></i>';
+        btn.addEventListener('click', () => {
+          const collapsed = !card.classList.contains('is-collapsed');
+          setHomeSectionCollapsed(card, collapsed);
+        });
+        const options = header.querySelector('.card-options') || (() => {
+          const wrap = document.createElement('div');
+          wrap.className = 'card-options';
+          header.appendChild(wrap);
+          return wrap;
+        })();
+        options.appendChild(btn);
+      }
+    });
+
+    const topOptions = homePage.querySelector('#home-topbar')?.previousElementSibling?.querySelector('.card-options');
+    if (topOptions && !topOptions.querySelector('#collapseAllHomeSectionsBtn')) {
+      const collapseBtn = document.createElement('button');
+      collapseBtn.type = 'button';
+      collapseBtn.id = 'collapseAllHomeSectionsBtn';
+      collapseBtn.className = 'btn btn-sm btn-outline-secondary';
+      collapseBtn.innerHTML = '<i class="ti ti-fold-down me-1"></i>طي الكل';
+      collapseBtn.addEventListener('click', () => cards.forEach((card) => setHomeSectionCollapsed(card, true)));
+
+      const expandBtn = document.createElement('button');
+      expandBtn.type = 'button';
+      expandBtn.id = 'expandAllHomeSectionsBtn';
+      expandBtn.className = 'btn btn-sm btn-outline-secondary';
+      expandBtn.innerHTML = '<i class="ti ti-fold-up me-1"></i>توسيع الكل';
+      expandBtn.addEventListener('click', () => cards.forEach((card) => setHomeSectionCollapsed(card, false)));
+
+      topOptions.appendChild(collapseBtn);
+      topOptions.appendChild(expandBtn);
+    }
+  }
+
   function syncDraftFromFields() {
     if (!homeDraft) return;
 
@@ -912,6 +1008,7 @@
     // Arrays
     renderAllArrays();
     wireAddButtons();
+    initHomeSectionToggles();
     await loadHeroVideosList();
   }
 
@@ -1217,15 +1314,36 @@
     });
     if (summary) summary.textContent = rows.length ? `عدد النتائج: ${rows.length}` : "لا توجد نتائج مطابقة";
     list.innerHTML = "";
+
+    if (!rows.length) {
+      list.innerHTML = `
+        <div class="empty py-5">
+          <div class="empty-icon"><i class="ti ti-article"></i></div>
+          <p class="empty-title">لا توجد مقالات</p>
+          <p class="empty-subtitle">أنشئ أول مقال من زر "مقال جديد".</p>
+        </div>
+      `;
+      return;
+    }
+
     rows.forEach((p) => {
+      const cover = String(p.cover_image || "").trim();
+      const title = escapeHtml(p.title || "(بدون عنوان)");
+      const slug = escapeHtml(p.slug || "");
+      const dateText = escapeHtml(formatDateTime(p.updated_at || p.created_at));
       const el = document.createElement("div");
       el.className = `postItem${Number(currentPostId) === Number(p.id) ? " is-active" : ""}`;
       el.innerHTML = `
-        <div class="postItem__title">${p.title}</div>
-        <div class="postItem__meta" dir="ltr">/${p.slug}</div>
-        <div class="postItem__badges">
-          <span class="pill ${p.published ? "pill--pub" : "pill--draft"}">${p.published ? "منشور" : "مسودة"}</span>
-          <span class="pill pill--draft">${formatDateTime(p.updated_at || p.created_at)}</span>
+        <div class="postItem__head">
+          <span class="postItem__thumb">${cover ? `<img src="${escapeHtml(cover)}" alt="${title}" />` : `<i class="ti ti-photo"></i>`}</span>
+          <div class="postItem__body">
+            <div class="postItem__title">${title}</div>
+            <div class="postItem__meta" dir="ltr">/${slug}</div>
+          </div>
+        </div>
+        <div class="postItem__badges mt-2">
+          <span class="badge ${p.published ? "bg-green-lt text-green" : "bg-yellow-lt text-yellow"}">${p.published ? "منشور" : "مسودة"}</span>
+          <span class="badge bg-secondary-lt text-secondary">${dateText}</span>
         </div>
       `;
       el.addEventListener("click", () => selectPost(p));
@@ -1240,6 +1358,40 @@
     postsCache = Array.isArray(posts) ? posts : [];
     renderPostsList();
     updateBlogStats();
+  }
+
+  async function loadDashboardStats() {
+    const ids = ["dashPostsCount", "dashProductsCount", "dashPagesCount", "dashVisitsCount"];
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "...";
+    });
+
+    try {
+      const [postsRes, productsRes, pagesRes, visitsRes] = await Promise.all([
+        api("/api/posts"),
+        api("/api/products"),
+        api("/api/custom-pages"),
+        api("/api/track/stats/summary?range=30"),
+      ]);
+
+      const postsCount = Array.isArray(postsRes?.posts) ? postsRes.posts.length : Number(postsRes?.total || 0);
+      const productsCount = Array.isArray(productsRes?.products)
+        ? productsRes.products.length
+        : Number(productsRes?.total || 0);
+      const pagesCount = Array.isArray(pagesRes?.pages) ? pagesRes.pages.length : Number(pagesRes?.total || 0);
+      const visitsCount = Number(visitsRes?.total || 0);
+
+      if (document.getElementById("dashPostsCount")) document.getElementById("dashPostsCount").textContent = String(postsCount);
+      if (document.getElementById("dashProductsCount")) document.getElementById("dashProductsCount").textContent = String(productsCount);
+      if (document.getElementById("dashPagesCount")) document.getElementById("dashPagesCount").textContent = String(pagesCount);
+      if (document.getElementById("dashVisitsCount")) document.getElementById("dashVisitsCount").textContent = String(visitsCount);
+    } catch {
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "—";
+      });
+    }
   }
 
   function selectPost(p) {
@@ -1379,6 +1531,7 @@
   // Initial load
   loadHome().catch(console.error);
   loadPosts().catch(() => {});
+  loadDashboardStats().catch(() => {});
 
   // --- Analytics settings page ---
   function buildAnalyticsSnippet(enabled, gaId, gtmId) {
@@ -1411,6 +1564,10 @@
 
     const statusEl = $("#analyticsConnectionStatus");
     if (statusEl) {
+      statusEl.className = "alert alert-sm";
+      if (!enabled) statusEl.classList.add("alert-secondary");
+      else if (hasId) statusEl.classList.add("alert-success");
+      else statusEl.classList.add("alert-warning");
       statusEl.textContent = enabled
         ? hasId
           ? "حالة الاتصال: جاهز"
@@ -1420,6 +1577,7 @@
 
     const effective = $("#analyticsEffective");
     if (effective) {
+      effective.className = `alert alert-sm ${source === "env" ? "alert-warning" : "alert-info"}`;
       effective.textContent = `الحالة الفعّالة: ${source === "env" ? "تجاوز عبر البيئة" : "قاعدة البيانات"} • التفعيل: ${enabled ? "نعم" : "لا"}`;
     }
 
@@ -1504,53 +1662,88 @@
     }
   });
 
+  $("#copyAnalyticsSnippetBtn")?.addEventListener("click", async () => {
+    const snippet = String($("#analyticsSnippet")?.value || "");
+    if (!snippet.trim()) return;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      showToast("تم نسخ المقتطف");
+    } catch {
+      showToast("تعذر نسخ المقتطف", "error");
+    }
+  });
+
   // --- Website stats page ---
   async function loadStats() {
     const rangeEl = $("#statsRange");
     if (!rangeEl) return;
     const range = Math.max(1, Number(rangeEl.value || 30));
-    const [summary, top, daily, dailyDouble] = await Promise.all([
-      api(`/api/track/stats/summary?range=${encodeURIComponent(range)}`),
-      api(`/api/track/stats/top?range=${encodeURIComponent(range)}`),
-      api(`/api/track/stats/daily?range=${encodeURIComponent(range)}`),
-      api(`/api/track/stats/daily?range=${encodeURIComponent(Math.min(365, range * 2))}`),
-    ]);
+    try {
+      const [summary, top, daily, dailyDouble] = await Promise.all([
+        api(`/api/track/stats/summary?range=${encodeURIComponent(range)}`),
+        api(`/api/track/stats/top?range=${encodeURIComponent(range)}`),
+        api(`/api/track/stats/daily?range=${encodeURIComponent(range)}`),
+        api(`/api/track/stats/daily?range=${encodeURIComponent(Math.min(365, range * 2))}`),
+      ]);
 
-    $("#statTotal").textContent = String(summary.total || 0);
-    $("#statUniques").textContent = String(summary.uniques || 0);
-    $("#statEssential").textContent = String(summary.totals?.essential || 0);
-    $("#statAnalytics").textContent = String(summary.totals?.analytics || 0);
+      $("#statTotal").textContent = String(summary.total || 0);
+      $("#statUniques").textContent = String(summary.uniques || 0);
+      $("#statEssential").textContent = String(summary.totals?.essential || 0);
+      $("#statAnalytics").textContent = String(summary.totals?.analytics || 0);
 
-    const topBody = $("#topUrlsBody");
-    if (topBody) {
-      topBody.innerHTML = (top.top || [])
-        .map((r) => `<tr><td dir="ltr">${r.path}</td><td>${r.visits}</td></tr>`)
-        .join("") || `<tr><td colspan="2" class="muted">لا توجد بيانات بعد</td></tr>`;
-    }
+      const topBody = $("#topUrlsBody");
+      if (topBody) {
+        topBody.innerHTML = (top.top || [])
+          .map((r) => `<tr><td dir="ltr">${r.path}</td><td>${r.visits}</td></tr>`)
+          .join("") || `<tr><td colspan="2" class="text-center text-muted py-4">لا توجد بيانات بعد</td></tr>`;
+      }
 
-    const trend = $("#dailyTrend");
-    if (trend) {
-      const series = daily.series || [];
-      const max = Math.max(1, ...series.map((x) => x.visits || 0));
-      trend.innerHTML = series
-        .map((x) => {
-          const h = Math.max(6, Math.round(((x.visits || 0) / max) * 100));
-          return `<div class="trend__bar" title="${x.day}: ${x.visits}" style="height:${h}%"></div>`;
-        })
-        .join("");
-    }
+      const trend = $("#dailyTrend");
+      if (trend) {
+        const series = daily.series || [];
+        if (!series.length) {
+          trend.innerHTML = `<div class="text-muted small w-100 text-center py-3">لا توجد بيانات اتجاه بعد</div>`;
+        } else {
+          const max = Math.max(1, ...series.map((x) => x.visits || 0));
+          trend.innerHTML = series
+            .map((x) => {
+              const h = Math.max(6, Math.round(((x.visits || 0) / max) * 100));
+              return `<div class="trend__bar" title="${x.day}: ${x.visits}" style="height:${h}%"></div>`;
+            })
+            .join("");
+        }
+      }
 
-    const compareEl = $("#statsCompareHint");
-    if (compareEl) {
-      const ds = dailyDouble.series || [];
-      if (ds.length >= range * 2) {
-        const prev = ds.slice(0, range).reduce((s, x) => s + Number(x.visits || 0), 0);
-        const curr = ds.slice(range).reduce((s, x) => s + Number(x.visits || 0), 0);
-        const delta = curr - prev;
-        const pct = prev ? ((delta / prev) * 100).toFixed(1) : "—";
-        compareEl.textContent = `مقارنة بالفترة السابقة: ${delta >= 0 ? "+" : ""}${delta} زيارة (${pct}%)`;
-      } else {
-        compareEl.textContent = "مقارنة بالفترة السابقة: بيانات غير كافية";
+      const compareEl = $("#statsCompareHint");
+      if (compareEl) {
+        const ds = dailyDouble.series || [];
+        compareEl.classList.remove("text-green", "text-red", "text-muted");
+        if (ds.length >= range * 2) {
+          const prev = ds.slice(0, range).reduce((s, x) => s + Number(x.visits || 0), 0);
+          const curr = ds.slice(range).reduce((s, x) => s + Number(x.visits || 0), 0);
+          const delta = curr - prev;
+          const pct = prev ? ((delta / prev) * 100).toFixed(1) : "—";
+          compareEl.classList.add(delta >= 0 ? "text-green" : "text-red");
+          compareEl.textContent = `مقارنة بالفترة السابقة: ${delta >= 0 ? "+" : ""}${delta} زيارة (${pct}%)`;
+        } else {
+          compareEl.classList.add("text-muted");
+          compareEl.textContent = "مقارنة بالفترة السابقة: بيانات غير كافية";
+        }
+      }
+    } catch {
+      ["#statTotal", "#statUniques", "#statEssential", "#statAnalytics"].forEach((id) => {
+        const el = $(id);
+        if (el) el.textContent = "—";
+      });
+      const topBody = $("#topUrlsBody");
+      if (topBody) topBody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-4">تعذر تحميل البيانات</td></tr>`;
+      const trend = $("#dailyTrend");
+      if (trend) trend.innerHTML = `<div class="text-muted small w-100 text-center py-3">تعذر تحميل الاتجاه اليومي</div>`;
+      const compareEl = $("#statsCompareHint");
+      if (compareEl) {
+        compareEl.classList.remove("text-green", "text-red");
+        compareEl.classList.add("text-muted");
+        compareEl.textContent = "تعذر تحميل المقارنة";
       }
     }
   }
@@ -1597,19 +1790,27 @@
 
     body.innerHTML = slice
       .map((p) => {
-        const status = p.published ? `<span class="pill pill--pub">منشورة</span>` : `<span class="pill pill--draft">مسودة</span>`;
-        const updated = (p.updated_at || '').replace('T', ' ').slice(0, 16);
+        const status = p.published
+          ? `<span class="badge bg-green-lt text-green">منشورة</span>`
+          : `<span class="badge bg-yellow-lt text-yellow">مسودة</span>`;
+        const unsafe = p.unsafe_js
+          ? `<span class="badge bg-red-lt text-red" title="Unsafe JS مفعل"><i class="ti ti-alert-triangle me-1"></i>Unsafe JS</span>`
+          : `<span class="badge bg-secondary-lt text-secondary">JS آمن</span>`;
+        const updated = formatDateTime(p.updated_at || p.created_at);
         return `
           <tr data-id="${p.id}" class="customRow">
             <td><input type="checkbox" class="rowCheck" data-id="${p.id}" /></td>
-            <td>${p.title}</td>
-            <td dir="ltr">${p.slug}</td>
-            <td>${status}</td>
+            <td>
+              <div class="fw-semibold">${escapeHtml(p.title || "(بدون عنوان)")}</div>
+              <div class="text-muted small" dir="ltr">/rec/${escapeHtml(p.slug || "")}</div>
+            </td>
+            <td dir="ltr">${escapeHtml(p.slug || "")}</td>
+            <td><div class="d-flex flex-wrap gap-1">${status}${unsafe}</div></td>
             <td dir="ltr">${updated}</td>
           </tr>
         `;
       })
-      .join("") || `<tr><td colspan="5" class="muted">لا توجد صفحات بعد</td></tr>`;
+      .join("") || `<tr><td colspan="5" class="text-center text-muted py-4">لا توجد صفحات بعد</td></tr>`;
 
     $("#customPagesPagerText").textContent = `صفحة ${customPagesPage} من ${pagesCount} • ${rows.length} عنصر`;
 
@@ -1629,10 +1830,18 @@
   async function loadCustomPages() {
     const body = $("#customPagesTableBody");
     if (!body) return;
-    body.innerHTML = `<tr><td colspan="5" class="muted">جارٍ التحميل...</td></tr>`;
+    body.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">جارٍ التحميل...</td></tr>`;
     const { pages } = await api('/api/custom-pages');
     customPages = pages || [];
     renderCustomPagesTable();
+  }
+
+  function updateCustomUnsafeNotice() {
+    const unsafe = !!$("#customPageUnsafeJs")?.checked;
+    const unsafeAlert = $("#customPageUnsafeAlert");
+    const sanitizeNote = $("#customPageSanitizeNote");
+    if (unsafeAlert) unsafeAlert.hidden = !unsafe;
+    if (sanitizeNote) sanitizeNote.hidden = unsafe;
   }
 
   function showCustomPageEditor(page) {
@@ -1653,6 +1862,7 @@
 
     renderCustomPageMeta();
     updateCustomSlugHint();
+    updateCustomUnsafeNotice();
     activateCustomTab('html');
     setDirty('custom-pages', false);
   }
@@ -1661,6 +1871,7 @@
     currentCustomPage = null;
     $("#customPageEditor").hidden = true;
     $("#customPageEmptyEditor").hidden = false;
+    updateCustomUnsafeNotice();
     setDirty('custom-pages', false);
   }
 
@@ -1739,6 +1950,7 @@
     updateCustomSlugHint();
   });
   $("#customPageUnsafeJs")?.addEventListener('change', () => {
+    updateCustomUnsafeNotice();
     if (currentCustomTab === 'preview') renderCustomPreview();
   });
   ["#customPageHtml", "#customPageCss", "#customPageJs"].forEach((sel) => {
@@ -1889,10 +2101,33 @@
     body.innerHTML =
       slice
         .map((p) => {
-          const status = p.published ? `<span class="pill pill--pub">منشور</span>` : `<span class="pill pill--draft">مسودة</span>`;
-          return `<tr class="productRow" data-id="${p.id}"><td>${Number(p.sort_order || 0)}</td><td>${p.title}</td><td>${p.category || "—"}</td><td dir="ltr">${p.slug}</td><td>${status}</td></tr>`;
+          const status = p.published
+            ? `<span class="badge bg-green-lt text-green">منشور</span>`
+            : `<span class="badge bg-yellow-lt text-yellow">مسودة</span>`;
+          const category = String(p.category || "").trim();
+          const categoryBadge = category
+            ? `<span class="badge bg-azure-lt text-azure">${escapeHtml(category)}</span>`
+            : `<span class="text-muted">—</span>`;
+          const image = String(p.image || "").trim();
+          const thumb = image
+            ? `<span class="avatar avatar-xs me-2" style="background-image:url('${escapeHtml(image)}')"></span>`
+            : `<span class="avatar avatar-xs me-2 bg-secondary-lt text-secondary"><i class="ti ti-photo"></i></span>`;
+          return `<tr class="productRow" data-id="${p.id}">
+            <td>${Number(p.sort_order || 0)}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                ${thumb}
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">${escapeHtml(p.title || "(بدون عنوان)")}</div>
+                  <div class="text-muted small" dir="ltr">/${escapeHtml(p.slug || "")}</div>
+                </div>
+              </div>
+            </td>
+            <td>${categoryBadge}</td>
+            <td>${status}</td>
+          </tr>`;
         })
-        .join("") || `<tr><td colspan="5" class="muted">لا توجد منتجات</td></tr>`;
+        .join("") || `<tr><td colspan="4" class="text-center text-muted py-4">لا توجد منتجات</td></tr>`;
 
     if (pager) pager.textContent = `صفحة ${productsPage} من ${pagesCount} • ${rows.length} عنصر`;
 
@@ -1953,13 +2188,18 @@
           .map(
             (row) => `
               <tr class="categoryRow" data-name="${encodeURIComponent(row.name)}">
-                <td>${row.name}</td>
-                <td>${row.count}</td>
+                <td>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-semibold">${escapeHtml(row.name)}</span>
+                    <span class="badge bg-blue-lt text-blue">${row.count}</span>
+                  </div>
+                </td>
+                <td class="text-muted">${row.count} منتج</td>
               </tr>
             `
           )
           .join("")
-      : `<tr><td colspan="2" class="muted">لا توجد تصنيفات بعد</td></tr>`;
+      : `<tr><td colspan="2" class="text-center text-muted py-4">لا توجد تصنيفات بعد</td></tr>`;
 
     $$(".categoryRow", body).forEach((tr) => {
       tr.addEventListener("click", () => {
@@ -2278,14 +2518,30 @@
     if (!$("#settingsForm")) return;
     status.textContent = "جارٍ التحميل...";
     try {
-      const res = await api("/api/settings/general");
-      const s = res?.settings || {};
+      const [genRes, seoRes] = await Promise.all([
+        api("/api/settings/general"),
+        api("/api/settings/page-seo"),
+      ]);
+      const s = genRes?.settings || {};
       $("#settingsCompanyName").value = s.companyName || "ATEX";
       $("#settingsAdminEmail").value = s.adminEmail || "";
       $("#settingsWhatsapp").value = s.whatsapp || "";
       $("#settingsMaintenanceMode").checked = !!s.maintenanceMode;
-      $("#settingsHomepageTitle").value = s.homepageTitle || "";
-      $("#settingsHomepageDescription").value = s.homepageDescription || "";
+
+      // Populate per-page SEO fields
+      const pageSeo = seoRes?.settings || {};
+      $$(".seoPageField").forEach((el) => {
+        const route = el.getAttribute("data-seo-route");
+        const field = el.getAttribute("data-seo-field");
+        if (!route || !field) return;
+        const val = pageSeo[route]?.[field] || "";
+        if (el.tagName === "SELECT") {
+          el.value = val;
+        } else {
+          el.value = val;
+        }
+      });
+
       status.textContent = "";
       setDirty("settings", false);
     } catch {
@@ -2297,19 +2553,32 @@
     e.preventDefault();
     const status = $("#settingsStatus");
     status.textContent = "جارٍ الحفظ...";
-    const payload = {
+
+    const generalPayload = {
       companyName: $("#settingsCompanyName").value.trim(),
       adminEmail: $("#settingsAdminEmail").value.trim(),
       whatsapp: $("#settingsWhatsapp").value.trim(),
       maintenanceMode: $("#settingsMaintenanceMode").checked,
-      homepageTitle: $("#settingsHomepageTitle").value.trim(),
-      homepageDescription: $("#settingsHomepageDescription").value.trim(),
     };
+
+    // Collect per-page SEO from all accordion fields
+    const pageSeoPayload = {};
+    $$(".seoPageField").forEach((el) => {
+      const route = el.getAttribute("data-seo-route");
+      const field = el.getAttribute("data-seo-field");
+      if (!route || !field) return;
+      if (!pageSeoPayload[route]) pageSeoPayload[route] = {};
+      pageSeoPayload[route][field] = el.value.trim();
+    });
+
     try {
-      await api("/api/settings/general", { method: "PUT", body: JSON.stringify(payload) });
+      await Promise.all([
+        api("/api/settings/general", { method: "PUT", body: JSON.stringify(generalPayload) }),
+        api("/api/settings/page-seo", { method: "PUT", body: JSON.stringify(pageSeoPayload) }),
+      ]);
       status.textContent = "تم حفظ الإعدادات";
       setDirty("settings", false);
-      showToast("تم حفظ الإعدادات العامة");
+      showToast("تم حفظ الإعدادات والـ SEO");
       setTimeout(() => (status.textContent = ""), 1500);
     } catch {
       status.textContent = "فشل حفظ الإعدادات";
@@ -2384,6 +2653,7 @@
   });
 
   // Load module data
+  loadCurrentAdminUser().catch(() => {});
   loadAnalyticsForm().catch(() => {});
   loadCustomPages().catch(() => {});
   loadStats().catch(() => {});
