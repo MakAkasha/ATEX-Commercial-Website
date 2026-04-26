@@ -8,11 +8,11 @@ function preferPngAsset(assetPath) {
   if (!normalized.startsWith("/assets/solutions/")) return normalized;
 
   const parsed = path.parse(normalized);
-  const pngFileName = `${parsed.name}.png`;
-  const pngDiskPath = path.join(SOLUTIONS_DIR, pngFileName);
+  const webpFileName = `${parsed.name}.webp`;
+  const webpDiskPath = path.join(SOLUTIONS_DIR, webpFileName);
 
-  if (fs.existsSync(pngDiskPath)) {
-    return `/assets/solutions/${pngFileName}`;
+  if (fs.existsSync(webpDiskPath)) {
+    return `/assets/solutions/${webpFileName}`;
   }
 
   return normalized;

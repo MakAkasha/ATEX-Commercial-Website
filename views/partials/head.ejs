@@ -16,7 +16,7 @@
 
 <!-- Open Graph / Facebook -->
 <%
-  const __ogImage = meta?.ogImage || '/assets/solutions/smart-building.jpg';
+  const __ogImage = meta?.ogImage || '/assets/solutions/smart-building.webp';
   const __ogImageType = __ogImage.match(/\.(png|gif|webp)$/i) ? 'image/' + __ogImage.match(/\.(png|gif|webp)$/i)[1].toLowerCase() : 'image/jpeg';
 %>
 <meta property="og:type" content="<%= meta?.ogType || 'website' %>" />
@@ -65,8 +65,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
 <!-- Stylesheets -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <link rel="stylesheet" href="/assets/css/styles.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" /></noscript>
+<% if (meta?.preloadImage) { %><link rel="preload" as="image" href="<%= meta.preloadImage %>" fetchpriority="high" /><% } %>
 
 <% const __consent = (typeof consent !== 'undefined') ? consent : 'unknown'; %>
 <% const __analytics = (typeof analytics !== 'undefined') ? analytics : null; %>

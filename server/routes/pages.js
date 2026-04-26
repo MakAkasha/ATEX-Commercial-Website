@@ -238,7 +238,8 @@ router.get("/", (req, res) => {
       title: "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
       description:
         "أتكس مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+      preloadImage: "/assets/hero-video/video-keeper.webp",
     })),
   });
 });
@@ -323,7 +324,7 @@ router.get("/blog", (req, res) => {
     meta: withMeta(req, applyPageSeo("/blog", {
       title: "أتكس | المدونة — حلول إنترنت الأشياء في السعودية",
       description: "مدونة أتكس: مقالات وأفضل الممارسات في حلول إنترنت الأشياء، المنازل الذكية، المباني الذكية، وإدارة الطاقة داخل المملكة العربية السعودية.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
     })),
   });
 });
@@ -353,7 +354,7 @@ router.get("/blog/:slug", (req, res) => {
 
   const siteUrl = absoluteUrl(req, "/");
   const postUrl = absoluteUrl(req, `/blog/${post.slug}`);
-  const coverImage = post.cover_image || absoluteUrl(req, "/assets/solutions/smart-building.jpg");
+  const coverImage = post.cover_image || absoluteUrl(req, "/assets/solutions/smart-building.webp");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -420,7 +421,7 @@ router.get("/solutions", (req, res) => {
       title: "أتكس | الأنظمة والحلول",
       description:
         "صفحة الأنظمة والحلول من أتكس: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.jpg"),
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
     })),
   });
 });

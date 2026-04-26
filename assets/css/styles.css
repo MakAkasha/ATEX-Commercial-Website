@@ -950,8 +950,8 @@ body.has-hero-video .header.is-scrolled {
   left: 50%;
   min-width: 100%;
   min-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
   object-fit: cover;
   display: block;
@@ -3533,7 +3533,7 @@ body.has-hero-video .header.is-scrolled {
 .heroVideo__media {
   background:
     linear-gradient(135deg, rgba(0, 24, 37, 0.72) 0%, rgba(0, 43, 68, 0.62) 100%),
-    url("/assets/hero-video/video-keeper.png") center/cover no-repeat,
+    url("/assets/hero-video/video-keeper.webp") center/cover no-repeat,
     linear-gradient(135deg, #001825 0%, #002b44 100%);
 }
 
