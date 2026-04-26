@@ -34,6 +34,7 @@ function buildCspDirectives() {
       "https://www.googletagmanager.com",
       "https://www.google-analytics.com",
     ],
+    scriptSrcAttr: ["'unsafe-inline'"],
     connectSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
     frameSrc: ["'self'", "https://www.youtube-nocookie.com", "https://www.youtube.com"],
     mediaSrc: ["'self'", "https:", "blob:"],
