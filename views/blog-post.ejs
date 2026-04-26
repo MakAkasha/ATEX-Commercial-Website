@@ -48,7 +48,7 @@
             let articleHtml = post.content_html || '';
             if (post.cover_image) {
               // Strip first <p> that contains only an <img> (cover embedded in content as base64 or URL)
-              articleHtml = articleHtml.replace(/^(\s*<p>\s*<img[^>]*>\s*<\/p>\s*)+/i, '');
+              articleHtml = articleHtml.replace(/<p>\s*<img[^>]*\/?>\s*<\/p>/i, '');
               articleHtml = articleHtml.replace(/<p>\s*<\/p>/gi, '');
             }
           %>
