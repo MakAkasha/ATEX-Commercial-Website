@@ -397,6 +397,7 @@ router.get("/blog/:slug", (req, res) => {
     ...baseRenderData(req),
     meta: withMeta(req, {
       title: `${post.title} | أتكس`,
+      ogTitle: post.title,
       description: post.excerpt || "",
       ogType: "article",
       ogImage: coverImage,
