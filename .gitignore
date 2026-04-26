@@ -20,6 +20,9 @@ server_run*.log
 server/data.sqlite
 server/data.sqlite-shm
 server/data.sqlite-wal
+server/test-*.sqlite
+server/test-*.sqlite-shm
+server/test-*.sqlite-wal
 
 # Temp directories
 temp-blog-writer-review/
