@@ -153,7 +153,7 @@ app.get("/sitemap.xml", (req, res) => {
       loc: `${baseUrl}/blog/${p.slug}`,
       priority: "0.7",
       changefreq: "weekly",
-      lastmod: p.updated_at || new Date().toISOString()
+      lastmod: p.updated_at ? new Date(p.updated_at.replace(' ', 'T') + 'Z').toISOString() : new Date().toISOString()
     }));
     
     // Combine all URLs
