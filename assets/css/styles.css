@@ -839,13 +839,14 @@ body.has-hero-video .header.is-scrolled {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+  transition: opacity 0.6s ease-out;
 }
 
 .loadingOverlay.is-hidden {
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.6s ease-out, visibility 0s linear 0.6s;
 }
 
 .loadingOverlay__spinner {
@@ -3631,13 +3632,22 @@ body.has-hero-video .header.is-scrolled {
 
 /* final CTA remains light mode by request */
 
-/* --- Kicker dot — pulsing amber glow --- */
+/* --- Kicker dot — pulsing amber glow (composited) --- */
 @keyframes kickerPulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.2); }
-  50%       { box-shadow: 0 0 0 8px rgba(255, 153, 51, 0.08); }
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%       { transform: scale(2.2); opacity: 0; }
 }
 
 .kicker__dot {
+  position: relative;
+}
+
+.kicker__dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(255, 153, 51, 0.5);
   animation: kickerPulse 2.4s ease-in-out infinite;
 }
 
@@ -3726,13 +3736,21 @@ body.has-hero-video .header.is-scrolled {
   height: 7px;
   border-radius: 50%;
   background: #22c55e;
+  position: relative;
+}
+
+.platformSection__liveDot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.5);
   animation: livePulse 1.8s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
 }
 
 @keyframes livePulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%       { transform: scale(2.4); opacity: 0; }
 }
 
 /* Stats inside dark panel */
@@ -4121,8 +4139,17 @@ body.has-hero-video .header.is-scrolled {
   border-radius: 50%;
   background: #ff9933;
   margin-left: 8px;
-  animation: kickerPulse 2s ease-in-out infinite;
   vertical-align: middle;
+  position: relative;
+}
+
+.heroVideo__kickerDot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(255, 153, 51, 0.5);
+  animation: kickerPulse 2s ease-in-out infinite;
 }
 
 /* Word cycling wrapper */
