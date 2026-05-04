@@ -5,7 +5,7 @@
     <%- include('partials/structured-data') %>
   </head>
 
-  <body>
+  <body class="has-hero-video">
     <%- include('partials/site-header') %>
 
     <% 
@@ -153,17 +153,7 @@
             <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
           </div>
 
-          <div class="grid grid--cards">
-            <% __pageSolutions.forEach(function(c, idx){ %>
-              <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage %>')" aria-label="عرض تفاصيل <%= c.title %>">
-                <span class="solutionCard__num" aria-hidden="true"><%= String(idx + 1).padStart(2, '0') %></span>
-                <div class="solutionCard__body">
-                  <h3 class="card__title"><%= c.title %></h3>
-                  <p class="card__desc"><%= c.summary %></p>
-                </div>
-              </a>
-            <% }) %>
-          </div>
+          <%- include('partials/solutions-grid', { items: __pageSolutions }) %>
         </div>
       </section>
 
@@ -225,14 +215,7 @@
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
             <% const industryItems = Array.isArray(pageIndustries) ? pageIndustries : []; %>
-            <div class="industriesShowcase__grid">
-              <% industryItems.forEach(function(item, idx){ %>
-                <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.image %>')" aria-label="عرض تفاصيل <%= item.title %>">
-                  <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
-                  <h3><%= item.title %></h3>
-                </a>
-              <% }) %>
-            </div>
+            <%- include('partials/industries-grid', { items: industryItems }) %>
 
             <div class="industriesShowcase__hint" aria-hidden="true">
               <span>اسحب أفقيًا لاستعراض القطاعات</span>
@@ -508,26 +491,7 @@
       </section>
 
       <!-- Final CTA -->
-      <section class="section finalCta" id="contact" aria-label="دعوة للتواصل">
-        <div class="container">
-          <div class="finalCta__band">
-            <div class="finalCta__main">
-              <h2><%= content?.contact?.heading || 'جاهز لبدء مشروعك؟' %></h2>
-              <p><%= content?.contact?.subheading || 'أرسل لنا استفسارك والفريق الفني سيقدم (حلول + أجهزة + تكامل) مع خطة تنفيذ واضحة.' %></p>
-              <span class="finalCta__badge">تم الرد في أقل من 24 ساعة</span>
-            </div>
-
-            <div class="finalCta__card" aria-label="حلول عند الطلب">
-              <h3>هنالك دائماً حل عند الطلب</h3>
-              <p>إذا لم تجد ما تبحث عنه، يمكنك الاتصال بنا مباشرة وسنقدّم لك استشارة مجانية لمساعدتك في اختيار الحل الأنسب.</p>
-              <div class="finalCta__actions">
-                <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">اتصال مباشر</a>
-                <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">واتساب</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <%- include('partials/final-cta', { id: 'contact', badge: 'يتم الرد في أقل من 24 ساعة' }) %>
     </main>
 
     <%- include('partials/site-footer') %>

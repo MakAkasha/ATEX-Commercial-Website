@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
   </head>
   <body>
     <%- include('partials/site-header', { content }) %>
@@ -134,18 +135,7 @@
               <p class="solutionsPage__sectionKicker">RELATED INDUSTRIES</p>
               <h2>قطاعات يرتبط بها هذا الحل</h2>
             </div>
-            <div class="solutionsPage__catalogGrid">
-              <% relatedIndustries.forEach(function(industry){ %>
-                <article class="solutionsPage__catalogCard">
-                  <a class="solutionsPage__catalogMedia" href="/industries/<%= industry.slug %>"><img src="<%= industry.image %>" alt="<%= industry.title %>" loading="lazy" /></a>
-                  <div class="solutionsPage__catalogBody">
-                    <h3><a href="/industries/<%= industry.slug %>"><%= industry.title %></a></h3>
-                    <p class="solutionsPage__catalogSummary"><%= industry.intro %></p>
-                    <div class="solutionsPage__catalogActions"><a class="btn btn--primary btn--small" href="/industries/<%= industry.slug %>">عرض القطاع</a></div>
-                  </div>
-                </article>
-              <% }) %>
-            </div>
+            <%- include('partials/industries-grid', { items: relatedIndustries }) %>
           </div>
         </section>
       <% } %>
@@ -159,24 +149,7 @@
               <p>اطّلع على حلول إضافية ضمن نفس منظومة اتكس الذكية.</p>
             </div>
 
-            <div class="solutionsPage__catalogGrid">
-              <% relatedSolutions.forEach(function(s){ %>
-                <article class="solutionsPage__catalogCard" aria-labelledby="related-solution-<%= s.slug %>">
-                  <a class="solutionsPage__catalogMedia" href="/solutions/<%= s.slug %>">
-                    <img src="<%= s.primaryImage %>" alt="<%= s.title %>" loading="lazy" />
-                  </a>
-                  <div class="solutionsPage__catalogBody">
-                    <h3 id="related-solution-<%= s.slug %>">
-                      <a href="/solutions/<%= s.slug %>"><%= s.title %></a>
-                    </h3>
-                    <p class="solutionsPage__catalogSummary"><%= s.summary %></p>
-                    <div class="solutionsPage__catalogActions">
-                      <a class="btn btn--primary btn--small" href="/solutions/<%= s.slug %>">عرض التفاصيل</a>
-                    </div>
-                  </div>
-                </article>
-              <% }) %>
-            </div>
+            <%- include('partials/solutions-grid', { items: relatedSolutions }) %>
           </div>
         </section>
       <% } %>

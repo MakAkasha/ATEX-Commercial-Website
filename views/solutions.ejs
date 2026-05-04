@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
   <head>
     <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
   </head>
   <body>
     <%- include('partials/site-header', { content }) %>
@@ -64,52 +65,17 @@
             <p>كل بطاقة تفتح صفحة مستقلة تحتوي على شرح أعمق للحل، الميزات، وحالات الاستخدام المقترحة.</p>
           </div>
 
-          <div class="solutionsPage__catalogGrid">
-            <% solutions.forEach(function(s, idx){ %>
-              <article class="solutionsPage__catalogCard" aria-labelledby="solution-card-title-<%= s.slug %>">
-                <a class="solutionsPage__catalogMedia" href="/solutions/<%= s.slug %>">
-                  <img src="<%= s.primaryImage %>" alt="<%= s.title %>" loading="lazy" />
-                </a>
-
-                <div class="solutionsPage__catalogBody">
-                  <p class="solutionsPage__catalogKicker" dir="ltr">Solution / <%= String(idx + 1).padStart(2, '0') %></p>
-                  <h3 id="solution-card-title-<%= s.slug %>">
-                    <a href="/solutions/<%= s.slug %>"><%= s.title %></a>
-                  </h3>
-                  <p class="solutionsPage__catalogSummary"><%= s.summary %></p>
-
-                  <div class="solutionsPage__useCases">
-                    <% (s.useCases || []).slice(0, 2).forEach(function(u){ %>
-                      <span><%= u %></span>
-                    <% }) %>
-                  </div>
-
-                  <div class="solutionsPage__catalogActions">
-                    <a class="btn btn--primary btn--small" href="/solutions/<%= s.slug %>">عرض التفاصيل</a>
-                  </div>
-                </div>
-              </article>
-            <% }) %>
-          </div>
+          <%- include('partials/solutions-grid', { items: solutions }) %>
         </div>
       </section>
 
-      <section class="section">
-        <div class="container">
-          <div class="finalCta__band">
-            <div class="finalCta__main">
-              <h2>هل تحتاج دمج أكثر من حل في مشروع واحد؟</h2>
-              <p>فريق اتكس يساعدك ببناء خارطة تنفيذ متكاملة تربط الأنظمة والحلول على مراحل واضحة وقابلة للتوسع.</p>
-              <a class="btn btn--primary" href="/contact-us">ابدأ المناقشة الفنية</a>
-            </div>
-            <div class="finalCta__card">
-              <h3>استشارة فنية مجانية</h3>
-              <p>أرسل نوع المشروع والمساحة والقطاع المستهدف وسنقترح لك الحلول المناسبة خلال وقت قصير.</p>
-              <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">+966 58 010 2121</a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <%- include('partials/final-cta', { 
+        heading: 'هل تحتاج دمج أكثر من حل في مشروع واحد؟',
+        subheading: 'فريق اتكس يساعدك ببناء خارطة تنفيذ متكاملة تربط الأنظمة والحلول على مراحل واضحة وقابلة للتوسع.',
+        mainAction: '<a class="btn btn--primary" href="/contact-us">ابدأ المناقشة الفنية</a>',
+        cardHeading: 'استشارة فنية مجانية',
+        cardDesc: 'أرسل نوع المشروع والمساحة والقطاع المستهدف وسنقترح لك الحلول المناسبة خلال وقت قصير.'
+      }) %>
     </main>
 
     <%- include('partials/site-footer', { content }) %>

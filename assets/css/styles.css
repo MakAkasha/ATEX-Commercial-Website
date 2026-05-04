@@ -349,7 +349,7 @@ body.has-hero-video .header.is-scrolled {
   border: 1px solid transparent;
   border-radius: 14px;
   letter-spacing: -0.1px;
-  transition: background 240ms ease, transform 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  transition: background 240ms ease, transform 240ms ease, color 240ms ease;
   position: relative;
   overflow: hidden;
   white-space: nowrap;
@@ -845,8 +845,7 @@ body.has-hero-video .header.is-scrolled {
 .loadingOverlay.is-hidden {
   opacity: 0;
   pointer-events: none;
-  visibility: hidden;
-  transition: opacity 0.6s ease-out, visibility 0s linear 0.6s;
+  transition: opacity 0.6s ease-out;
 }
 
 .loadingOverlay__spinner {
@@ -1004,7 +1003,7 @@ body.has-hero-video .header.is-scrolled {
 /* Trust strip (below video hero) */
 .trustStrip {
   position: relative;
-  margin-top: -115px;
+  margin-top: -55px;
   z-index: 3;
   padding: 0 0 10px;
   background:
@@ -1026,15 +1025,15 @@ body.has-hero-video .header.is-scrolled {
 
 .trustStrip__item {
   border: 1px solid rgba(0, 43, 68, 0.12);
-  border-radius: calc(var(--radius-sm) + 4px);
+  border-radius: calc(var(--radius-sm) + 2px);
   background:
     radial-gradient(220px 90px at 85% 10%, rgba(255, 153, 51, 0.16), transparent 64%),
     rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
-  padding: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  padding: 6px 10px;
   display: grid;
-  gap: 6px;
+  gap: 0px;
   align-content: start;
   transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
 }
@@ -1046,14 +1045,14 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .trustStrip__item strong {
-  font-size: clamp(21px, 2.3vw, 28px);
+  font-size: clamp(15px, 1.6vw, 18px);
   line-height: 1.15;
   color: var(--navy);
 }
 
 .trustStrip__item span {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 11px;
+  line-height: 1.4;
   font-weight: 800;
   color: rgba(11, 31, 42, 0.82);
 }
@@ -2419,7 +2418,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .footer__brandLogo img {
-  width: clamp(110px, 12vw, 170px);
+  width: clamp(180px, 22vw, 320px);
   height: auto;
   display: block;
 }
@@ -2434,6 +2433,8 @@ body.has-hero-video .header.is-scrolled {
   margin: 0 0 8px;
   color: rgba(255, 255, 255, 0.92);
   font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.6;
 }
 
 .footer__links {
@@ -2467,19 +2468,44 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .footer__bottomInner {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 16px;
   font-weight: 500;
   font-size: 13px;
 }
 
-.footer__legal {
+.footer__copyright {
+  text-align: start;
+}
+
+.footer__versionTag {
+  display: flex;
+  justify-content: center;
+}
+
+.footer__version {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.5px;
+}
+
+.footer__legal {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.footer__sep {
+  opacity: 0.3;
 }
 
 .footer__legal .footer__link {
@@ -3042,7 +3068,7 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .trustStrip {
-    margin-top: -106px;
+    margin-top: -60px;
   }
 
   .trustStrip__inner {
@@ -3141,6 +3167,21 @@ body.has-hero-video .header.is-scrolled {
     grid-template-columns: 1fr;
   }
 
+  .footer__bottomInner {
+    grid-template-columns: 1fr;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .footer__copyright {
+    text-align: center;
+  }
+
+  .footer__legal {
+    justify-content: center;
+  }
+
 }
 
 @keyframes heroAssetFloat {
@@ -3236,7 +3277,7 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .trustStrip {
-    margin-top: -98px;
+    margin-top: -55px;
   }
 
   .trustStrip__inner {
@@ -3950,6 +3991,7 @@ body.has-hero-video .header.is-scrolled {
   position: relative;
   z-index: 1;
   margin-top: auto;
+  padding-top: 48px;
 }
 
 /* Hover: number brightens */
@@ -4008,7 +4050,7 @@ body.has-hero-video .header.is-scrolled {
    ============================================================ */
 
 .trustStrip__item {
-  padding: 22px 16px 18px;
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4017,8 +4059,8 @@ body.has-hero-video .header.is-scrolled {
   gap: 0;
   position: relative;
   overflow: hidden;
-  min-height: 198px;
-  height: 198px;
+  min-height: 110px;
+  height: auto;
 }
 
 /* Amber glow orb top-right of each card */
@@ -4036,29 +4078,29 @@ body.has-hero-video .header.is-scrolled {
 
 /* Massive editorial number */
 .trustStrip__item strong {
-  font-size: clamp(44px, 5.8vw, 74px);
+  font-size: clamp(34px, 4.5vw, 48px);
   font-weight: 900;
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: -1px;
   background: linear-gradient(145deg, #ff9933 20%, #cc6600 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   min-height: 1em;
 }
 
 /* Label — small, bold, uppercase, spaced */
 .trustStrip__item span {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: rgba(0, 43, 68, 0.65);
-  line-height: 1.5;
+  line-height: 1.4;
   max-width: 130px;
-  min-height: calc(1.5em * 2);
+  min-height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4078,13 +4120,13 @@ body.has-hero-video .header.is-scrolled {
 
 @media (max-width: 900px) {
   .trustStrip__item {
-    min-height: 182px;
-    height: 182px;
+    min-height: 100px;
+    height: auto;
   }
 
   .trustStrip__item strong {
-    font-size: clamp(40px, 8vw, 58px);
-    letter-spacing: -1.5px;
+    font-size: clamp(30px, 6vw, 42px);
+    letter-spacing: -0.5px;
   }
 }
 
@@ -4095,12 +4137,12 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .trustStrip__item {
-    min-height: 170px;
-    height: 170px;
+    min-height: 90px;
+    height: auto;
   }
 
   .trustStrip__item strong {
-    font-size: clamp(36px, 10vw, 52px);
+    font-size: clamp(28px, 8vw, 36px);
   }
 }
 

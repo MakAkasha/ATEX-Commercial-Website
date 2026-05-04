@@ -16,7 +16,6 @@
         </nav>
 
         <header class="subpage__head">
-          <span class="subpage__kicker">رؤى أتكس</span>
           <h1 class="subpage__title">المدونة</h1>
           <p class="subpage__desc">مقالات وأفضل الممارسات في حلول إنترنت الأشياء داخل السعودية، مع رؤى عملية تساعدكم على اتخاذ قرارات تقنية مدروسة.</p>
         </header>
@@ -83,6 +82,14 @@
           </div>
         <% } %>
       </div>
+
+      <%- include('partials/final-cta', {
+        heading: 'هل تريد تطبيق هذه الرؤى في مشروعك؟',
+        subheading: 'استفد من خبرات فريقنا الفني لتحويل هذه الأفكار إلى حلول وتقنيات ملموسة.',
+        mainAction: '<a class="btn btn--primary" href="/contact-us">ابدأ المناقشة الفنية</a>',
+        cardHeading: 'دعنا نبني مستقبلك الذكي',
+        cardDesc: 'فريقنا مستعد لتزويدك بأفضل ممارسات السوق وتطبيقها فوراً في منشأتك.'
+      }) %>
     </main>
     <%- include('partials/site-footer') %>
   </body>

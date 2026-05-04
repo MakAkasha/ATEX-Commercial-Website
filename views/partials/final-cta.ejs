@@ -1,0 +1,31 @@
+<% 
+  const ctaHeading = locals.heading || content?.contact?.heading || 'جاهز لبدء مشروعك؟';
+  const ctaSubheading = locals.subheading || content?.contact?.subheading || 'أرسل لنا استفسارك والفريق الفني سيقدم (حلول + أجهزة + تكامل) مع خطة تنفيذ واضحة.';
+  const ctaBadge = locals.badge || null;
+  const ctaCardHeading = locals.cardHeading || 'هنالك دائماً حل عند الطلب';
+  const ctaCardDesc = locals.cardDesc || 'إذا لم تجد ما تبحث عنه، يمكنك الاتصال بنا مباشرة وسنقدّم لك استشارة مجانية لمساعدتك في اختيار الحل الأنسب.';
+%>
+<section class="section finalCta" <%= locals.id ? `id="${id}"` : '' %> aria-label="دعوة للتواصل">
+  <div class="container">
+    <div class="finalCta__band">
+      <div class="finalCta__main">
+        <h2><%= ctaHeading %></h2>
+        <p><%= ctaSubheading %></p>
+        <% if (locals.mainAction) { %>
+          <%- locals.mainAction %>
+        <% } else if (ctaBadge) { %>
+          <span class="finalCta__badge"><%= ctaBadge %></span>
+        <% } %>
+      </div>
+
+      <div class="finalCta__card" aria-label="حلول عند الطلب">
+        <h3><%= ctaCardHeading %></h3>
+        <p><%= ctaCardDesc %></p>
+        <div class="finalCta__actions">
+          <a class="btn btn--ghost" href="tel:+966580102121" dir="ltr">اتصال مباشر</a>
+          <a class="btn btn--primary" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">واتساب</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

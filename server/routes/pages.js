@@ -414,9 +414,41 @@ router.get("/blog/:slug", (req, res) => {
 router.get("/solutions", (req, res) => {
   const solutions = getSolutions();
   const content = loadHomeContent();
+  const siteUrl = absoluteUrl(req, "/");
+  const pageUrl = absoluteUrl(req, "/solutions");
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "الأنظمة والحلول", "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        "name": "حلول إنترنت الأشياء من أتكس",
+        "description": "كتالوج شامل لحلول إنترنت الأشياء والأنظمة الذكية المقدمة من أتكس في السعودية.",
+        "url": pageUrl,
+        "numberOfItems": solutions.length,
+        "itemListElement": solutions.map((s, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": s.title,
+          "url": absoluteUrl(req, `/solutions/${s.slug}`),
+          "description": s.summary,
+          "image": absoluteUrl(req, s.primaryImage),
+        })),
+      },
+    ],
+  };
+
   return res.render("solutions", {
     content,
     pageSolutions: solutions,
+    structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/solutions", {
       title: "أتكس | الأنظمة والحلول",
@@ -451,18 +483,76 @@ router.get("/solutions/:slug", (req, res) => {
     .slice(0, 3);
   const relatedIndustries = industries.filter((i) => (solution.industrySlugs || []).includes(i.slug)).slice(0, 3);
 
+  const siteUrl = absoluteUrl(req, "/");
+  const pageUrl = absoluteUrl(req, `/solutions/${solution.slug}`);
+  const solutionImage = absoluteUrl(req, solution.primaryImage);
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "الأنظمة والحلول", "item": absoluteUrl(req, "/solutions") },
+          { "@type": "ListItem", "position": 3, "name": solution.title, "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "Service",
+        "@id": `${pageUrl}#service`,
+        "name": solution.title,
+        "description": solution.details || solution.summary,
+        "url": pageUrl,
+        "image": solutionImage,
+        "provider": {
+          "@type": "Organization",
+          "name": "ATEX",
+          "url": siteUrl,
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "Saudi Arabia",
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": solution.title,
+          "itemListElement": (solution.features || []).map((f, idx) => ({
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": f,
+            },
+          })),
+        },
+      },
+      ...(solution.faqs && solution.faqs.length ? [{
+        "@type": "FAQPage",
+        "mainEntity": solution.faqs.map((faq) => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a,
+          },
+        })),
+      }] : []),
+    ],
+  };
+
   return res.render("solution-detail", {
     content,
     solution,
     relatedSolutions,
     relatedIndustries,
+    structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, {
       title: `أتكس | ${solution.title}`,
       description: solution.summary,
       ogTitle: solution.title,
       ogDescription: solution.summary,
-      ogImage: absoluteUrl(req, solution.primaryImage),
+      ogImage: solutionImage,
     }),
   });
 });
@@ -490,18 +580,71 @@ router.get("/industries/:slug", (req, res) => {
     })
     .slice(0, 3);
 
+  const siteUrl = absoluteUrl(req, "/");
+  const pageUrl = absoluteUrl(req, `/industries/${industry.slug}`);
+  const industryImage = absoluteUrl(req, industry.image);
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": industry.title, "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#page`,
+        "name": industry.metaTitle || industry.title,
+        "description": industry.metaDescription || industry.intro,
+        "url": pageUrl,
+        "image": industryImage,
+        "isPartOf": { "@id": `${siteUrl}#website` },
+        "about": {
+          "@type": "Thing",
+          "name": industry.title,
+          "description": industry.intro,
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": `حلول أتكس لـ ${industry.title}`,
+          "itemListElement": relatedSolutions.map((s, idx) => ({
+            "@type": "ListItem",
+            "position": idx + 1,
+            "name": s.title,
+            "url": absoluteUrl(req, `/solutions/${s.slug}`),
+          })),
+        },
+      },
+      ...(industry.faqs && industry.faqs.length ? [{
+        "@type": "FAQPage",
+        "mainEntity": industry.faqs.map((faq) => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a,
+          },
+        })),
+      }] : []),
+    ],
+  };
+
   return res.render("industry-detail", {
     content,
     industry,
     relatedSolutions,
     relatedIndustries,
+    structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, {
       title: `أتكس | ${industry.title}`,
       description: industry.metaDescription || industry.intro,
       ogTitle: industry.metaTitle || industry.title,
       ogDescription: industry.metaDescription || industry.intro,
-      ogImage: absoluteUrl(req, industry.image),
+      ogImage: industryImage,
     }),
   });
 });
@@ -509,8 +652,51 @@ router.get("/industries/:slug", (req, res) => {
 // Contact us page
 router.get("/contact-us", (req, res) => {
   const content = loadHomeContent();
+  const siteUrl = absoluteUrl(req, "/");
+  const pageUrl = absoluteUrl(req, "/contact-us");
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "تواصل معنا", "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "ContactPage",
+        "name": "تواصل مع أتكس",
+        "description": "تواصل مع فريق أتكس للحصول على استشارة وحلول تقنية تناسب مشروعك.",
+        "url": pageUrl,
+        "mainEntity": {
+          "@type": "Organization",
+          "name": "ATEX",
+          "url": siteUrl,
+          "telephone": "+966580102121",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "جدة",
+            "addressCountry": "SA",
+          },
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "telephone": "+966580102121",
+              "contactType": "sales",
+              "areaServed": "SA",
+              "availableLanguage": ["Arabic", "English"],
+            },
+          ],
+        },
+      },
+    ],
+  };
+
   return res.render("contact-us", {
     content,
+    structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/contact-us", {
       title: "ATEX | تواصل معنا",

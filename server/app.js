@@ -183,8 +183,139 @@ app.get("/robots.txt", (req, res) => {
   const host = req.get("host") || "atex.sa";
   const proto = req.protocol || "https";
   res.type("text/plain").send(
-    `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${proto}://${host}/sitemap.xml\n`
+    [
+      "User-agent: *",
+      "Allow: /",
+      "Disallow: /admin",
+      "Disallow: /api/",
+      "",
+      "# AI Crawlers",
+      "User-agent: GPTBot",
+      "Allow: /",
+      "User-agent: ChatGPT-User",
+      "Allow: /",
+      "User-agent: Google-Extended",
+      "Allow: /",
+      "User-agent: PerplexityBot",
+      "Allow: /",
+      "User-agent: ClaudeBot",
+      "Allow: /",
+      "User-agent: Amazonbot",
+      "Allow: /",
+      "",
+      `Sitemap: ${proto}://${host}/sitemap.xml`,
+      `# LLM-readable site summary: ${proto}://${host}/llms.txt`,
+      "",
+    ].join("\n")
   );
+});
+
+// llms.txt — Generative Engine Optimization (GEO) endpoint
+// Provides a clean, structured Markdown summary for AI crawlers and LLMs.
+app.get("/llms.txt", (req, res) => {
+  try {
+    const { getSolutions, getIndustries } = require("./data/contentRegistry");
+    const { getDb } = require("./db");
+    const db = getDb();
+    const solutions = getSolutions();
+    const industries = getIndustries();
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+    let blogSection = "";
+    try {
+      const posts = db
+        .prepare(
+          "SELECT title, slug, excerpt FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 10"
+        )
+        .all();
+      if (posts.length) {
+        blogSection =
+          "\n## Latest Articles\n\n" +
+          posts
+            .map(
+              (p) =>
+                `- [${p.title}](${baseUrl}/blog/${p.slug}): ${p.excerpt || ""}`
+            )
+            .join("\n");
+      }
+    } catch {
+      /* blog table may not exist */
+    }
+
+    const md = [
+      "# ATEX (إي تي إي إكس التجارية)",
+      "",
+      "> Saudi Arabian IoT systems integrator specializing in smart buildings, smart homes, smart hotels, smart offices, EV charging, security systems, BMS, ICT infrastructure, LED screens, facade lighting, and central vacuum systems.",
+      "",
+      "## Company Overview",
+      "",
+      "ATEX is a Saudi-based technology company headquartered in Jeddah, Saudi Arabia. We design, deploy, and maintain Internet of Things (IoT) solutions for residential, commercial, government, industrial, healthcare, education, and smart-city projects across the Kingdom.",
+      "",
+      "- **Website**: " + baseUrl,
+      "- **Phone**: +966 58 010 2121",
+      "- **Location**: Jeddah, Saudi Arabia",
+      "- **National Unified Number**: 7051668007",
+      "- **Languages**: Arabic (primary), English",
+      "",
+      "## Solutions & Services",
+      "",
+      ...solutions.map((s) => {
+        const features = (s.features || []).map((f) => `  - ${f}`).join("\n");
+        const useCases = (s.useCases || []).join("، ");
+        return [
+          `### ${s.title}`,
+          "",
+          s.summary,
+          "",
+          s.details || "",
+          "",
+          features ? `**Key capabilities:**\n${features}` : "",
+          useCases ? `**Use cases:** ${useCases}` : "",
+          "",
+          `Learn more: ${baseUrl}/solutions/${s.slug}`,
+          "",
+          "---",
+          "",
+        ].filter(Boolean).join("\n");
+      }),
+      "## Industries Served",
+      "",
+      ...industries.map((i) => {
+        const sols = (i.solutions || []).join("، ");
+        return [
+          `### ${i.title} (${i.englishTitle})`,
+          "",
+          i.intro || "",
+          "",
+          sols ? `**Solutions:** ${sols}` : "",
+          "",
+          `Learn more: ${baseUrl}/industries/${i.slug}`,
+          "",
+          "---",
+          "",
+        ].filter(Boolean).join("\n");
+      }),
+      blogSection,
+      "",
+      "## Contact",
+      "",
+      "For inquiries, consultations, or project proposals:",
+      "",
+      `- **Contact page**: ${baseUrl}/contact-us`,
+      "- **WhatsApp**: https://wa.me/966580102121",
+      "- **Phone**: +966 58 010 2121",
+      "",
+      "---",
+      "",
+      `*This document was auto-generated on ${new Date().toISOString().slice(0, 10)} for AI and LLM consumption. For the full interactive experience, visit [${baseUrl}](${baseUrl}).*`,
+      "",
+    ].join("\n");
+
+    res.type("text/plain; charset=utf-8").send(md);
+  } catch (err) {
+    console.error("Error generating llms.txt:", err);
+    res.status(500).send("Error generating llms.txt");
+  }
 });
 
 // Static public site

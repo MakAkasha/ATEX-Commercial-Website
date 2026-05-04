@@ -1,0 +1,8 @@
+<div class="industriesShowcase__grid">
+  <% (locals.items || []).forEach(function(item, idx){ %>
+    <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.image %>')" aria-label="عرض تفاصيل <%= item.title %>">
+      <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
+      <h3><%= item.title %></h3>
+    </a>
+  <% }) %>
+</div>

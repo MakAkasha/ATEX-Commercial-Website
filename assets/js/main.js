@@ -586,8 +586,9 @@ function initTilt() {
       clearResetTimer();
       rect = null;
       card.style.transition = "transform 220ms ease-out";
-      card.style.transform = "";
+      card.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translate3d(0,0,0)";
       resetTimer = window.setTimeout(() => {
+        card.style.transform = "";
         card.style.willChange = "";
       }, 220);
     };
@@ -615,15 +616,15 @@ function initGsap() {
   }
 
   // Intro
-  const heroCopyItems = qsa(".hero__copy > *");
-  const heroScene = qs(".hero__scene");
+  const heroCopyItems = qsa(".hero__copy > *, .solutionsPage__heroCopy > *, .subpage__head > *");
+  const heroScenes = qsa(".hero__scene, .solutionsPage__heroMedia");
   if (heroCopyItems.length) {
     gsap.set(heroCopyItems, { opacity: 0, y: 22 });
-    gsap.to(heroCopyItems, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.08 });
+    gsap.to(heroCopyItems, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", stagger: 0.05, delay: 0.05 });
   }
-  if (heroScene) {
-    gsap.set(heroScene, { opacity: 0, y: 22 });
-    gsap.to(heroScene, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out", delay: 0.2 });
+  if (heroScenes.length) {
+    gsap.set(heroScenes, { opacity: 0, y: 22 });
+    gsap.to(heroScenes, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", delay: 0.1 });
   }
 
   // Ambient loops (desktop/fine pointer only)
@@ -662,7 +663,7 @@ function initGsap() {
     const isWhySection = sec.id === "why";
     const items = isWhySection
       ? qsa(".section__head, .whyKeypoints__item", sec)
-      : qsa(".section__head, .grid > *, .banner, .cta, .footer", sec);
+      : qsa(".section__head, .grid > *, .industriesShowcase__grid > *, .finalCta__band, .banner, .cta, .footer", sec);
     if (!items.length) return;
 
     gsap.from(items, {
@@ -671,6 +672,7 @@ function initGsap() {
       duration: 0.9,
       ease: "power3.out",
       stagger: 0.06,
+      clearProps: "opacity,transform",
       ...withScrollTrigger({ trigger: sec, start: "top 78%", once: true }),
     });
   });
@@ -687,6 +689,7 @@ function initGsap() {
         duration: 0.5,
         ease: "power2.out",
         stagger: 0.08,
+        clearProps: "opacity,transform",
         ...withScrollTrigger({ trigger: trustStrip, start: "top 88%", once: true }),
       });
     }
@@ -725,6 +728,7 @@ function initGsap() {
         duration: 0.75,
         ease: "power3.out",
         stagger: 0.06,
+        clearProps: "opacity,transform",
         ...withScrollTrigger({ trigger: why, start: "top 75%", once: true }),
       });
     }

@@ -6,7 +6,8 @@
         <img src="/assets/ATEX-footer-logo.svg" alt="ATEX" width="170" height="32" />
       </a>
       <p class="footer__desc">شركة سعودية متخصصة في حلول إنترنت الأشياء للشركات.</p>
-      <p class="muted"><%= (__homeContent?.contact?.address || 'جدة، المملكة العربية السعودية') %></p>
+      <p class="muted" style="margin-bottom: 2px; font-size: 13px;"><%= (__homeContent?.contact?.address || 'جدة، المملكة العربية السعودية') %></p>
+      <p class="muted" style="margin-top: 0; font-size: 13px;">الرقم الوطني الموحد: <span dir="ltr">7051668007</span></p>
     </div>
     <div class="footer__col">
       <h3 class="footer__title">روابط سريعة</h3>
@@ -28,9 +29,15 @@
   </div>
   <div class="footer__bottom">
     <div class="container footer__bottomInner">
-      <span>© 2026 أتكس. جميع الحقوق محفوظة</span>
+      <div class="footer__copyright">
+        <span>© 2026 إي تي إي إكس التجارية. جميع الحقوق محفوظة</span>
+      </div>
+      <div class="footer__versionTag">
+        <span class="footer__version" dir="ltr">v4.5.48</span>
+      </div>
       <div class="footer__legal">
         <a class="footer__link" href="/privacy">سياسة الخصوصية</a>
+        <span class="footer__sep" aria-hidden="true">·</span>
         <a class="footer__link" href="/terms">الشروط والأحكام</a>
       </div>
     </div>

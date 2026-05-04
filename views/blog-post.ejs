@@ -17,7 +17,6 @@
         </nav>
 
         <header class="subpage__head">
-          <span class="subpage__kicker">ARTICLE</span>
           <h1 class="subpage__title"><%= post.title %></h1>
           <div class="blogPostHeadMeta">
             <% if (post.formattedDate) { %>
@@ -28,7 +27,6 @@
             <% if (post.readingTime) { %>
               <span class="blogReadingTime blogReadingTime--lg"><i class="fa-regular fa-clock" aria-hidden="true"></i> وقت القراءة: <%= post.readingTime %> دقيقة</span>
             <% } %>
-            <span class="blogPostHeadMeta__pill">أتكس إنسايت</span>
             <% if (post.tags && post.tags.length) { %>
               <% post.tags.slice(0, 3).forEach(function(tag){ %>
                 <span class="blogPostHeadMeta__pill blogPostHeadMeta__pill--tag"><%= tag %></span>
@@ -120,6 +118,14 @@
           </section>
         <% } %>
       </div>
+
+      <%- include('partials/final-cta', {
+        heading: 'هل واجهت تحديات مشابهة في مشروعك؟',
+        subheading: 'دعنا نحول هذه الأفكار إلى واقع. تحدث مع خبرائنا لتصميم حل ذكي متكامل لمنشأتك.',
+        mainAction: '<a class="btn btn--primary" href="/contact-us">احجز استشارتك المجانية</a>',
+        cardHeading: 'دعم فني متخصص',
+        cardDesc: 'المهندسون لدينا جاهزون لتحليل متطلباتك وتقديم مقترح تقني شامل.'
+      }) %>
     </main>
     <%- include('partials/site-footer') %>
 
