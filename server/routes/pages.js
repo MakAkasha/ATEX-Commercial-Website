@@ -354,7 +354,8 @@ router.get("/blog/:slug", (req, res) => {
 
   const siteUrl = absoluteUrl(req, "/");
   const postUrl = absoluteUrl(req, `/blog/${post.slug}`);
-  const coverImage = post.cover_image ? absoluteUrl(req, post.cover_image) : absoluteUrl(req, "/assets/solutions/smart-building.webp");
+  const coverImageSrc = post.cover_image && !post.cover_image.startsWith("data:") ? post.cover_image : null;
+  const coverImage = coverImageSrc ? absoluteUrl(req, coverImageSrc) : absoluteUrl(req, "/assets/solutions/smart-building.webp");
 
   const structuredData = {
     "@context": "https://schema.org",

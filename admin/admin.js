@@ -1259,6 +1259,16 @@
       .replace(/^\-+|\-+$/g, "");
   }
 
+  function generatePostSlug() {
+    const digits = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+    return `P${digits}`;
+  }
+
+  function updatePostSlugHint(slug) {
+    const hint = $("#postSlugHint");
+    if (hint) hint.textContent = slug ? `/blog/${slug}` : "";
+  }
+
   function normalizeTagsInput(value) {
     return String(value || "")
       .split(",")
@@ -1398,6 +1408,7 @@
     currentPostId = p.id;
     $("#postTitle").value = p.title || "";
     $("#postSlug").value = p.slug || "";
+    updatePostSlugHint(p.slug || "");
     $("#postExcerpt").value = p.excerpt || "";
     $("#postTags").value = Array.isArray(p.tags) ? p.tags.join(", ") : "";
     $("#postCover").value = p.cover_image || "";
@@ -1413,7 +1424,9 @@
   function newPost() {
     currentPostId = null;
     $("#postTitle").value = "";
-    $("#postSlug").value = "";
+    const newSlug = generatePostSlug();
+    $("#postSlug").value = newSlug;
+    updatePostSlugHint(newSlug);
     $("#postExcerpt").value = "";
     $("#postTags").value = "";
     $("#postCover").value = "";
@@ -1473,9 +1486,14 @@
     window.open(`/blog/${encodeURIComponent(slug)}`, "_blank", "noopener");
   });
 
-  $("#postTitle")?.addEventListener("input", (e) => {
-    const slugInput = $("#postSlug");
-    if (!slugInput.value) slugInput.value = slugifyArabic(e.target.value);
+  $("#postSlug")?.addEventListener("input", (e) => {
+    updatePostSlugHint(e.target.value.trim());
+  });
+
+  $("#regenSlugBtn")?.addEventListener("click", () => {
+    const s = generatePostSlug();
+    $("#postSlug").value = s;
+    updatePostSlugHint(s);
   });
 
   async function savePost() {

@@ -715,7 +715,11 @@
                       <div class="col-lg-4">
                         <div class="mb-3">
                           <label class="form-label">Slug</label>
-                          <input class="form-control" id="postSlug" type="text" dir="ltr" />
+                          <div class="input-group">
+                            <input class="form-control" id="postSlug" type="text" dir="ltr" placeholder="P######" />
+                            <button class="btn btn-outline-secondary" type="button" id="regenSlugBtn" title="توليد slug جديد">&#8635;</button>
+                          </div>
+                          <div class="form-hint" id="postSlugHint"></div>
                         </div>
                         <div class="mb-3">
                           <label class="form-label">ملخص</label>

@@ -5,18 +5,54 @@
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="subpage">
-      <div class="container">
-        <header class="subpage__head">
-          <span class="subpage__kicker">404</span>
-          <h1 class="subpage__title">الصفحة غير موجودة</h1>
-          <p class="subpage__desc">قد يكون الرابط غير صحيح أو تم نقل الصفحة. يمكنك الرجوع للرئيسية أو متابعة أحدث المقالات.</p>
-        </header>
-        <div class="subpage__panel">
-          <div class="contactQuickActions">
-            <a class="btn btn--primary btn--small" href="/">العودة للرئيسية</a>
-            <a class="btn btn--ghost btn--small" href="/blog">المدونة</a>
-          </div>
+    <main class="nf" role="main">
+      <div class="nf__bg" aria-hidden="true">
+        <div class="nf__bg-num">404</div>
+        <div class="nf__bg-circle nf__bg-circle--a"></div>
+        <div class="nf__bg-circle nf__bg-circle--b"></div>
+      </div>
+
+      <div class="nf__content">
+        <div class="nf__badge">
+          <span class="nf__badge-dot"></span>
+          خطأ 404
+        </div>
+
+        <div class="nf__code" aria-label="خطأ 404">404</div>
+
+        <div class="nf__divider"></div>
+
+        <h1 class="nf__title">الصفحة غير موجودة</h1>
+        <p class="nf__desc">
+          قد يكون الرابط غير صحيح أو تمت إزالة الصفحة.<br />
+          تحقق من العنوان أو انتقل لأحد الروابط أدناه.
+        </p>
+
+        <div class="nf__actions">
+          <a class="btn btn--primary" href="/">العودة للرئيسية</a>
+          <a class="btn btn--ghost" href="/contact-us">تواصل معنا</a>
+        </div>
+
+        <div class="nf__links" aria-label="روابط سريعة">
+          <p class="nf__links-label">تصفح الموقع</p>
+          <nav class="nf__quicknav" aria-label="تنقل سريع">
+            <a class="nf__quicknav-link" href="/blog">
+              <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
+              المدونة
+            </a>
+            <a class="nf__quicknav-link" href="/solutions">
+              <i class="fa-regular fa-lightbulb" aria-hidden="true"></i>
+              الحلول
+            </a>
+            <a class="nf__quicknav-link" href="/products">
+              <i class="fa-regular fa-box" aria-hidden="true"></i>
+              المنتجات
+            </a>
+            <a class="nf__quicknav-link" href="/industries">
+              <i class="fa-regular fa-building" aria-hidden="true"></i>
+              القطاعات
+            </a>
+          </nav>
         </div>
       </div>
     </main>

@@ -6,6 +6,11 @@ const { safeJsonParse, parsePositiveInt, nonEmptyString, toSqliteBool } = requir
 
 const router = express.Router();
 
+function generatePostSlug() {
+  const digits = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+  return `P${digits}`;
+}
+
 function sanitizePostHtml(html) {
   return sanitizeHtml(html || "", {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "h3", "h4", "span"]),
@@ -36,24 +41,27 @@ router.get("/", requireAdmin, (req, res) => {
 
 router.post("/", requireAdmin, (req, res) => {
   const { slug, title, excerpt, cover_image, content_html, tags, published } = req.body || {};
-  const cleanSlug = nonEmptyString(slug);
   const cleanTitle = nonEmptyString(title);
-  if (!cleanSlug || !cleanTitle) return res.status(400).json({ error: "MISSING_FIELDS" });
+  if (!cleanTitle) return res.status(400).json({ error: "MISSING_FIELDS" });
 
   const db = getDb();
   const clean = sanitizePostHtml(content_html);
   const tagsJson = JSON.stringify(Array.isArray(tags) ? tags : []);
-  try {
-    const info = db
-      .prepare(
-        "INSERT INTO posts (slug, title, excerpt, cover_image, content_html, tags_json, published) VALUES (?, ?, ?, ?, ?, ?, ?)"
-      )
-      .run(cleanSlug, cleanTitle, excerpt || "", cover_image || "", clean, tagsJson, toSqliteBool(published));
+  const stmt = db.prepare(
+    "INSERT INTO posts (slug, title, excerpt, cover_image, content_html, tags_json, published) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  );
 
-    return res.json({ ok: true, id: info.lastInsertRowid });
-  } catch (e) {
-    if (String(e.message || "").includes("UNIQUE")) return res.status(409).json({ error: "SLUG_EXISTS" });
-    return res.status(500).json({ error: "SERVER_ERROR" });
+  const userSlug = nonEmptyString(slug);
+  const attempts = userSlug ? 1 : 3;
+  for (let i = 0; i < attempts; i++) {
+    const trySlug = userSlug || generatePostSlug();
+    try {
+      const info = stmt.run(trySlug, cleanTitle, excerpt || "", cover_image || "", clean, tagsJson, toSqliteBool(published));
+      return res.json({ ok: true, id: info.lastInsertRowid, slug: trySlug });
+    } catch (e) {
+      if (!String(e.message || "").includes("UNIQUE")) return res.status(500).json({ error: "SERVER_ERROR" });
+      if (userSlug || i === attempts - 1) return res.status(409).json({ error: "SLUG_EXISTS" });
+    }
   }
 });
 
