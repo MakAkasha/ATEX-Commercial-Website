@@ -225,17 +225,19 @@ app.get("/llms.txt", (req, res) => {
     try {
       const posts = db
         .prepare(
-          "SELECT title, slug, excerpt FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 10"
+          "SELECT title, slug, excerpt, tags_json FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 10"
         )
         .all();
       if (posts.length) {
         blogSection =
           "\n## Latest Articles\n\n" +
           posts
-            .map(
-              (p) =>
-                `- [${p.title}](${baseUrl}/blog/${p.slug}): ${p.excerpt || ""}`
-            )
+            .map((p) => {
+              let tags = [];
+              try { tags = JSON.parse(p.tags_json || "[]"); } catch {}
+              const tagStr = tags.length ? ` [${tags.join(", ")}]` : "";
+              return `- [${p.title}](${baseUrl}/blog/${p.slug})${tagStr}: ${p.excerpt || ""}`;
+            })
             .join("\n");
       }
     } catch {

@@ -357,6 +357,12 @@ router.get("/blog/:slug", (req, res) => {
   const coverImageSrc = post.cover_image && !post.cover_image.startsWith("data:") ? post.cover_image : null;
   const coverImage = coverImageSrc ? absoluteUrl(req, coverImageSrc) : absoluteUrl(req, "/assets/solutions/smart-building.webp");
 
+  const postSection = (post.tags && post.tags.length) ? post.tags[0] : "حلول إنترنت الأشياء";
+  const postKeywords = (post.tags && post.tags.length) ? post.tags.join("، ") : "";
+
+  // Approximate word count from stripped HTML for Article schema
+  const wordCount = (post.content_html || "").replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -371,6 +377,7 @@ router.get("/blog/:slug", (req, res) => {
       {
         "@type": "Article",
         "@id": `${postUrl}#article`,
+        "mainEntityOfPage": { "@type": "WebPage", "@id": postUrl },
         "headline": post.title,
         "description": post.excerpt || "",
         "image": coverImage,
@@ -386,6 +393,7 @@ router.get("/blog/:slug", (req, res) => {
         },
         "isPartOf": { "@type": "Blog", "url": absoluteUrl(req, "/blog") },
         ...(post.tags.length ? { "keywords": post.tags.join(", ") } : {}),
+        ...(wordCount > 0 ? { "wordCount": wordCount } : {}),
       },
     ],
   };
@@ -399,13 +407,17 @@ router.get("/blog/:slug", (req, res) => {
     meta: withMeta(req, {
       title: `${post.title} | أتكس`,
       ogTitle: post.title,
+      ogImageAlt: post.title,
       description: post.excerpt || "",
+      keywords: postKeywords,
+      author: "أتكس",
       ogType: "article",
       ogImage: coverImage,
+      preloadImage: coverImageSrc || null,
       articlePublishedTime: post.isoPublished,
       articleModifiedTime: post.isoModified,
       articleAuthor: "أتكس",
-      articleSection: "حلول إنترنت الأشياء",
+      articleSection: postSection,
       articleTags: post.tags || [],
     }),
   });
