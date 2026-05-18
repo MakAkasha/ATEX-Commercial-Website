@@ -334,6 +334,12 @@ app.use(
   })
 );
 
+// Version endpoint (admin panel reads this)
+app.get("/api/version", (req, res) => {
+  const { version } = require("../package.json");
+  res.json({ version: `v.${version}` });
+});
+
 // APIs
 app.use("/api/auth", authRoutes);
 app.use("/api/content", contentRoutes);

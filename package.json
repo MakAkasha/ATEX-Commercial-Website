@@ -1,6 +1,6 @@
 {
   "name": "at4",
-  "version": "1.0.0",
+  "version": "0.4.246",
   "description": "",
   "main": "server/app.js",
   "scripts": {

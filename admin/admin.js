@@ -2670,6 +2670,14 @@
     if (!inside) box.hidden = true;
   });
 
+  // Inject version into navbar badge and footer
+  fetch('/api/version').then(r => r.json()).then(({ version }) => {
+    const badge = $('#adminVersionBadge');
+    const foot = $('#adminVersionFooter');
+    if (badge) badge.textContent = version;
+    if (foot) foot.textContent = version;
+  }).catch(() => {});
+
   // Load module data
   loadCurrentAdminUser().catch(() => {});
   loadAnalyticsForm().catch(() => {});
