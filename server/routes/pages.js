@@ -189,7 +189,7 @@ router.get("/", (req, res) => {
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "SA",
-          "addressLocality": "الرياض"
+          "addressLocality": "جدة"
         },
         "contactPoint": {
           "@type": "ContactPoint",
