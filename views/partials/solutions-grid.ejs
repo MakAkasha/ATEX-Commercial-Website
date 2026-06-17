@@ -1,6 +1,6 @@
 <div class="grid grid--cards">
   <% (locals.items || []).forEach(function(c, idx){ %>
-    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage %>')" aria-label="عرض تفاصيل <%= c.title %>">
+    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage || '/assets/ATEX-logo.svg' %>')" aria-label="عرض تفاصيل <%= c.title %>">
       <span class="solutionCard__num" aria-hidden="true"><%= String(idx + 1).padStart(2, '0') %></span>
       <div class="solutionCard__body">
         <h3 class="card__title"><%= c.title %></h3>

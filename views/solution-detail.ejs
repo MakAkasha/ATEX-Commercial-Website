@@ -30,7 +30,7 @@
 
           <div class="solutionsPage__heroMedia solutionsPage__heroMedia--single" aria-hidden="true">
             <figure class="solutionsPage__heroPrimary">
-              <img src="<%= solution.primaryImage %>" alt="<%= solution.title %>" loading="lazy" />
+              <img src="<%= solution.primaryImage || '/assets/ATEX-logo.svg' %>" alt="<%= solution.title %>" loading="lazy" onerror="this.onerror=null;this.src='/assets/ATEX-logo.svg'" />
             </figure>
           </div>
         </div>
