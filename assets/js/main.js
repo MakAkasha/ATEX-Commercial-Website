@@ -481,12 +481,6 @@ function safeImg(src, alt) {
   return `<img src="${s}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_IMG}'" />`;
 }
 
-async function loadJson(path) {
-  const res = await fetch(path, { cache: "default" });
-  if (!res.ok) throw new Error(`فشل تحميل البيانات: ${path}`);
-  return res.json();
-}
-
 function renderProducts(items) {
   const grid = qs("#productsGrid");
   if (!grid) return;
@@ -1043,13 +1037,8 @@ async function bootstrap() {
     renderProducts(products);
     renderPosts(posts);
   } catch (e) {
-    // Fallback to static JSON if API is unavailable.
-    Promise.all([loadJson("data/products.json"), loadJson("data/posts.json")])
-      .then(([products, posts]) => {
-        renderProducts(products);
-        renderPosts(posts);
-      })
-      .catch((err) => console.warn(err || e));
+    // Public APIs are the single source of truth; raw /data JSON is no longer served.
+    console.warn(e);
   }
 
   initTilt();

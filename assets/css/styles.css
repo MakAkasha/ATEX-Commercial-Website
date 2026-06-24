@@ -5437,3 +5437,30 @@ body.has-hero-video .header.is-scrolled {
   display: inline-flex;
   align-items: center;
 }
+
+/* Print stylesheet: strip chrome, force readable black-on-white, expose link URLs */
+@media print {
+  .topbar,
+  .header,
+  .nav,
+  footer,
+  .waBtn,
+  .scrollProgress {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .container {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}

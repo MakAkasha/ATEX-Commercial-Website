@@ -2,8 +2,10 @@ const express = require("express");
 const { getDb } = require("../db");
 const { requireAdmin } = require("../auth");
 const { safeJsonParse, parseBoolean } = require("../utils/safe");
+const { memoize } = require("../utils/ttlCache");
 
 const router = express.Router();
+const SETTINGS_TTL_MS = 60_000;
 
 const KEY_ANALYTICS = "analytics";
 const KEY_GENERAL = "general";
@@ -22,7 +24,7 @@ function cleanPageSeoEntry(entry) {
   };
 }
 
-function loadPageSeoSettings() {
+function loadPageSeoSettingsRaw() {
   const db = getDb();
   const row = db.prepare("SELECT value_json FROM settings WHERE key = ?").get(KEY_PAGE_SEO);
   const parsed = safeJsonParse(row?.value_json || "", {});
@@ -33,6 +35,9 @@ function loadPageSeoSettings() {
   return result;
 }
 
+// 60s TTL cache; busted on save below. Page SEO settings are global, not per-user.
+const loadPageSeoSettings = memoize(loadPageSeoSettingsRaw, SETTINGS_TTL_MS);
+
 function savePageSeoSettings(next) {
   const clean = {};
   PAGE_SEO_ROUTES.forEach((route) => {
@@ -42,6 +47,7 @@ function savePageSeoSettings(next) {
   db.prepare(
     "INSERT INTO settings (key, value_json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json"
   ).run(KEY_PAGE_SEO, JSON.stringify(clean));
+  loadPageSeoSettings.bust();
   return clean;
 }
 
@@ -94,7 +100,7 @@ function saveAnalyticsSettings(next) {
   return clean;
 }
 
-function loadGeneralSettings() {
+function loadGeneralSettingsRaw() {
   const db = getDb();
   const row = db.prepare("SELECT value_json FROM settings WHERE key = ?").get(KEY_GENERAL);
   const base = {
@@ -115,6 +121,9 @@ function loadGeneralSettings() {
   };
 }
 
+// 60s TTL cache; busted on save below. General settings are global, not per-user.
+const loadGeneralSettings = memoize(loadGeneralSettingsRaw, SETTINGS_TTL_MS);
+
 function saveGeneralSettings(next) {
   const clean = {
     companyName: String(next.companyName || "ATEX").trim() || "ATEX",
@@ -128,6 +137,7 @@ function saveGeneralSettings(next) {
   db.prepare(
     "INSERT INTO settings (key, value_json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json"
   ).run(KEY_GENERAL, JSON.stringify(clean));
+  loadGeneralSettings.bust();
   return clean;
 }
 

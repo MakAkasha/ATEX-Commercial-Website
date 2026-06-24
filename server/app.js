@@ -18,6 +18,7 @@ const { router: customPagesRoutes } = require("./routes/customPages");
 const { router: settingsRoutes } = require("./routes/settings");
 const pagesRoutes = require("./routes/pages");
 const { getSolutions, getIndustries } = require("./data/contentRegistry");
+const { memoize } = require("./utils/ttlCache");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -123,13 +124,24 @@ app.get("/readyz", (req, res) => {
   }
 });
 
+// Sitemap source data (request-independent). Cached 60s; rebuilt per-request
+// into URLs using the request's baseUrl, so nothing request-specific is cached.
+const SITEMAP_TTL_MS = 60_000;
+const loadSitemapData = memoize(() => {
+  const db = getDb();
+  const solutionSlugs = getSolutions().map((s) => s.slug);
+  const industrySlugs = getIndustries().map((i) => i.slug);
+  const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
+  return { solutionSlugs, industrySlugs, posts };
+}, SITEMAP_TTL_MS);
+
 // Sitemap.xml generator
 app.get("/sitemap.xml", (req, res) => {
   try {
-    const db = getDb();
     const proto = req.get("x-forwarded-proto") || req.protocol;
     const baseUrl = `${proto}://${req.get("host")}`;
-    
+    const { solutionSlugs, industrySlugs, posts } = loadSitemapData();
+
     // Get all static routes
     const staticUrls = [
       { loc: baseUrl, priority: "1.0", changefreq: "daily" },
@@ -139,32 +151,31 @@ app.get("/sitemap.xml", (req, res) => {
       { loc: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
     ];
-    
+
     // Solutions + industries are file-based (contentRegistry), not DB tables
-    const solutionUrls = getSolutions().map(s => ({
-      loc: `${baseUrl}/solutions/${s.slug}`,
+    const solutionUrls = solutionSlugs.map(slug => ({
+      loc: `${baseUrl}/solutions/${slug}`,
       priority: "0.8",
       changefreq: "weekly",
     }));
 
-    const industryUrls = getIndustries().map(i => ({
-      loc: `${baseUrl}/industries/${i.slug}`,
+    const industryUrls = industrySlugs.map(slug => ({
+      loc: `${baseUrl}/industries/${slug}`,
       priority: "0.8",
       changefreq: "weekly",
     }));
-    
+
     // Get all published blog posts
-    const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
     const postUrls = posts.map(p => ({
       loc: `${baseUrl}/blog/${p.slug}`,
       priority: "0.7",
       changefreq: "weekly",
       lastmod: p.updated_at ? new Date(p.updated_at.replace(' ', 'T') + 'Z').toISOString() : new Date().toISOString()
     }));
-    
+
     // Combine all URLs
     const allUrls = [...staticUrls, ...solutionUrls, ...industryUrls, ...postUrls];
-    
+
     // Generate XML
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -330,7 +341,9 @@ app.get("/llms.txt", (req, res) => {
 // Static public site
 const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
 app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" }));
-app.use("/data", express.static(path.join(ROOT_DIR, "data"), { maxAge: "1h" }));
+// Note: /data is intentionally NOT served statically. The JSON source files
+// (products.json, posts.json) are read server-side (DB seed in db.js, contentRegistry)
+// and exposed to clients only via /api/products/public and /api/posts/public.
 app.use("/uploads", express.static(UPLOADS_DIR, { maxAge: "30d" }));
 app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce"), { maxAge: "1y", immutable: true }));
 

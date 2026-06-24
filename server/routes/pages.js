@@ -10,9 +10,11 @@ const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
 const { safeJsonParse } = require("../utils/safe");
+const { memoize } = require("../utils/ttlCache");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
+const HOME_CONTENT_TTL_MS = 60_000;
 
 function loadPartnerLogos() {
   const dir = path.join(ROOT_DIR, "assets", "social-logos");
@@ -43,7 +45,7 @@ function loadPartnerLogos() {
   ];
 }
 
-function loadHomeContent() {
+function loadHomeContentRaw() {
   const db = getDb();
   const row = db.prepare("SELECT content_json FROM home_content WHERE id = 1").get();
   try {
@@ -52,6 +54,10 @@ function loadHomeContent() {
     return normalizeHomeContent(null);
   }
 }
+
+// 60s in-process TTL cache. Home content is global (not request-specific).
+// Admin edits become visible within HOME_CONTENT_TTL_MS at the latest.
+const loadHomeContent = memoize(loadHomeContentRaw, HOME_CONTENT_TTL_MS);
 
 function parseCookie(cookieHeader) {
   const safeDecode = (value) => {
