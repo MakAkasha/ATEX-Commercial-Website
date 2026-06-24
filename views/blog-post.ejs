@@ -131,8 +131,8 @@
 
     <script>
       (function() {
-        var url = '<%= (meta?.canonical || "").replace(/'/g, "\\'") %>';
-        var title = '<%= post.title.replace(/'/g, "\\'") %>';
+        var url = <%- JSON.stringify(meta?.canonical || "") %>;
+        var title = <%- JSON.stringify(post.title || "") %>;
 
         var nativeBtn = document.getElementById('blogShareNative');
         if (nativeBtn) {

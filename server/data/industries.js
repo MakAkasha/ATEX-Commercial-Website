@@ -6,7 +6,7 @@ const industries = [
     shortTitle: "السكني",
     image: "/assets/solutions/residential.webp",
     solutionSlugs: ["smart-home", "indoor-lighting-control", "central-vacuum", "security-systems"],
-    metaTitle: "حلول المنازل الذكية في مصر والسعودية | رفاهية وأمان | اتكس",
+    metaTitle: "حلول المنازل الذكية في المملكة العربية السعودية | رفاهية وأمان | اتكس",
     metaDescription:
       "تحول إلى نمط حياة ذكي مع حلول اتكس السكنية. ندمج أنظمة الإضاءة، التكييف، والأمن في منصة واحدة لضمان راحتك وتوفير طاقتك.",
     heroTitle: "منازل ذكية تعيد تعريف مفهوم الراحة والرفاهية",

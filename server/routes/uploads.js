@@ -7,7 +7,7 @@ const { requireAdmin } = require("../auth");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
-const UPLOADS_DIR = path.join(ROOT_DIR, "uploads");
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
 
 const uploadLimiter = rateLimit({
   windowMs: 60 * 1000,

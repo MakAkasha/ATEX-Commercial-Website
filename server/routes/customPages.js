@@ -24,9 +24,9 @@ function sanitizePageHtml(html) {
     allowedAttributes: {
       a: ["href", "name", "target", "rel"],
       img: ["src", "alt", "title", "width", "height", "loading"],
-      "*": ["style", "class", "id"],
+      "*": ["class", "id"],
     },
-    allowedSchemes: ["http", "https", "data"],
+    allowedSchemes: ["http", "https"],
   });
 }
 

@@ -107,7 +107,8 @@ function applyPageSeo(route, defaults) {
 }
 
 function absoluteUrl(req, pathname = "/") {
-  const origin = `${req.protocol}://${req.get("host")}`;
+  const proto = req.get("x-forwarded-proto") || req.protocol;
+  const origin = `${proto}://${req.get("host")}`;
   return new URL(pathname, origin).toString();
 }
 
@@ -160,7 +161,7 @@ router.get("/", (req, res) => {
   const industries = getIndustries();
   const content = loadHomeContent();
   const db = getDb();
-  const socialLogos = loadPartnerLogos();
+  const socialLogos = []; // partner logos hidden pending verification of client relationships
   const pageSolutions = solutions;
   const pageIndustries = industries;
   const latestPosts = db
@@ -336,7 +337,7 @@ router.get("/blog/:slug", (req, res) => {
   if (!rawPost)
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
 
   const post = processPost(rawPost);
 
@@ -483,7 +484,7 @@ router.get("/solutions/:slug", (req, res) => {
   if (!solution) {
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
   }
 
   const relatedSolutions = solutions
@@ -580,7 +581,7 @@ router.get("/industries/:slug", (req, res) => {
   if (!industry) {
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
   }
 
   const relatedSolutions = solutions.filter((s) => (industry.solutionSlugs || []).includes(s.slug)).slice(0, 4);
@@ -729,7 +730,7 @@ router.get("/rec/:slug", (req, res) => {
   if (!row)
     return res
       .status(404)
-      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+      .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
 
   const page = {
     id: row.id,
@@ -756,7 +757,7 @@ router.get("/rec/:slug", (req, res) => {
 
 router.use((req, res) => {
   const content = loadHomeContent();
-  res.status(404).render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود" } });
+  res.status(404).render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
 });
 
 module.exports = router;

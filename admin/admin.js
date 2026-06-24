@@ -1712,7 +1712,7 @@
       const topBody = $("#topUrlsBody");
       if (topBody) {
         topBody.innerHTML = (top.top || [])
-          .map((r) => `<tr><td dir="ltr">${r.path}</td><td>${r.visits}</td></tr>`)
+          .map((r) => `<tr><td dir="ltr">${escapeHtml(r.path)}</td><td>${escapeHtml(String(r.visits))}</td></tr>`)
           .join("") || `<tr><td colspan="2" class="text-center text-muted py-4">لا توجد بيانات بعد</td></tr>`;
       }
 
@@ -1726,7 +1726,7 @@
           trend.innerHTML = series
             .map((x) => {
               const h = Math.max(6, Math.round(((x.visits || 0) / max) * 100));
-              return `<div class="trend__bar" title="${x.day}: ${x.visits}" style="height:${h}%"></div>`;
+              return `<div class="trend__bar" title="${escapeHtml(x.day)}: ${escapeHtml(String(x.visits))}" style="height:${h}%"></div>`;
             })
             .join("");
         }
@@ -2641,7 +2641,7 @@
 
     box.innerHTML = items
       .slice(0, 10)
-      .map((it, idx) => `<div class="search__item" data-idx="${idx}">${it.label}</div>`)
+      .map((it, idx) => `<div class="search__item" data-idx="${idx}">${escapeHtml(it.label)}</div>`)
       .join('') || `<div class="search__item muted">لا توجد نتائج</div>`;
     box.hidden = false;
 

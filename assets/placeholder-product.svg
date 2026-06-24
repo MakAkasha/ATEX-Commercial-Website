@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="ATEX">
+  <rect width="400" height="300" fill="#f3f5f7"/>
+  <rect x="0.5" y="0.5" width="399" height="299" fill="none" stroke="#e2e6ea"/>
+  <g fill="#ff9933">
+    <rect x="170" y="120" width="60" height="60" rx="10"/>
+  </g>
+  <text x="200" y="210" text-anchor="middle" font-family="Cairo, Arial, sans-serif" font-size="22" font-weight="700" fill="#002b44">ATEX</text>
+</svg>

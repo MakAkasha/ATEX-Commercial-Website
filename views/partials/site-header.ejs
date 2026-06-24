@@ -2,13 +2,17 @@
 <!-- Top bar -->
 <% const __homeContent = (typeof content !== 'undefined') ? content : null; %>
 <% const __topbarPhone = '+966580102121'; %>
+<% const __topbarSales = '0509330008'; %>
 <% const __topbarWhatsapp = 'https://wa.me/966580102121'; %>
 <div class="topbar">
   <div class="container topbar__inner">
     <div class="topbar__item">
       <span>
-        <%= (__homeContent?.topbar?.supportText || 'الدعم والمبيعات:') %>
+        <%= (__homeContent?.topbar?.supportText || 'خدمة العملاء:') %>
         <a href="<%= __topbarWhatsapp %>" target="_blank" rel="noopener noreferrer" dir="ltr"><strong><%= __topbarPhone %></strong></a>
+        <span class="topbar__sep" aria-hidden="true">·</span>
+        المبيعات:
+        <a href="tel:<%= __topbarSales %>" dir="ltr"><strong><%= __topbarSales %></strong></a>
       </span>
     </div>
     <div class="topbar__item">

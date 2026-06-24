@@ -17,9 +17,9 @@ function sanitizePostHtml(html) {
     allowedAttributes: {
       a: ["href", "name", "target", "rel"],
       img: ["src", "alt", "title", "width", "height", "loading"],
-      "*": ["style", "class"],
+      "*": ["class"],
     },
-    allowedSchemes: ["http", "https", "data"],
+    allowedSchemes: ["http", "https"],
   });
 }
 

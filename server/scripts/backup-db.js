@@ -23,7 +23,7 @@ function copyIfExists(src, destDir, suffix) {
 
 function main() {
   const root = path.resolve(__dirname, "..", "..");
-  const backupsDir = path.join(root, "server", "backups");
+  const backupsDir = process.env.BACKUPS_DIR || path.join(root, "server", "backups");
   fs.mkdirSync(backupsDir, { recursive: true });
 
   if (!fs.existsSync(DB_PATH)) {

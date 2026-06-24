@@ -4,20 +4,20 @@
     "category": "أجهزة",
     "title": "جهاز تتبّع أصول صناعي",
     "description": "تتبّع المواقع والحركة والتنبيهات الجغرافية مع عمر بطارية طويل وإعدادات مرنة حسب المشروع.",
-    "image": "https://demo2.themelexus.com/priotech/wp-content/uploads/2023/06/product-7-1.jpg"
+    "image": "/assets/placeholder-product.svg"
   },
   {
     "id": "cold-chain-sensor",
     "category": "حساسات",
     "title": "حساس سلسلة التبريد",
     "description": "قياس الحرارة والرطوبة مع سجلات وتقارير، وتنبيهات عند تجاوز الحدود لضمان الجودة والامتثال.",
-    "image": "https://demo2.themelexus.com/priotech/wp-content/uploads/2023/06/product-10-1.jpg"
+    "image": "/assets/placeholder-product.svg"
   },
   {
     "id": "iot-gateway",
     "category": "بوابة اتصال",
     "title": "بوابة إنترنت الأشياء متعددة البروتوكولات",
     "description": "ربط الحساسات والأجهزة عبر بروتوكولات شائعة وتوجيه البيانات للمنصة مع تكاملات جاهزة.",
-    "image": "https://demo2.themelexus.com/priotech/wp-content/uploads/2023/06/product-8-1.jpg"
+    "image": "/assets/placeholder-product.svg"
   }
 ]

@@ -63,7 +63,7 @@
         <div class="container heroVideo__inner">
           <div class="heroVideo__content">
             <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span>IoT Solutions — المملكة العربية السعودية</p>
-            <h2 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
+            <h1 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
               <span class="heroVideo__titleStatic">حلول إنترنت الأشياء</span>
               <span class="heroVideo__cycleWrap" aria-hidden="true">
                 <span class="heroVideo__cycleWord is-visible">للمنازل الذكية</span>
@@ -71,7 +71,7 @@
                 <span class="heroVideo__cycleWord">للمكاتب الذكية</span>
                 <span class="heroVideo__cycleWord">للمباني الذكية</span>
               </span>
-            </h2>
+            </h1>
             <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
             <div class="heroVideo__actions">
               <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
@@ -105,7 +105,7 @@
       <section class="hero" id="atex-overview" aria-label="اتكس Overview">
         <div class="container hero__inner">
           <div class="hero__copy">
-            <h1 class="hero__title"><%= content?.hero?.title || "أتكس… مباني أذكى" %></h1>
+            <h2 class="hero__title"><%= content?.hero?.title || "أتكس… مباني أذكى" %></h2>
             <p class="hero__desc">
               <%= content?.hero?.desc || "نحوّل المنازل والفنادق والمباني إلى منظومة متصلة تُظهر لك ما يحدث الآن وتُمكّنك من التحكم بكل التفاصيل بسهولة.\nمن الأجهزة والاتصال إلى المنصة, لتشغيل الإضاءة والتكييف والطاقة والمشاهد، إدارة الغرف والوصول الذكي، ورفع الكفاءة وتقليل التكاليف مع تجربة ضيوف وسكان أكثر رفاهية." %>
             </p>
@@ -438,9 +438,10 @@
         <div class="container">
           <div class="section__head">
             <h2>موثوقية مثبتة في السوق</h2>
-            <p>شركاؤنا وعملاؤنا في السعودية يعتمدون على أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
+            <p>آراء من فرق المشاريع التي عملت مع أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
           </div>
 
+          <% if (Array.isArray(socialLogos) && socialLogos.length) { %>
           <div class="socialProof__logos marquee" data-marquee aria-label="شعارات شركات سعودية">
             <div class="marquee__viewport" data-marquee-viewport>
               <div class="marquee__runner" data-marquee-runner>
@@ -462,6 +463,7 @@
               </div>
             </div>
           </div>
+          <% } %>
 
           <div class="grid grid--cards quotesGrid">
             <article class="card quoteCard" data-tilt>

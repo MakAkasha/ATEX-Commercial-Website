@@ -17,6 +17,7 @@ const contactRoutes = require("./routes/contact");
 const { router: customPagesRoutes } = require("./routes/customPages");
 const { router: settingsRoutes } = require("./routes/settings");
 const pagesRoutes = require("./routes/pages");
+const { getSolutions, getIndustries } = require("./data/contentRegistry");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -115,7 +116,8 @@ app.get("/readyz", (req, res) => {
 app.get("/sitemap.xml", (req, res) => {
   try {
     const db = getDb();
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const proto = req.get("x-forwarded-proto") || req.protocol;
+    const baseUrl = `${proto}://${req.get("host")}`;
     
     // Get all static routes
     const staticUrls = [
@@ -127,25 +129,18 @@ app.get("/sitemap.xml", (req, res) => {
       { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
     ];
     
-    // Get all solutions (table may not exist)
-    let solutionUrls = [];
-    try {
-      solutionUrls = db.prepare("SELECT slug FROM solutions").all().map(s => ({
-        loc: `${baseUrl}/solutions/${s.slug}`,
-        priority: "0.8",
-        changefreq: "weekly",
-      }));
-    } catch { /* table doesn't exist yet */ }
+    // Solutions + industries are file-based (contentRegistry), not DB tables
+    const solutionUrls = getSolutions().map(s => ({
+      loc: `${baseUrl}/solutions/${s.slug}`,
+      priority: "0.8",
+      changefreq: "weekly",
+    }));
 
-    // Get all industries (table may not exist)
-    let industryUrls = [];
-    try {
-      industryUrls = db.prepare("SELECT slug FROM industries").all().map(i => ({
-        loc: `${baseUrl}/industries/${i.slug}`,
-        priority: "0.8",
-        changefreq: "weekly",
-      }));
-    } catch { /* table doesn't exist yet */ }
+    const industryUrls = getIndustries().map(i => ({
+      loc: `${baseUrl}/industries/${i.slug}`,
+      priority: "0.8",
+      changefreq: "weekly",
+    }));
     
     // Get all published blog posts
     const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
@@ -187,6 +182,7 @@ app.get("/robots.txt", (req, res) => {
       "User-agent: *",
       "Allow: /",
       "Disallow: /admin",
+      "Disallow: /admin-login",
       "Disallow: /api/",
       "",
       "# AI Crawlers",
@@ -321,10 +317,11 @@ app.get("/llms.txt", (req, res) => {
 });
 
 // Static public site
-app.use("/assets", express.static(path.join(ROOT_DIR, "assets")));
-app.use("/data", express.static(path.join(ROOT_DIR, "data")));
-app.use("/uploads", express.static(path.join(ROOT_DIR, "uploads")));
-app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce")));
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
+app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" }));
+app.use("/data", express.static(path.join(ROOT_DIR, "data"), { maxAge: "1h" }));
+app.use("/uploads", express.static(UPLOADS_DIR, { maxAge: "30d" }));
+app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce"), { maxAge: "1y", immutable: true }));
 
 // Admin static (disable directory redirect so /admin can be handled by router)
 app.use(

@@ -24,8 +24,17 @@ server/test-*.sqlite
 server/test-*.sqlite-shm
 server/test-*.sqlite-wal
 
+# User uploads (runtime, never tracked)
+uploads/
+
+# DB backups
+server/backups/
+
 # Temp directories
 temp-blog-writer-review/
 
 # Local cloned external repositories
 tabler/
+
+# CSS pre-zoom-migration backup
+*.prezoom.bak
