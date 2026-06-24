@@ -151,9 +151,15 @@ function toISODate(dateStr) {
   }
 }
 
+// Demote in-content <h1> to <h2> so the page title (.subpage__title) stays the sole H1.
+function demoteContentH1(html) {
+  return (html || "").replace(/<(\/?)h1(\s[^>]*)?>/gi, "<$1h2$2>");
+}
+
 function processPost(post) {
   return {
     ...post,
+    content_html: demoteContentH1(post.content_html),
     tags: safeJsonParse(post.tags_json, []),
     readingTime: estimateReadingTime(post.content_html || ""),
     formattedDate: formatArabicDate(post.created_at),

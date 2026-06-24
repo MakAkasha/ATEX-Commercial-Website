@@ -598,6 +598,13 @@ function initTilt() {
 
 function initGsap() {
   const motion = getMotionContext();
+
+  // Seed final stat values so reduced-motion / no-GSAP users see real numbers, not 0.
+  qsa(".stat").forEach((stat) => {
+    const num = qs(".stat__num", stat);
+    if (num) num.textContent = String(Number(stat.getAttribute("data-count") || "0"));
+  });
+
   if (!motion.allowGsap) return;
 
   const gsap = window.gsap;
