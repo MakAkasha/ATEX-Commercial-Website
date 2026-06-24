@@ -81,11 +81,14 @@
               <% if (Array.isArray(industry.faqs) && industry.faqs.length) { %>
                   <section class="solutionsPage__metaBlock subpage__fullCol">
                     <h4>الأسئلة الشائعة</h4>
-                    <ul>
-                      <% industry.faqs.forEach(function(item){ %>
-                        <li><strong><%= item.q %></strong><br /><%= item.a %></li>
+                    <div class="faq" role="list">
+                      <% industry.faqs.forEach(function(item, idx){ %>
+                        <div class="faq__item" role="listitem">
+                          <button class="faq__q" type="button" aria-expanded="false" aria-controls="industry-faq-answer-<%= idx %>"><%= item.q %> <span class="faq__icon" aria-hidden="true">+</span></button>
+                          <div class="faq__a" id="industry-faq-answer-<%= idx %>" role="region"><%= item.a %></div>
+                        </div>
                       <% }) %>
-                    </ul>
+                    </div>
                   </section>
               <% } %>
 

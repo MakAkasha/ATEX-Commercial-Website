@@ -62,6 +62,9 @@
   --s-8: calc(64px * var(--font-scale));
   --s-9: calc(96px * var(--font-scale));
 
+  /* Display/heading font pairing (Tajawal for impact, Cairo for body) */
+  --font-display: 'Tajawal', 'Cairo', system-ui, sans-serif;
+
   /* Radius + motion */
   --radius-pill: calc(999px * var(--font-scale));
   --dur: 220ms;
@@ -1385,6 +1388,20 @@ body.has-hero-video .header.is-scrolled {
   padding: calc(68px * var(--font-scale)) 0;
 }
 
+/* ── Batch C: section rhythm variants (break uniform vertical pace) ── */
+.section--tight {
+  padding-block: var(--s-7);
+}
+
+.section--feature {
+  padding-block: var(--s-9);
+}
+
+.section__head--start {
+  justify-items: start;
+  text-align: start;
+}
+
 .section__head {
   display: grid;
   gap: var(--s-2);
@@ -1401,6 +1418,19 @@ body.has-hero-video .header.is-scrolled {
   margin: 0;
   color: var(--muted);
   font-weight: 700;
+}
+
+/* ── Batch C: display font pairing — Tajawal on impact/heading type only ── */
+.hero__title,
+.heroVideo__title,
+.heroVideo__kicker,
+.section__head h2,
+.section__head .eyebrow,
+.subpage__title,
+.solutionsPage__title,
+.solutionsPage__eyebrow,
+.stat__num {
+  font-family: var(--font-display);
 }
 
 .grid {
@@ -1537,6 +1567,21 @@ body.has-hero-video .header.is-scrolled {
 #solutions .solutionCard .card__desc {
   font-size: calc(15px * var(--font-scale));
   line-height: 1.75;
+}
+
+/* ── Batch C: featured lead solution tile (break the uniform 3-up) ── */
+#solutions .grid.grid--cards .solutionCard:first-child {
+  grid-column: span 2;
+  min-height: calc(420px * var(--font-scale));
+}
+
+#solutions .grid.grid--cards .solutionCard:first-child .card__title {
+  font-size: clamp(calc(26px * var(--font-scale)), 3vw, calc(34px * var(--font-scale)));
+}
+
+#solutions .grid.grid--cards .solutionCard:first-child .card__desc {
+  font-size: calc(16px * var(--font-scale));
+  max-width: 56ch;
 }
 
 /* Banner */
@@ -3240,6 +3285,46 @@ body.has-hero-video .header.is-scrolled {
 
 }
 
+/* ── Batch C: hamburger nav collapse moved 760 → 880 (tablet overflow fix) ── */
+@media (max-width: 880px) {
+  .nav__toggle {
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .nav__menu {
+    position: fixed;
+    inset-inline: calc(10px * var(--font-scale));
+    top: calc(var(--mobile-nav-top, var(--s-8)) + var(--s-2));
+    background: var(--white-96);
+    border: calc(1px * var(--font-scale)) solid var(--line);
+    border-radius: calc(18px * var(--font-scale));
+    box-shadow: var(--shadow);
+    padding: var(--s-3);
+    display: grid;
+    gap: calc(6px * var(--font-scale));
+    transform: translateY(calc(-12px * var(--font-scale)));
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(var(--s-4));
+    transition: opacity 200ms ease, transform 200ms ease;
+    z-index: 1100;
+  }
+
+  .nav__menu.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .nav__link {
+    font-size: calc(15px * var(--font-scale));
+    min-height: calc(40px * var(--font-scale));
+    justify-content: flex-start;
+    background: rgba(0, 43, 68, 0.04);
+  }
+}
+
 @keyframes heroAssetFloat {
   0%,
   100% {
@@ -3406,43 +3491,6 @@ body.has-hero-video .header.is-scrolled {
     border-radius: var(--s-2);
   }
 
-  .nav__toggle {
-    display: inline-grid;
-    place-items: center;
-  }
-
-  .nav__menu {
-    position: fixed;
-    inset-inline: calc(10px * var(--font-scale));
-    top: calc(var(--mobile-nav-top, var(--s-8)) + var(--s-2));
-    background: var(--white-96);
-    border: calc(1px * var(--font-scale)) solid var(--line);
-    border-radius: calc(18px * var(--font-scale));
-    box-shadow: var(--shadow);
-    padding: var(--s-3);
-    display: grid;
-    gap: calc(6px * var(--font-scale));
-    transform: translateY(calc(-12px * var(--font-scale)));
-    opacity: 0;
-    pointer-events: none;
-    backdrop-filter: blur(var(--s-4));
-    transition: opacity 200ms ease, transform 200ms ease;
-    z-index: 1100;
-  }
-
-  .nav__menu.is-open {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  .nav__link {
-    font-size: calc(15px * var(--font-scale));
-    min-height: calc(40px * var(--font-scale));
-    justify-content: flex-start;
-    background: rgba(0, 43, 68, 0.04);
-  }
-
   .grid--cards,
   .grid--banners,
   .grid--products,
@@ -3531,6 +3579,12 @@ body.has-hero-video .header.is-scrolled {
     min-height: calc(350px * var(--font-scale));
     border-radius: calc(var(--radius) + var(--s-1));
     scroll-snap-align: start;
+  }
+
+  /* Featured lead reverts to a normal slide in the horizontal scroller */
+  #solutions .grid.grid--cards .solutionCard:first-child {
+    grid-column: auto;
+    min-height: calc(350px * var(--font-scale));
   }
 
   .processFlow {
@@ -4063,8 +4117,6 @@ body.has-hero-video .header.is-scrolled {
 
 /* Centered sections: industries, process, integrations, faq, blog */
 #industries .section__head,
-#process .section__head,
-#integrations .section__head,
 #faq .section__head,
 #blog .section__head {
   text-align: center;
@@ -4072,11 +4124,16 @@ body.has-hero-video .header.is-scrolled {
 }
 
 #industries .section__head h2::after,
-#process .section__head h2::after,
-#integrations .section__head h2::after,
 #faq .section__head h2::after,
 #blog .section__head h2::after {
   margin-inline: auto;
+}
+
+/* Batch C: #process + #integrations heads opt into editorial start-align
+   via .section__head--start (removed from the centered group above). */
+#process .section__head--start h2::after,
+#integrations .section__head--start h2::after {
+  margin-inline: 0;
 }
 
 /* Start-aligned sections with amber inline-start border (right side in RTL) */
@@ -4360,24 +4417,8 @@ body.has-hero-video .header.is-scrolled {
   font-weight: 800;
 }
 
-@media (max-width: 980px) and (min-width: 761px) {
-  .nav__menu {
-    gap: var(--s-2);
-    padding: var(--s-2) calc(10px * var(--font-scale));
-  }
-
-  .nav__link {
-    min-height: calc(44px * var(--font-scale));
-    font-size: var(--s-4);
-    padding: 0 calc(10px * var(--font-scale));
-  }
-
-  .nav__menu > .btn {
-    height: calc(44px * var(--font-scale));
-    font-size: var(--s-4);
-    padding-inline: calc(14px * var(--font-scale));
-  }
-}
+/* Batch C: removed 761–980 nav-shrink hack — nav now collapses at ≤880,
+   so the desktop nav (≥881) no longer needs link shrinking to avoid overflow. */
 
 @media (max-width: 760px) {
   .nav__menu {
@@ -4772,6 +4813,25 @@ body.has-hero-video .header.is-scrolled {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+/* ── Batch C: featured lead card (editorial bento) ── */
+.blogGrid .blogCard:first-child {
+  grid-column: span 2;
+}
+
+.blogGrid .blogCard:first-child > a {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.blogGrid .blogCard:first-child .blogCard__media {
+  height: 100%;
+  min-height: calc(240px * var(--font-scale));
+}
+
+.blogGrid .blogCard:first-child .blogCard__title {
+  font-size: calc(26px * var(--font-scale));
+}
+
 .blogIntroPanel {
   border: calc(1px * var(--font-scale)) solid var(--navy-12);
   border-radius: calc(var(--radius) + calc(2px * var(--font-scale)));
@@ -5055,11 +5115,28 @@ body.has-hero-video .header.is-scrolled {
   .blogGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /* Featured card stacks its inner layout once columns narrow */
+  .blogGrid .blogCard:first-child > a {
+    grid-template-columns: 1fr;
+  }
+
+  .blogGrid .blogCard:first-child .blogCard__media {
+    min-height: calc(200px * var(--font-scale));
+  }
 }
 
 @media (max-width: 600px) {
   .blogGrid {
     grid-template-columns: 1fr;
+  }
+
+  .blogGrid .blogCard:first-child {
+    grid-column: auto;
+  }
+
+  .blogGrid .blogCard:first-child .blogCard__title {
+    font-size: calc(18px * var(--font-scale));
   }
 }
 
