@@ -796,7 +796,9 @@ function initGsap() {
   }
 
   // FAQ: height animation + stagger on first view
-  const faq = qs("#faq");
+  // Fall back to the .faq container on pages without a #faq id (e.g. solution/industry detail),
+  // otherwise the GSAP path skips and initFaq() has already bailed on desktop → no handler binds.
+  const faq = qs("#faq") || qs(".faq");
   if (faq && motion.finePointer) {
     const items = qsa(".faq__item", faq);
     if (items.length) {
