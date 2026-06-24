@@ -47,6 +47,8 @@
           <% } else if (__heroVideoYoutubeId) { %>
             <iframe
               id="heroYoutubeVideo"
+              tabindex="-1"
+              aria-hidden="true"
               data-src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
               title="IoT background video"
               frameborder="0"

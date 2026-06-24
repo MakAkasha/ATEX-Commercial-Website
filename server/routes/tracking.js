@@ -1,10 +1,18 @@
 const express = require("express");
 const crypto = require("crypto");
+const rateLimit = require("express-rate-limit");
 const { getDb } = require("../db");
 const { requireAdmin } = require("../auth");
 const { parsePositiveInt } = require("../utils/safe");
 
 const router = express.Router();
+
+const trackLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 function sha256(s) {
   return crypto.createHash("sha256").update(String(s || "")).digest("hex");
@@ -28,7 +36,7 @@ function detectDevice(ua) {
 // Rules:
 // - Before consent: store path only (essential). No visitor_id, no referrer.
 // - After consent: store visitor_id (anonymous), referrer, and device.
-router.post("/view", (req, res) => {
+router.post("/view", trackLimiter, (req, res) => {
   const body = req.body || {};
   const path = String(body.path || req.headers["x-path"] || "").trim() || "/";
   const consent = String(body.consent || "essential");

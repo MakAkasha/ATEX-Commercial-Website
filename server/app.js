@@ -99,7 +99,18 @@ app.use(
 );
 
 app.get("/healthz", (req, res) => {
-  res.json({ ok: true, env: config.nodeEnv, uptimeSec: Math.round(process.uptime()) });
+  res.json({ ok: true });
+});
+
+// CSRF defense: reject cross-origin state-changing API requests
+app.use("/api", (req, res, next) => {
+  if (req.method === "GET" || req.method === "HEAD" || req.method === "OPTIONS") return next();
+  const origin = req.get("origin") || req.get("referer") || "";
+  const host = req.get("host");
+  if (origin && host && !origin.startsWith(`${req.protocol}://${host}`)) {
+    return res.status(403).json({ error: "CSRF_REJECTED" });
+  }
+  next();
 });
 
 app.get("/readyz", (req, res) => {
