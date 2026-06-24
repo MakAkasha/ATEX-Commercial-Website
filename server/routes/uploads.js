@@ -5,6 +5,50 @@ const multer = require("multer");
 const rateLimit = require("express-rate-limit");
 const { requireAdmin } = require("../auth");
 
+// Magic-byte signatures for allowed image types.
+// file-type is not a project dependency; we sniff the first 12 bytes manually.
+const IMAGE_MAGIC = [
+  { mime: "image/jpeg",  bytes: [0xff, 0xd8, 0xff],                   offset: 0 },
+  { mime: "image/png",   bytes: [0x89, 0x50, 0x4e, 0x47],             offset: 0 },
+  { mime: "image/gif",   bytes: [0x47, 0x49, 0x46, 0x38],             offset: 0 },
+  // WebP: "RIFF" at 0, "WEBP" at 8
+  { mime: "image/webp",  bytes: [0x52, 0x49, 0x46, 0x46],             offset: 0, suffix: [0x57, 0x45, 0x42, 0x50], suffixOffset: 8 },
+];
+
+function readFirstBytes(filePath, n) {
+  const fd = fs.openSync(filePath, "r");
+  const buf = Buffer.alloc(n);
+  try {
+    fs.readSync(fd, buf, 0, n, 0);
+  } finally {
+    fs.closeSync(fd);
+  }
+  return buf;
+}
+
+function matchesMagic(buf, sig) {
+  for (let i = 0; i < sig.bytes.length; i++) {
+    if (buf[sig.offset + i] !== sig.bytes[i]) return false;
+  }
+  if (sig.suffix) {
+    for (let i = 0; i < sig.suffix.length; i++) {
+      if (buf[sig.suffixOffset + i] !== sig.suffix[i]) return false;
+    }
+  }
+  return true;
+}
+
+function verifyImageMagicBytes(filePath, declaredMime) {
+  try {
+    const buf = readFirstBytes(filePath, 12);
+    const sig = IMAGE_MAGIC.find((s) => s.mime === declaredMime);
+    if (!sig) return false; // unknown mime — reject
+    return matchesMagic(buf, sig);
+  } catch {
+    return false;
+  }
+}
+
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
 const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
@@ -82,6 +126,13 @@ function walkFiles(dir, out = []) {
 
 router.post("/images", requireAdmin, uploadLimiter, uploadImages.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "NO_FILE" });
+
+  // Verify magic bytes match declared mimetype — rejects disguised files that pass the mimetype filter.
+  if (!verifyImageMagicBytes(req.file.path, req.file.mimetype)) {
+    fs.unlink(req.file.path, () => {});
+    return res.status(400).json({ error: "INVALID_FILE_CONTENT" });
+  }
+
   res.json({ ok: true, url: toPublicUploadUrl(req.file.path) });
 });
 

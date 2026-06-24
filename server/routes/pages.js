@@ -5,7 +5,8 @@ const express = require("express");
 const { requireAdminPage, isAdminSession } = require("../auth");
 const { getDb } = require("../db");
 const { normalizeHomeContent } = require("../homeSchema");
-const { sanitizePageHtml } = require("./customPages");
+const { sanitizePageHtml, sanitizeCssCode } = require("./customPages");
+const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
 const { safeJsonParse } = require("../utils/safe");
@@ -339,7 +340,11 @@ router.get("/blog/:slug", (req, res) => {
       .status(404)
       .render("not-found", { content, ...baseRenderData(req), meta: { title: "أتكس | غير موجود", robots: "noindex, nofollow" } });
 
-  const post = processPost(rawPost);
+  const post = processPost({
+    ...rawPost,
+    // Defense-in-depth: re-sanitize at render time in case DB row was tampered or pre-dates input sanitization.
+    content_html: sanitizePostHtml(rawPost.content_html),
+  });
 
   // Related posts: prefer tag overlap, fallback to latest
   const allOtherRaw = db
@@ -737,7 +742,8 @@ router.get("/rec/:slug", (req, res) => {
     title: row.title,
     slug: row.slug,
     html_code: sanitizePageHtml(row.html_code || ""),
-    css_code: String(row.css_code || ""),
+    // Defense-in-depth: re-sanitize css_code at render time for legacy/tampered DB rows.
+    css_code: sanitizeCssCode(row.css_code || ""),
     // JS is only allowed when unsafe_js is enabled for that page.
     js_code: row.unsafe_js ? String(row.js_code || "") : "",
     unsafe_js: !!row.unsafe_js,

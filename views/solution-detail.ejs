@@ -7,7 +7,7 @@
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="solutionsPage solutionDetailPage">
+    <main class="solutionsPage solutionDetailPage" id="main-content" tabindex="-1">
       <section class="section solutionsPage__hero" aria-label="تفاصيل الحل">
         <div class="container solutionsPage__heroInner">
           <div class="solutionsPage__heroCopy">
@@ -109,10 +109,10 @@
                 <section class="solutionsPage__metaBlock subpage__fullCol">
                   <h4>أسئلة شائعة</h4>
                   <div class="faq" role="list">
-                    <% solution.faqs.forEach(function(item){ %>
+                    <% solution.faqs.forEach(function(item, idx){ %>
                       <div class="faq__item" role="listitem">
-                        <button class="faq__q" type="button"><%= item.q %> <span class="faq__icon">+</span></button>
-                        <div class="faq__a"><%= item.a %></div>
+                        <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-answer-<%= idx %>"><%= item.q %> <span class="faq__icon" aria-hidden="true">+</span></button>
+                        <div class="faq__a" id="faq-answer-<%= idx %>" role="region"><%= item.a %></div>
                       </div>
                     <% }) %>
                   </div>

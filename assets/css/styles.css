@@ -5400,3 +5400,40 @@ body.has-hero-video .header.is-scrolled {
   font-size: calc(13px * var(--font-scale));
   opacity: 0.7;
 }
+
+/* ── Accessibility additions (WCAG 2.2) ─────────────────────────── */
+
+/* Task 1: Skip link */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  z-index: 1000;
+  background: var(--navy, #002b44);
+  color: #fff;
+  padding: calc(10px * var(--font-scale)) calc(16px * var(--font-scale));
+  border-radius: 0 0 calc(6px * var(--font-scale)) 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Task 5: Screen-reader-only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Task 6: Topbar link touch targets ≥44px */
+.topbar__item a {
+  min-height: calc(44px * var(--font-scale));
+  display: inline-flex;
+  align-items: center;
+}

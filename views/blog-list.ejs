@@ -6,7 +6,7 @@
   </head>
   <body>
     <%- include('partials/site-header') %>
-    <main class="subpage">
+    <main class="subpage" id="main-content" tabindex="-1">
       <div class="container">
         <nav class="breadcrumbNav" aria-label="مسار التنقل">
           <ol class="breadcrumbNav__list">
@@ -38,10 +38,10 @@
         <div class="blogGrid">
           <% posts.forEach(function(p){ %>
             <article class="blogCard" data-tilt>
-              <a href="/blog/<%= p.slug %>">
+              <a href="/blog/<%= p.slug %>" aria-label="<%= p.title %>">
                 <div class="blogCard__media">
                   <% if (p.cover_image) { %>
-                    <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
+                    <img src="<%= p.cover_image %>" alt="" loading="lazy" />
                   <% } else { %>
                     <div class="blogCard__mediaFallback">ATEX</div>
                   <% } %>

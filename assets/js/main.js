@@ -299,8 +299,11 @@ function initFaq() {
       // close others
       items.forEach((x) => {
         if (x !== item) x.classList.remove("is-open");
+        const xBtn = qs(".faq__q", x);
+        if (xBtn) xBtn.setAttribute("aria-expanded", "false");
       });
       item.classList.toggle("is-open", !isOpen);
+      btn.setAttribute("aria-expanded", item.classList.contains("is-open") ? "true" : "false");
       if (icon) icon.textContent = item.classList.contains("is-open") ? "–" : "+";
     });
   });
@@ -864,12 +867,15 @@ function initGsap() {
         items.forEach((x) => {
           if (x === item || !x.classList.contains("is-open")) return;
           x.classList.remove("is-open");
+          const xBtn = qs(".faq__q", x);
+          if (xBtn) xBtn.setAttribute("aria-expanded", "false");
           const a = qs(".faq__a", x);
           if (a) closeAnswer(a);
           setFaqIcon(x);
         });
 
         item.classList.toggle("is-open", !isOpen);
+        btn.setAttribute("aria-expanded", item.classList.contains("is-open") ? "true" : "false");
         setFaqIcon(item);
 
         if (item.classList.contains("is-open")) {

@@ -8,7 +8,7 @@
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="subpage">
+    <main class="subpage" id="main-content" tabindex="-1">
       <div class="container">
         <header class="subpage__head">
           <span class="subpage__kicker">CONTACT ATEX</span>
@@ -49,11 +49,14 @@
               <p class="contactPage__formSubtitle">سنتواصل معك خلال يوم عمل واحد.</p>
             </div>
 
-            <form id="contactForm" class="cta__form contactPage__form" novalidate>
+            <div aria-live="polite" aria-atomic="true" id="contactFormStatus" class="sr-only"></div>
+            <form id="contactForm" class="cta__form contactPage__form" novalidate aria-describedby="contactFormStatus">
               <div class="field">
                 <label class="field__label" for="contactName">الاسم الكامل</label>
                 <input class="field__input" id="contactName" name="name" type="text"
-                       placeholder="محمد العمري" autocomplete="name" required />
+                       placeholder="محمد العمري" autocomplete="name" required
+                       aria-invalid="false" aria-describedby="contactName-error" />
+                <span id="contactName-error" class="field__error" aria-live="polite"></span>
               </div>
 
               <div class="field">
@@ -65,7 +68,9 @@
               <div class="field">
                 <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري</label>
                 <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
-                       type="text" placeholder="4030XXXXXX" required inputmode="numeric" />
+                       type="text" placeholder="4030XXXXXX" required inputmode="numeric"
+                       aria-invalid="false" aria-describedby="contactCommercialRegister-error" />
+                <span id="contactCommercialRegister-error" class="field__error" aria-live="polite"></span>
               </div>
 
               <div class="field">
@@ -80,7 +85,10 @@
                   dir="ltr"
                   inputmode="tel"
                   autocomplete="tel"
+                  aria-invalid="false"
+                  aria-describedby="contactWhatsapp-error"
                 />
+                <span id="contactWhatsapp-error" class="field__error" aria-live="polite"></span>
               </div>
 
               <div class="field">

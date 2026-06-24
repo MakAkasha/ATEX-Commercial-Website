@@ -30,6 +30,18 @@ function sanitizePageHtml(html) {
   });
 }
 
+// Strip CSS constructs that can be used for injection or exfiltration.
+// Blocks: closing </style> tag (breaks out of style block), <script injection,
+// javascript: URIs in url(), expression() (IE CSS XSS), and @import (SSRF/exfil).
+function sanitizeCssCode(css) {
+  return String(css || "")
+    .replace(/<\/style/gi, "")
+    .replace(/<script/gi, "")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/expression\s*\(/gi, "")
+    .replace(/@import\b/gi, "");
+}
+
 function readRow(row) {
   if (!row) return null;
   return {
@@ -84,7 +96,7 @@ router.post("/", requireAdmin, (req, res) => {
   if (!title || !slug) return res.status(400).json({ error: "MISSING_FIELDS" });
 
   const html = sanitizePageHtml(body.html_code || "");
-  const css = String(body.css_code || "");
+  const css = sanitizeCssCode(body.css_code || "");
   const js = String(body.js_code || "");
   const published = toSqliteBool(body.published);
   const unsafe = toSqliteBool(body.unsafe_js);
@@ -112,7 +124,7 @@ router.put("/:id", requireAdmin, (req, res) => {
   if (!title || !slug) return res.status(400).json({ error: "MISSING_FIELDS" });
 
   const html = sanitizePageHtml(body.html_code || "");
-  const css = String(body.css_code || "");
+  const css = sanitizeCssCode(body.css_code || "");
   const js = String(body.js_code || "");
   const published = toSqliteBool(body.published);
   const unsafe = toSqliteBool(body.unsafe_js);
@@ -148,4 +160,5 @@ module.exports = {
   router,
   slugify,
   sanitizePageHtml,
+  sanitizeCssCode,
 };
