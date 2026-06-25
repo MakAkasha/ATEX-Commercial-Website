@@ -3468,28 +3468,16 @@ body.nav-open .nav__toggleLines::after {
   }
 
   .trustStrip__inner {
-    display: flex;
-    overflow-x: auto;
-    gap: calc(10px * var(--font-scale));
-    padding: var(--s-1) calc(2px * var(--font-scale)) var(--s-2);
-    margin-inline: calc(-2px * var(--font-scale));
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .trustStrip__inner::-webkit-scrollbar {
-    height: calc(6px * var(--font-scale));
-  }
-
-  .trustStrip__inner::-webkit-scrollbar-thumb {
-    background: rgba(0, 43, 68, 0.25);
-    border-radius: var(--radius-pill);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(8px * var(--font-scale));
+    padding: var(--s-1) 0 var(--s-2);
   }
 
   .trustStrip__item {
-    flex: 0 0 min(80vw, calc(260px * var(--font-scale)));
-    scroll-snap-align: start;
-    padding: var(--s-3);
+    min-width: 0;
+    padding: var(--s-2) calc(6px * var(--font-scale));
+    text-align: center;
   }
 
   .hero__trust {
