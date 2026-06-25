@@ -10,13 +10,15 @@
       <span>
         <%= (__homeContent?.topbar?.supportText || 'خدمة العملاء:') %>
         <a href="<%= __topbarWhatsapp %>" target="_blank" rel="noopener noreferrer" dir="ltr"><strong><%= __topbarPhone %></strong></a>
-        <span class="topbar__sep" aria-hidden="true">·</span>
-        المبيعات:
-        <a href="tel:<%= __topbarSales %>" dir="ltr"><strong><%= __topbarSales %></strong></a>
+        <span class="topbar__sales">
+          <span class="topbar__sep" aria-hidden="true">·</span>
+          المبيعات:
+          <a href="tel:<%= __topbarSales %>" dir="ltr"><strong><%= __topbarSales %></strong></a>
+        </span>
       </span>
     </div>
     <div class="topbar__item">
-      <span><%= (__homeContent?.topbar?.tagline || 'حلول إنترنت الأشياء') %></span>
+      <span class="topbar__tagline"><%= (__homeContent?.topbar?.tagline || 'حلول إنترنت الأشياء') %></span>
       <a class="topbar__textLink" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer">
         <span>بوابة العملاء</span>
         <span class="topbar__extIcon" aria-hidden="true">↗</span>

@@ -3265,7 +3265,11 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .footer__inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer__col--brand {
+    grid-column: 1 / -1;
   }
 
   .footer__bottomInner {
@@ -3456,7 +3460,6 @@ body.has-hero-video .header.is-scrolled {
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
-    direction: ltr;
   }
 
   .topbar__item {
@@ -3477,6 +3480,11 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .topbar__item .topbar__textLink {
+    display: inline-flex;
+  }
+
+  .topbar__sales,
+  .topbar__tagline {
     display: none;
   }
 
