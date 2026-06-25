@@ -2516,11 +2516,11 @@ body.has-hero-video .header.is-scrolled {
 .footer__brandLogo {
   display: inline-flex;
   align-items: center;
-  margin-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
 }
 
 .footer__brandLogo img {
-  width: clamp(calc(180px * var(--font-scale)), 22vw, calc(320px * var(--font-scale)));
+  width: clamp(calc(144px * var(--font-scale)), 18vw, calc(256px * var(--font-scale)));
   height: auto;
   display: block;
 }
