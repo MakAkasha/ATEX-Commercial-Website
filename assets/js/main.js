@@ -967,10 +967,24 @@ function initHeroVideoLazyLoad() {
     // Load native video
     if (heroVideo) {
       const videoSrc = heroVideo.getAttribute("data-src");
-      const source = qs("source", heroVideo);
+      const sources = qsa("source", heroVideo);
 
-      if (videoSrc) {
-        heroVideo.src = videoSrc;
+      // Prefer <source> elements (lets the browser pick webm > mp4); fall back to a single src.
+      let hasSource = false;
+      sources.forEach((s) => {
+        const ds = s.getAttribute("data-src");
+        if (ds) {
+          s.src = ds;
+          hasSource = true;
+        }
+      });
+
+      if (hasSource || videoSrc) {
+        if (hasSource) {
+          heroVideo.removeAttribute("src");
+        } else {
+          heroVideo.src = videoSrc;
+        }
         heroVideo.load();
 
         // Hide overlay when video metadata is loaded and ready
@@ -988,11 +1002,6 @@ function initHeroVideoLazyLoad() {
 
         // Fallback: hide overlay after 3 seconds even if video fails
         setTimeout(hideLoadingOverlay, 3000);
-
-        // Also update source src
-        if (source) {
-          source.src = videoSrc;
-        }
       } else {
         // No video source, hide overlay
         hideLoadingOverlay();

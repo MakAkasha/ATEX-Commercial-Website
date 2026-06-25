@@ -41,7 +41,9 @@
       <section class="heroVideo" aria-label="IoT Hero">
         <div class="heroVideo__media" aria-hidden="true">
           <% if (__heroVideoSourceType === 'upload' && __heroVideoUploadedUrl) { %>
+            <% const __heroWebmUrl = __heroVideoUploadedUrl.replace(/\.mp4(\?|$)/, '.webm$1'); %>
             <video id="heroVideo" muted loop playsinline preload="none" poster="/assets/hero-video/video-keeper.webp" fetchpriority="high" data-src="<%= __heroVideoUploadedUrl %>">
+              <source data-src="<%= __heroWebmUrl %>" type="video/webm" />
               <source data-src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
             </video>
           <% } else if (__heroVideoYoutubeId) { %>
