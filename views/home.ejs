@@ -42,7 +42,7 @@
         <div class="heroVideo__media" aria-hidden="true">
           <% if (__heroVideoSourceType === 'upload' && __heroVideoUploadedUrl) { %>
             <% const __heroWebmUrl = __heroVideoUploadedUrl.replace(/\.mp4(\?|$)/, '.webm$1'); %>
-            <video id="heroVideo" muted loop playsinline preload="none" poster="/assets/hero-video/video-keeper.webp" fetchpriority="high" data-src="<%= __heroVideoUploadedUrl %>">
+            <video id="heroVideo" muted loop playsinline preload="none" fetchpriority="high" data-src="<%= __heroVideoUploadedUrl %>">
               <source data-src="<%= __heroWebmUrl %>" type="video/webm" />
               <source data-src="<%= __heroVideoUploadedUrl %>" type="video/mp4" />
             </video>
@@ -59,7 +59,7 @@
               allowfullscreen
               loading="lazy"></iframe>
           <% } else { %>
-            <video id="heroVideo" muted loop playsinline preload="none" poster="/assets/hero-video/video-keeper.webp" fetchpriority="high" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
+            <video id="heroVideo" muted loop playsinline preload="none" fetchpriority="high" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
               <source data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />
             </video>
           <% } %>
