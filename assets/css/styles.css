@@ -5527,20 +5527,6 @@ body.has-hero-video .header.is-scrolled {
 /* ── Accessibility additions (WCAG 2.2) ─────────────────────────── */
 
 /* Task 1: Skip link */
-.skip-link {
-  position: absolute;
-  left: -999px;
-  top: 0;
-  z-index: 1000;
-  background: var(--navy, #002b44);
-  color: #fff;
-  padding: calc(10px * var(--font-scale)) var(--s-4);
-  border-radius: 0 0 calc(6px * var(--font-scale)) 0;
-}
-.skip-link:focus {
-  left: 0;
-}
-
 /* Task 5: Screen-reader-only utility */
 .sr-only {
   position: absolute;
