@@ -960,22 +960,12 @@ function initHeroVideoLazyLoad() {
     }
   };
 
-  // Hard cap: overlay never lingers past 2s on slow/mobile or when video is skipped
+  // Hard cap: overlay never lingers past 2s on slow connections
   setTimeout(hideLoadingOverlay, 2000);
-
-  // Skip the heavy hero video on touch/mobile or Save-Data; keep the poster as a static hero
-  const saveData = !!(navigator.connection && navigator.connection.saveData);
-  const coarse = isTouchLike();
-  const skipVideo = coarse || saveData;
 
   const loadVideo = () => {
     // Load native video
     if (heroVideo) {
-      if (skipVideo) {
-        // Keep poster (video-keeper.webp) as the static hero; do NOT load the 11MB video
-        hideLoadingOverlay();
-        return;
-      }
       const videoSrc = heroVideo.getAttribute("data-src");
       const source = qs("source", heroVideo);
 
