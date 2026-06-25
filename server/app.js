@@ -33,6 +33,23 @@ if (config.trustProxy) {
 app.set("view engine", "ejs");
 app.set("views", path.join(ROOT_DIR, "views"));
 
+// Cache-busting asset version: newest mtime of the hot static assets.
+// Changes every deploy, so the ?v= query yields a fresh URL that bypasses
+// any stale browser/CDN (Cloudflare) cache automatically.
+app.locals.assetVer = (() => {
+  const fs = require("fs");
+  try {
+    const files = [
+      path.join(ROOT_DIR, "assets", "css", "styles.css"),
+      path.join(ROOT_DIR, "assets", "js", "main.js"),
+    ];
+    const newest = Math.max(...files.map((f) => fs.statSync(f).mtimeMs));
+    return String(Math.floor(newest));
+  } catch {
+    return "1";
+  }
+})();
+
 // Migrate DB on boot
 migrate();
 
