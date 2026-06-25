@@ -53,10 +53,15 @@ function initNav() {
     document.documentElement.style.setProperty("--mobile-nav-top", `${top}px`);
   };
 
+  const focusables = () => qsa("a.nav__link, .btn", menu);
+
   const close = () => {
+    const focusInside = menu.contains(document.activeElement);
     menu.classList.remove("is-open");
     document.body.classList.remove("nav-open");
     toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "فتح القائمة");
+    if (focusInside) toggle.focus();
   };
 
   const open = () => {
@@ -64,6 +69,9 @@ function initNav() {
     menu.classList.add("is-open");
     document.body.classList.add("nav-open");
     toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "إغلاق القائمة");
+    const first = qs("a.nav__link", menu);
+    if (first) first.focus();
   };
 
   toggle.addEventListener("click", () => {
@@ -71,8 +79,24 @@ function initNav() {
     expanded ? close() : open();
   });
 
-  // Close on link click (mobile)
-  qsa("a.nav__link", menu).forEach((a) => a.addEventListener("click", close));
+  // Close on link or portal CTA click (mobile)
+  qsa("a.nav__link, .btn", menu).forEach((a) => a.addEventListener("click", close));
+
+  // Focus trap while menu is open
+  menu.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" || !menu.classList.contains("is-open")) return;
+    const items = focusables();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
 
   // Close on outside click
   document.addEventListener("click", (e) => {
@@ -305,6 +329,7 @@ function initFaq() {
       item.classList.toggle("is-open", !isOpen);
       btn.setAttribute("aria-expanded", item.classList.contains("is-open") ? "true" : "false");
       if (icon) icon.textContent = item.classList.contains("is-open") ? "–" : "+";
+      if (item.classList.contains("is-open")) item.scrollIntoView({ block: "nearest" });
     });
   });
 }
@@ -335,6 +360,8 @@ function initContactForm() {
       : null;
 
   const setNote = (text, type = "info") => {
+    const st = document.getElementById("contactFormStatus");
+    if (st) st.textContent = text;
     if (!note) return;
     note.textContent = text;
     note.classList.remove("is-error", "is-success", "is-info");
@@ -342,12 +369,20 @@ function initContactForm() {
   };
 
   const clearInputState = () => {
-    inputs.forEach((el) => el.classList.remove("is-invalid"));
+    inputs.forEach((el) => {
+      el.classList.remove("is-invalid");
+      el.setAttribute("aria-invalid", "false");
+      const s = document.getElementById(el.id + "-error");
+      if (s) s.textContent = "";
+    });
   };
 
-  const markInvalid = (el) => {
+  const markInvalid = (el, msg) => {
     if (!el) return;
     el.classList.add("is-invalid");
+    el.setAttribute("aria-invalid", "true");
+    const s = document.getElementById(el.id + "-error");
+    if (s && msg) s.textContent = msg;
   };
 
   const cleanCommercialRegister = (value) => String(value || "").replace(/\s+/g, "").trim();
@@ -370,20 +405,30 @@ function initContactForm() {
     const message = String(messageInput?.value || "").trim();
 
     if (name.length < 2) {
-      markInvalid(nameInput);
-      setNote("يرجى إدخال اسم صحيح (حرفين على الأقل).", "error");
+      const msg = "يرجى إدخال اسم صحيح (حرفين على الأقل).";
+      markInvalid(nameInput, msg);
+      setNote(msg, "error");
       return null;
     }
 
     if (commercialRegister.length < 5) {
-      markInvalid(commercialRegisterInput);
-      setNote("يرجى إدخال رقم سجل تجاري صحيح.", "error");
+      const msg = "يرجى إدخال رقم سجل تجاري صحيح.";
+      markInvalid(commercialRegisterInput, msg);
+      setNote(msg, "error");
       return null;
     }
 
     if (!whatsapp || !/^\+\d{8,16}$/.test(whatsapp)) {
-      markInvalid(whatsappInput);
-      setNote("يرجى إدخال رقم واتساب صحيح مع مفتاح الدولة.", "error");
+      const msg = "يرجى إدخال رقم واتساب صحيح مع مفتاح الدولة.";
+      markInvalid(whatsappInput, msg);
+      setNote(msg, "error");
+      return null;
+    }
+
+    if (message.length > 0 && message.length < 10) {
+      const msg = "الرسالة قصيرة جدًا. يرجى إضافة تفاصيل أكثر.";
+      markInvalid(messageInput, msg);
+      setNote(msg, "error");
       return null;
     }
 
@@ -467,6 +512,9 @@ function initContactForm() {
   inputs.forEach((el) => {
     el.addEventListener("input", () => {
       el.classList.remove("is-invalid");
+      el.setAttribute("aria-invalid", "false");
+      const s = document.getElementById(el.id + "-error");
+      if (s) s.textContent = "";
       if (note?.classList.contains("is-error")) {
         setNote("سنقوم بالتواصل معك في أقرب وقت ممكن.", "info");
       }
@@ -912,19 +960,36 @@ function initHeroVideoLazyLoad() {
     }
   };
 
+  // Hard cap: overlay never lingers past 2s on slow/mobile or when video is skipped
+  setTimeout(hideLoadingOverlay, 2000);
+
+  // Skip the heavy hero video on touch/mobile or Save-Data; keep the poster as a static hero
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+  const coarse = isTouchLike();
+  const skipVideo = coarse || saveData;
+
   const loadVideo = () => {
     // Load native video
     if (heroVideo) {
+      if (skipVideo) {
+        // Keep poster (video-keeper.webp) as the static hero; do NOT load the 11MB video
+        hideLoadingOverlay();
+        return;
+      }
       const videoSrc = heroVideo.getAttribute("data-src");
       const source = qs("source", heroVideo);
-      
+
       if (videoSrc) {
         heroVideo.src = videoSrc;
         heroVideo.load();
-        
+
         // Hide overlay when video metadata is loaded and ready
         heroVideo.addEventListener("loadedmetadata", () => {
           hideLoadingOverlay();
+          if (prefersReducedMotion) {
+            heroVideo.pause();
+            return;
+          }
           heroVideo.play().catch(() => {
             // Auto-play may be blocked by browser policy
             console.log("Video autoplay blocked by browser policy");
@@ -933,7 +998,7 @@ function initHeroVideoLazyLoad() {
 
         // Fallback: hide overlay after 3 seconds even if video fails
         setTimeout(hideLoadingOverlay, 3000);
-        
+
         // Also update source src
         if (source) {
           source.src = videoSrc;
@@ -1006,6 +1071,7 @@ function initScrollProgress() {
 function initHeroWordCycle() {
   const words = qsa(".heroVideo__cycleWord");
   if (words.length < 2) return;
+  if (prefersReducedMotion) return;
   let current = 0;
   setInterval(() => {
     words[current].classList.remove("is-visible");

@@ -411,7 +411,7 @@
                     <a class="item__link" href="/blog/<%= p.slug %>" aria-label="اقرأ المقال: <%= p.title %>">
                       <div class="item__media homeBlogCard__media">
                         <% if (p.cover_image) { %>
-                          <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" />
+                          <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" width="800" height="500" />
                         <% } else { %>
                           <div class="item__mediaFallback" aria-hidden="true">ATEX</div>
                         <% } %>
@@ -450,7 +450,7 @@
                 <div class="marquee__content" data-marquee-content>
                   <% (Array.isArray(socialLogos) ? socialLogos : []).forEach(function(logoPath, i){ %>
                     <div class="socialProof__logo" aria-label="شريك <%= i + 1 %>">
-                      <img src="<%= logoPath %>" alt="شعار الشريك <%= i + 1 %>" loading="lazy" />
+                      <img src="<%= logoPath %>" alt="شعار الشريك <%= i + 1 %>" loading="lazy" width="160" height="160" />
                     </div>
                   <% }) %>
                 </div>
@@ -458,7 +458,7 @@
                 <div class="marquee__content" data-marquee-static-clone aria-hidden="true">
                   <% (Array.isArray(socialLogos) ? socialLogos : []).forEach(function(logoPath){ %>
                     <div class="socialProof__logo">
-                      <img src="<%= logoPath %>" alt="" loading="lazy" />
+                      <img src="<%= logoPath %>" alt="" loading="lazy" width="160" height="160" />
                     </div>
                   <% }) %>
                 </div>

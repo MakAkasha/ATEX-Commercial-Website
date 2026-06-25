@@ -70,15 +70,19 @@
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button id="consentEssential" style="padding:10px 14px;border-radius:999px;border:1px solid rgba(0,0,0,0.12);background:#fff;font-weight:900;cursor:pointer">أساسي فقط</button>
-          <button id="consentAccept" style="padding:10px 14px;border-radius:999px;border:1px solid transparent;background:#ff9933;font-weight:900;cursor:pointer">قبول التحليلات</button>
+          <button id="consentEssential" style="min-height:44px;padding:12px 18px;border-radius:999px;border:1px solid rgba(0,0,0,0.12);background:#fff;font-weight:900;cursor:pointer">أساسي فقط</button>
+          <button id="consentAccept" style="min-height:44px;padding:12px 18px;border-radius:999px;border:1px solid transparent;background:#ff9933;font-weight:900;cursor:pointer">قبول التحليلات</button>
         </div>
       </div>
     `;
 
     document.body.appendChild(el);
+    document.body.classList.add("consent-open");
 
-    const close = () => el.remove();
+    const close = () => {
+      el.remove();
+      document.body.classList.remove("consent-open");
+    };
     document.getElementById("consentEssential").addEventListener("click", () => {
       setCookie(CONSENT_COOKIE, "essential", 365);
       close();

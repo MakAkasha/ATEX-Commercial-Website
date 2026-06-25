@@ -72,6 +72,9 @@
 
   /* Global scale dial — replaces body{zoom}. 0.85 = current look, 1 = original 100%. */
   --font-scale: 0.85;
+
+  /* Minimum tap target — RAW px, never scaled (WCAG 2.5.5 / iOS HIG). */
+  --tap-min: 48px;
 }
 
 * {
@@ -354,8 +357,8 @@ body.has-hero-video .header.is-scrolled {
   border: calc(1px * var(--font-scale)) solid var(--navy-16);
   background: #fff7ef;
   border-radius: calc(14px * var(--font-scale));
-  width: calc(50px * var(--font-scale));
-  height: calc(46px * var(--font-scale));
+  width: 48px;
+  height: 48px;
   cursor: pointer;
   box-shadow: 0 var(--s-2) calc(18px * var(--font-scale)) var(--navy-10);
 }
@@ -376,6 +379,7 @@ body.has-hero-video .header.is-scrolled {
   inset-inline: 0;
   height: calc(2px * var(--font-scale));
   background: var(--navy);
+  transition: transform 200ms ease, top 200ms ease;
 }
 
 .nav__toggleLines::before {
@@ -384,6 +388,21 @@ body.has-hero-video .header.is-scrolled {
 
 .nav__toggleLines::after {
   top: calc(6px * var(--font-scale));
+}
+
+/* Task 5: hamburger → X when menu open (JS toggles body.nav-open + aria-label) */
+body.nav-open .nav__toggleLines {
+  background: transparent;
+}
+
+body.nav-open .nav__toggleLines::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+body.nav-open .nav__toggleLines::after {
+  top: 0;
+  transform: rotate(-45deg);
 }
 
 .nav__menu {
@@ -489,7 +508,7 @@ body.has-hero-video .header.is-scrolled {
 .waBtn:focus-visible,
 .nav__toggle:focus-visible,
 .blogCard a:focus-visible {
-  outline: calc(3px * var(--font-scale)) solid #e07b00;
+  outline: 3px solid #e07b00;
   outline-offset: calc(3px * var(--font-scale));
   border-radius: calc(10px * var(--font-scale));
 }
@@ -506,7 +525,7 @@ body.has-hero-video .header.is-scrolled {
   display: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 880px) {
   .nav__backdrop {
     display: block;
     position: fixed;
@@ -515,6 +534,7 @@ body.has-hero-video .header.is-scrolled {
     opacity: 0;
     pointer-events: none;
     transition: opacity 240ms ease;
+    z-index: 1090;
   }
   body.nav-open {
     overflow: hidden;
@@ -1205,6 +1225,7 @@ body.has-hero-video .header.is-scrolled {
   font-weight: 800;
   border: calc(1px * var(--font-scale)) solid transparent;
   cursor: pointer;
+  min-height: 44px;
   transition: transform var(--dur) ease, background var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
 }
 
@@ -1565,7 +1586,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 #solutions .solutionCard .card__desc {
-  font-size: calc(15px * var(--font-scale));
+  font-size: calc(17px * var(--font-scale));
   line-height: 1.75;
 }
 
@@ -1580,7 +1601,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 #solutions .grid.grid--cards .solutionCard:first-child .card__desc {
-  font-size: calc(16px * var(--font-scale));
+  font-size: calc(17px * var(--font-scale));
   max-width: 56ch;
 }
 
@@ -2248,7 +2269,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 #blog .homeBlogCard .item__link:focus-visible {
-  outline: calc(3px * var(--font-scale)) solid var(--navy);
+  outline: 3px solid var(--navy);
   outline-offset: calc(2px * var(--font-scale));
   border-radius: calc(14px * var(--font-scale));
 }
@@ -2442,6 +2463,8 @@ body.has-hero-video .header.is-scrolled {
   font-weight: 700;
   outline: none;
   background: var(--white-92);
+  min-height: 48px;
+  font-size: 16px;
 }
 
 .field__input:focus {
@@ -2450,7 +2473,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .field__input:focus-visible {
-  outline: calc(3px * var(--font-scale)) solid #e07b00;
+  outline: 3px solid #e07b00;
   outline-offset: calc(2px * var(--font-scale));
 }
 
@@ -2541,7 +2564,7 @@ body.has-hero-video .header.is-scrolled {
 
 .footer__links {
   display: grid;
-  gap: 0;
+  gap: 4px;
 }
 
 .footer__link {
@@ -2555,6 +2578,9 @@ body.has-hero-video .header.is-scrolled {
   padding: calc(2px * var(--font-scale)) 0;
   font-size: calc(14px * var(--font-scale));
   font-weight: 500;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
 }
 
 .footer__link:hover {
@@ -2594,7 +2620,7 @@ body.has-hero-video .header.is-scrolled {
   border-radius: calc(6px * var(--font-scale));
   background: rgba(255, 255, 255, 0.08);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(13px * var(--font-scale));
   color: rgba(255, 255, 255, 0.65);
   letter-spacing: calc(0.5px * var(--font-scale));
 }
@@ -2614,6 +2640,9 @@ body.has-hero-video .header.is-scrolled {
   padding: 0;
   font-size: calc(13px * var(--font-scale));
   color: rgba(255, 255, 255, 0.82);
+  min-height: var(--tap-min);
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer__phone {
@@ -2661,6 +2690,12 @@ body.has-hero-video .header.is-scrolled {
   color: rgba(11, 31, 42, 0.66);
   font-size: calc(13px * var(--font-scale));
   font-weight: 800;
+}
+
+.breadcrumbs a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .breadcrumbs a:hover {
@@ -2765,9 +2800,8 @@ body.has-hero-video .header.is-scrolled {
   border: calc(1px * var(--font-scale)) solid var(--primary-35);
   background: rgba(255, 153, 51, 0.11);
   color: #99500a;
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(13px * var(--font-scale));
   font-weight: 800;
-  letter-spacing: 0.08em;
 }
 
 .solutionsPage__heroMedia {
@@ -3083,6 +3117,11 @@ body.has-hero-video .header.is-scrolled {
 
 /* Responsive */
 @media (max-width: 980px) {
+  /* Task 6: footer column rhythm */
+  .footer__inner {
+    gap: var(--s-4);
+  }
+
   .solutionsPage__heroBadges {
     gap: calc(7px * var(--font-scale));
   }
@@ -3313,6 +3352,7 @@ body.has-hero-video .header.is-scrolled {
     backdrop-filter: blur(var(--s-4));
     transition: opacity 200ms ease, transform 200ms ease;
     z-index: 1100;
+    gap: 10px;
   }
 
   .nav__menu.is-open {
@@ -3321,9 +3361,11 @@ body.has-hero-video .header.is-scrolled {
     pointer-events: auto;
   }
 
-  .nav__link {
+  .nav__menu .nav__link {
     font-size: calc(15px * var(--font-scale));
-    min-height: calc(40px * var(--font-scale));
+    min-height: var(--tap-min);
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
     background: rgba(0, 43, 68, 0.04);
   }
@@ -3414,7 +3456,7 @@ body.has-hero-video .header.is-scrolled {
   }
 
   .solutionsPage__sectionKicker {
-    font-size: calc(10px * var(--font-scale));
+    font-size: calc(13px * var(--font-scale));
   }
 
   .solutionsPage__detailActions .btn {
@@ -3691,6 +3733,12 @@ body.has-hero-video .header.is-scrolled {
 .waBtn:hover {
   transform: translateY(calc(-3px * var(--font-scale))) scale(1.06);
   box-shadow: 0 var(--s-3) var(--s-6) rgba(37, 211, 102, 0.55), 0 var(--s-1) var(--s-3) rgba(0,0,0,0.16);
+}
+
+/* Task 11: lift WhatsApp FAB above the consent banner while it is shown
+   (consent.js adds body.consent-open; banner is ~bottom:16px, end-side overlap) */
+body.consent-open .waBtn {
+  bottom: calc(var(--s-5) + 150px);
 }
 
 /* --- Hero video: fallback bg if video fails --- */
@@ -4056,6 +4104,13 @@ body.has-hero-video .header.is-scrolled {
 @media (max-width: 640px) {
   .processFlow__item { --stagger: 0px !important; }
   .processFlow { padding-bottom: calc(26px * var(--font-scale)); }
+
+  /* Task 6: tighten section vertical rhythm on small phones */
+  .section { padding-block: var(--s-7); }
+  .section--feature { padding-block: var(--s-8); }
+  .section--tight { padding-block: var(--s-6); }
+  #process.section { padding-block: var(--s-7); }
+  .section__head { margin-bottom: var(--s-5); }
 }
 
 /* ============================================================
@@ -4254,10 +4309,8 @@ body.has-hero-video .header.is-scrolled {
 }
 
 @media (max-width: 540px) {
-  .trustStrip__inner {
-    grid-template-columns: repeat(2, 1fr);
-    gap: calc(10px * var(--font-scale));
-  }
+  /* Task 8: removed .trustStrip__inner grid override so the ≤760 horizontal
+     carousel persists below 540 (grid was defeating the scroll layout). */
 
   .trustStrip__item {
     min-height: calc(90px * var(--font-scale));
@@ -4390,7 +4443,7 @@ body.has-hero-video .header.is-scrolled {
     padding: calc(36px * var(--font-scale)) calc(14px * var(--font-scale));
     border-radius: calc(14px * var(--font-scale));
     margin-inline-start: 0;
-    transform: translateX(clamp(calc(6px * var(--font-scale)), 1.6vw, var(--s-3)));
+    transform: none;
     gap: var(--s-3);
   }
   .heroVideo__cycleWrap {
@@ -4502,6 +4555,14 @@ body.has-hero-video .header.is-scrolled {
 .richText li {
   color: rgba(11, 31, 42, 0.82);
   font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+/* Task 7: keep wide tables / code blocks from breaking the layout */
+.richText :is(table, pre) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .richText h2,
@@ -4719,7 +4780,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .contactPage__form .field__input {
-  min-height: var(--s-7);
+  min-height: 48px;
 }
 
 .contactPage__form textarea.field__input {
@@ -4759,7 +4820,7 @@ body.has-hero-video .header.is-scrolled {
 .contactPage__form .iti__search-input {
   direction: ltr;
   font-family: inherit;
-  font-size: calc(14px * var(--font-scale));
+  font-size: 16px;
   padding: calc(10px * var(--font-scale)) calc(14px * var(--font-scale));
   border-bottom: calc(1px * var(--font-scale)) solid var(--navy-10);
   outline: none;
@@ -4775,7 +4836,7 @@ body.has-hero-video .header.is-scrolled {
 .contactPage__form .iti__country {
   direction: ltr;
   font-family: inherit;
-  font-size: calc(14px * var(--font-scale));
+  font-size: 14px;
 }
 
 .contactPage__form .iti__country.iti__highlight {
@@ -5024,7 +5085,7 @@ body.has-hero-video .header.is-scrolled {
 
 .blogPostContent p {
   margin: 0 0 1.5em;
-  font-size: clamp(var(--s-4), 1.35vw, calc(19px * var(--font-scale)));
+  font-size: clamp(calc(17px * var(--font-scale)), 1.35vw, calc(19px * var(--font-scale)));
   line-height: 1.75;
 }
 
@@ -5064,7 +5125,7 @@ body.has-hero-video .header.is-scrolled {
 }
 
 .blogPostContent li {
-  font-size: clamp(var(--s-4), 1.2vw, calc(18px * var(--font-scale)));
+  font-size: clamp(calc(17px * var(--font-scale)), 1.2vw, calc(18px * var(--font-scale)));
   line-height: 1.65;
 }
 
@@ -5239,6 +5300,9 @@ body.has-hero-video .header.is-scrolled {
   color: var(--primary);
   text-decoration: none;
   transition: opacity 160ms;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 .breadcrumbNav__item a:hover { opacity: 0.75; }
 .breadcrumbNav__item--current { color: rgba(11,31,42,0.45); }
@@ -5285,7 +5349,7 @@ body.has-hero-video .header.is-scrolled {
   border: calc(1px * var(--font-scale)) solid rgba(0,43,68,0.12);
   background: rgba(0,43,68,0.04);
   color: rgba(11,31,42,0.66);
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(12.5px * var(--font-scale));
   font-weight: 700;
 }
 .blogPostHeadMeta__pill--tag {
@@ -5548,9 +5612,9 @@ body.has-hero-video .header.is-scrolled {
   border: 0;
 }
 
-/* Task 6: Topbar link touch targets ≥44px */
+/* Task 6: Topbar link touch targets (raw px — thin bar, keep ≥40) */
 .topbar__item a {
-  min-height: calc(44px * var(--font-scale));
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
 }

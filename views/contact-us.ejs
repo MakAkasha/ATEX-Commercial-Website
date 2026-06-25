@@ -51,10 +51,11 @@
 
             <div aria-live="polite" aria-atomic="true" id="contactFormStatus" class="sr-only"></div>
             <form id="contactForm" class="cta__form contactPage__form" novalidate aria-describedby="contactFormStatus">
+              <p class="formNote is-info">*الحقول المطلوبة</p>
               <div class="field">
                 <label class="field__label" for="contactName">الاسم الكامل</label>
                 <input class="field__input" id="contactName" name="name" type="text"
-                       placeholder="محمد العمري" autocomplete="name" required
+                       placeholder="محمد العمري" autocomplete="name" required enterkeyhint="next"
                        aria-invalid="false" aria-describedby="contactName-error" />
                 <span id="contactName-error" class="field__error" aria-live="polite"></span>
               </div>
@@ -62,13 +63,13 @@
               <div class="field">
                 <label class="field__label" for="contactCompanyName">اسم الشركة</label>
                 <input class="field__input" id="contactCompanyName" name="companyName" type="text"
-                       placeholder="شركة المستقبل للتقنية" autocomplete="organization" />
+                       placeholder="شركة المستقبل للتقنية" autocomplete="organization" enterkeyhint="next" />
               </div>
 
               <div class="field">
-                <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري</label>
+                <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري<span aria-hidden="true"> *</span></label>
                 <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
-                       type="text" placeholder="4030XXXXXX" required inputmode="numeric"
+                       type="text" placeholder="4030XXXXXX" required inputmode="numeric" enterkeyhint="next"
                        aria-invalid="false" aria-describedby="contactCommercialRegister-error" />
                 <span id="contactCommercialRegister-error" class="field__error" aria-live="polite"></span>
               </div>
@@ -85,6 +86,7 @@
                   dir="ltr"
                   inputmode="tel"
                   autocomplete="tel"
+                  enterkeyhint="next"
                   aria-invalid="false"
                   aria-describedby="contactWhatsapp-error"
                 />
@@ -93,7 +95,7 @@
 
               <div class="field">
                 <label class="field__label" for="contactMessage">تفاصيل المشروع</label>
-                <textarea class="field__input" id="contactMessage" name="message" rows="5"
+                <textarea class="field__input" id="contactMessage" name="message" rows="5" enterkeyhint="send"
                           placeholder="صف باختصار ما تحتاجه: نوع المبنى، عدد الأجهزة المتوقع، والميزة الرئيسية التي تبحث عنها…"></textarea>
               </div>
 
