@@ -5165,21 +5165,28 @@ body.consent-open .waBtn {
   color: rgba(11, 31, 42, 0.6);
 }
 
-/* Specs / comparison tables — compact, real table styling */
+/* Specs / comparison tables — full-width section, breaks out of text column */
 .blogPostContent table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: calc(13.5px * var(--font-scale));
-  line-height: 1.55;
-  margin: 1.6em 0;
-  border: 1px solid rgba(13, 43, 62, 0.14);
+  width: min(calc(960px * var(--font-scale)), 92vw);
+  margin-inline: calc((100% - min(calc(960px * var(--font-scale)), 92vw)) / 2);
+  margin-block: calc(56px * var(--font-scale));
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: calc(14px * var(--font-scale));
+  line-height: 1.6;
+  border: 1px solid rgba(13, 43, 62, 0.12);
+  border-radius: var(--s-3);
+  overflow: hidden;
 }
 .blogPostContent th,
 .blogPostContent td {
-  border: 1px solid rgba(13, 43, 62, 0.1);
-  padding: calc(8px * var(--font-scale)) calc(11px * var(--font-scale));
+  border-bottom: 1px solid rgba(13, 43, 62, 0.09);
+  padding: calc(13px * var(--font-scale)) calc(16px * var(--font-scale));
   text-align: right;
   vertical-align: top;
+}
+.blogPostContent tbody tr:last-child td {
+  border-bottom: none;
 }
 .blogPostContent thead th {
   background: rgba(255, 153, 51, 0.1);
