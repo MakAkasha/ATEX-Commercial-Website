@@ -5151,7 +5151,7 @@ body.consent-open .waBtn {
 .blogPostContent figure {
   width: min(calc(960px * var(--font-scale)), 92vw);
   margin-inline: calc((100% - min(calc(960px * var(--font-scale)), 92vw)) / 2);
-  margin-block: calc(30px * var(--font-scale));
+  margin-block: calc(56px * var(--font-scale));
   text-align: center;
 }
 .blogPostContent figure img {
