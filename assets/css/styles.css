@@ -5147,6 +5147,24 @@ body.consent-open .waBtn {
   box-shadow: 0 var(--s-4) calc(30px * var(--font-scale)) rgba(0, 0, 0, 0.1);
 }
 
+/* Full-width figures (diagrams) — break out of the centered text column */
+.blogPostContent figure {
+  width: min(calc(960px * var(--font-scale)), 92vw);
+  margin-inline: calc((100% - min(calc(960px * var(--font-scale)), 92vw)) / 2);
+  margin-block: calc(30px * var(--font-scale));
+  text-align: center;
+}
+.blogPostContent figure img {
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+.blogPostContent figure figcaption {
+  margin-top: var(--s-2);
+  font-size: calc(13px * var(--font-scale));
+  color: rgba(11, 31, 42, 0.6);
+}
+
 .blogPostFooter {
   margin-top: var(--s-1);
   padding-top: calc(14px * var(--font-scale));
