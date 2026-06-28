@@ -5167,6 +5167,9 @@ body.consent-open .waBtn {
 
 /* Specs / comparison tables — full-width section, breaks out of text column */
 .blogPostContent table {
+  display: table;
+  table-layout: fixed;
+  max-width: none;
   width: min(calc(960px * var(--font-scale)), 92vw);
   margin-inline: calc((100% - min(calc(960px * var(--font-scale)), 92vw)) / 2);
   margin-block: calc(56px * var(--font-scale));
