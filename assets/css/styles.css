@@ -5160,9 +5160,38 @@ body.consent-open .waBtn {
   margin: 0;
 }
 .blogPostContent figure figcaption {
-  margin-top: var(--s-2);
+  margin-top: calc(18px * var(--font-scale));
   font-size: calc(13px * var(--font-scale));
   color: rgba(11, 31, 42, 0.6);
+}
+
+/* Specs / comparison tables — compact, real table styling */
+.blogPostContent table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: calc(13.5px * var(--font-scale));
+  line-height: 1.55;
+  margin: 1.6em 0;
+  border: 1px solid rgba(13, 43, 62, 0.14);
+}
+.blogPostContent th,
+.blogPostContent td {
+  border: 1px solid rgba(13, 43, 62, 0.1);
+  padding: calc(8px * var(--font-scale)) calc(11px * var(--font-scale));
+  text-align: right;
+  vertical-align: top;
+}
+.blogPostContent thead th {
+  background: rgba(255, 153, 51, 0.1);
+  color: var(--navy);
+  font-weight: 700;
+}
+.blogPostContent tbody tr:nth-child(even) {
+  background: rgba(13, 43, 62, 0.03);
+}
+.blogPostContent tbody td:first-child {
+  font-weight: 700;
+  color: var(--navy);
 }
 
 .blogPostFooter {
