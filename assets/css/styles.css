@@ -5160,7 +5160,7 @@ body.consent-open .waBtn {
   margin: 0;
 }
 .blogPostContent figure figcaption {
-  margin-top: calc(18px * var(--font-scale));
+  margin-top: var(--s-2);
   font-size: calc(13px * var(--font-scale));
   color: rgba(11, 31, 42, 0.6);
 }
