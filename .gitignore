@@ -38,3 +38,9 @@ tabler/
 
 # CSS pre-zoom-migration backup
 *.prezoom.bak
+
+# Q-System products preview (throwaway DB + generated artifact)
+server/preview-qsystem.sqlite
+server/preview-qsystem.sqlite-shm
+server/preview-qsystem.sqlite-wal
+qsystem-products-preview.html
