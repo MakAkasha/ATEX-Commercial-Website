@@ -106,7 +106,18 @@ router.get("/public", (req, res) => {
   const db = getDb();
   const products = db
     .prepare(
-      "SELECT id, slug, category, title, description, image, brochure_url, sort_order FROM products WHERE published = 1 ORDER BY sort_order ASC, id DESC"
+      "SELECT id, slug, category, title, description, image, brochure_url, sort_order FROM products WHERE published = 1 AND is_catalog = 0 ORDER BY sort_order ASC, id DESC"
+    )
+    .all();
+  return res.json({ products });
+});
+
+// Dedicated catalog feed for the /products page (Q-System items).
+router.get("/catalog", (req, res) => {
+  const db = getDb();
+  const products = db
+    .prepare(
+      "SELECT id, slug, category, title, description, image, brochure_url, sort_order FROM products WHERE published = 1 AND is_catalog = 1 ORDER BY sort_order ASC, id ASC"
     )
     .all();
   return res.json({ products });

@@ -9,6 +9,7 @@ const { sanitizePageHtml, sanitizeCssCode } = require("./customPages");
 const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
+const { CATEGORIES, getCatalog } = require("../data/productsPage");
 const { safeJsonParse } = require("../utils/safe");
 const { memoize } = require("../utils/ttlCache");
 
@@ -676,6 +677,56 @@ router.get("/industries/:slug", (req, res) => {
       ogDescription: industry.metaDescription || industry.intro,
       ogImage: industryImage,
     }),
+  });
+});
+
+// Products catalog page (SSR) — Q-System items, images-only, admin-managed.
+router.get("/products", (req, res) => {
+  const content = loadHomeContent();
+  const db = getDb();
+  const products = getCatalog(db);
+
+  const siteUrl = absoluteUrl(req, "/");
+  const pageUrl = absoluteUrl(req, "/products");
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "المنتجات", "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        "name": "تشكيلة الأنظمة الذكية من أتكس",
+        "description": "كتالوج منتجات أتكس: الأقفال الذكية، أنظمة الإنتركوم، مفاتيح التحكم، الشاشات، ولوحات الجرس.",
+        "url": pageUrl,
+        "numberOfItems": products.length,
+        "itemListElement": products.map((p, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": p.title,
+          "image": absoluteUrl(req, p.image),
+        })),
+      },
+    ],
+  };
+
+  return res.render("products", {
+    content,
+    categories: CATEGORIES,
+    products,
+    structuredData,
+    ...baseRenderData(req),
+    meta: withMeta(req, applyPageSeo("/products", {
+      title: "أتكس | المنتجات — الأنظمة الذكية",
+      description:
+        "تشكيلة منتجات أتكس للأنظمة الذكية: الأقفال الذكية، أنظمة الإنتركوم وعائلة بابكوم، مفاتيح التحكم الذكية، شاشات التحكم، ولوحات الجرس داخل المملكة العربية السعودية.",
+      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+    })),
   });
 });
 

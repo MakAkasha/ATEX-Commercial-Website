@@ -149,6 +149,13 @@ function migrate() {
     CREATE INDEX IF NOT EXISTS idx_contact_submissions_email ON contact_submissions(email);
   `);
 
+  // Additive column: separates the dedicated /products catalog (is_catalog=1)
+  // from homepage demo products (is_catalog=0). Guarded so re-runs are no-ops.
+  const productCols = db.prepare("PRAGMA table_info(products)").all();
+  if (!productCols.some((c) => c.name === "is_catalog")) {
+    db.exec("ALTER TABLE products ADD COLUMN is_catalog INTEGER NOT NULL DEFAULT 0");
+  }
+
   // Ensure a default home content exists (id=1)
   const row = db.prepare("SELECT content_json FROM home_content WHERE id = 1").get();
   if (!row) {

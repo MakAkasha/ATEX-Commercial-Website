@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
+  </head>
+  <body>
+    <%- include('partials/site-header', { content }) %>
+
+    <%
+      const cats = Array.isArray(categories) ? categories : [];
+      const bigB = cats.filter((c) => c.big);
+      const smallB = cats.filter((c) => !c.big);
+      const items = Array.isArray(products) ? products : [];
+
+      function bannerMarkup(c) {
+        const cls = 'products-page__banner' + (c.big ? ' products-page__banner--big' : '') + ' products-page__banner--img';
+        const link = c.big
+          ? ''
+          : '<div class="products-page__bannerInner"><span class="products-page__ulink">استكشف <i>←</i></span></div>';
+        return (
+          '<a class="' + cls + '" href="#" aria-label="' + c.label + '">' +
+          '<span class="products-page__bannerMedia" style="background-image:url(\'' + c.banner + '\')"></span>' +
+          link +
+          '</a>'
+        );
+      }
+      const smallRowHtml = smallB.map(bannerMarkup).join('');
+    %>
+
+    <main class="products-page" id="main-content" tabindex="-1" dir="rtl">
+      <div class="products-page__wrap">
+        <header class="products-page__head">
+          <p class="products-page__eyebrow">أتكس · المنتجات</p>
+          <h1 class="products-page__title">تشكيلة الأنظمة الذكية</h1>
+          <p class="products-page__lede">من الأقفال والإنتركوم إلى المفاتيح والشاشات ولوحات الجرس.</p>
+        </header>
+      </div>
+
+      <div class="products-page__wrap">
+        <section class="products-page__banners" aria-label="فئات المنتجات">
+          <div class="products-page__brow products-page__brow--2">
+            <%- bigB.map(bannerMarkup).join('') %>
+          </div>
+          <div class="products-page__brow products-page__brow--3 products-page__brow--dsk">
+            <%- smallRowHtml %>
+          </div>
+          <div class="products-page__marquee" aria-hidden="true">
+            <div class="products-page__marqueeTrack"><%- smallRowHtml %><%- smallRowHtml %></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="products-page__wrap products-page__gridsec">
+        <div class="products-page__sectHead">
+          <p class="products-page__eyebrow">الكتالوج</p>
+          <h2 class="products-page__sectTitle">كل المنتجات</h2>
+        </div>
+        <div class="products-page__grid products-page__grid--collapsed" id="catalogGrid">
+          <% items.forEach((p) => { %>
+            <a class="products-page__tile" href="#" title="<%= p.title %>">
+              <img src="<%= p.image %>" alt="<%= p.title %>" loading="lazy" />
+            </a>
+          <% }); %>
+        </div>
+        <div class="products-page__expandWrap">
+          <button class="products-page__expand" id="productsExpandBtn" aria-expanded="false">عرض كل المنتجات ▾</button>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/site-footer', { content }) %>
+
+    <script>
+      (function () {
+        var btn = document.getElementById('productsExpandBtn');
+        var grid = document.getElementById('catalogGrid');
+        if (!btn || !grid) return;
+        btn.addEventListener('click', function () {
+          var open = grid.classList.toggle('products-page__grid--collapsed') === false;
+          btn.setAttribute('aria-expanded', String(open));
+          btn.textContent = open ? 'عرض أقل ▴' : 'عرض كل المنتجات ▾';
+        });
+      })();
+    </script>
+  </body>
+</html>

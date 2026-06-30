@@ -163,6 +163,7 @@ app.get("/sitemap.xml", (req, res) => {
     const staticUrls = [
       { loc: baseUrl, priority: "1.0", changefreq: "daily" },
       { loc: `${baseUrl}/solutions`, priority: "0.9", changefreq: "weekly" },
+      { loc: `${baseUrl}/products`, priority: "0.8", changefreq: "weekly" },
       { loc: `${baseUrl}/contact-us`, priority: "0.8", changefreq: "monthly" },
       { loc: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
