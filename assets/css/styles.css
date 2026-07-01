@@ -2623,15 +2623,6 @@ body.nav-open .nav__toggleLines::after {
   line-height: 1.6;
 }
 
-.footer__descLead {
-  display: block;
-  margin-bottom: calc(10px * var(--font-scale));
-  color: #fff;
-  font-weight: 800;
-  font-size: calc(21px * var(--font-scale));
-  line-height: 1.35;
-}
-
 .footer__links {
   display: grid;
   gap: 4px;
