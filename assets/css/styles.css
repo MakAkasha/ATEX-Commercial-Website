@@ -6051,7 +6051,7 @@ body.consent-open .waBtn {
 /* link columns */
 .footer--v2 .footer__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: clamp(24px, 4vw, 56px);
   padding: clamp(36px, 4vw, 56px) 0;
 }
@@ -6145,11 +6145,9 @@ body.consent-open .waBtn {
     gap: 24px 18px;
     padding: 28px 0;
   }
-  /* mobile column order: العنوان, روابط سريعة, الدعم والتواصل, قانوني */
-  .footer--v2 .footer__grid > .footer__col:nth-child(1) { order: 2; } /* روابط سريعة */
-  .footer--v2 .footer__grid > .footer__col:nth-child(2) { order: 3; } /* الدعم والتواصل */
-  .footer--v2 .footer__grid > .footer__col:nth-child(3) { order: 4; } /* قانوني */
-  .footer--v2 .footer__grid > .footer__col:nth-child(4) { order: 1; } /* العنوان */
+  /* mobile: address shows in the brand block, hidden as a grid column */
+  .footer--v2 .footer__brandMeta { display: flex; }
+  .footer--v2 .footer__col--address { display: none; }
   .footer--v2 .footer__bottomInner { justify-content: center; text-align: center; }
 }
 
@@ -6240,10 +6238,15 @@ body.consent-open .waBtn {
 
 /* address block moved into the brand column, separated from the desc */
 .footer--v2 .footer__brandMeta {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 6px;
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* mobile: reveal the brand address block (must come after the base display:none) */
+@media (max-width: 560px) {
+  .footer--v2 .footer__brandMeta { display: flex; }
 }
