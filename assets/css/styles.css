@@ -6145,6 +6145,11 @@ body.consent-open .waBtn {
     gap: 24px 18px;
     padding: 28px 0;
   }
+  /* mobile column order: العنوان, روابط سريعة, الدعم والتواصل, قانوني */
+  .footer--v2 .footer__grid > .footer__col:nth-child(1) { order: 2; } /* روابط سريعة */
+  .footer--v2 .footer__grid > .footer__col:nth-child(2) { order: 3; } /* الدعم والتواصل */
+  .footer--v2 .footer__grid > .footer__col:nth-child(3) { order: 4; } /* قانوني */
+  .footer--v2 .footer__grid > .footer__col:nth-child(4) { order: 1; } /* العنوان */
   .footer--v2 .footer__bottomInner { justify-content: center; text-align: center; }
 }
 
