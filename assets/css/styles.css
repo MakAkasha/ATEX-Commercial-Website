@@ -3405,6 +3405,11 @@ body.nav-open .nav__toggleLines::after {
 
 /* ── Batch C: hamburger nav collapse moved 760 → 880 (tablet overflow fix) ── */
 @media (max-width: 880px) {
+  /* mobile: logo on the left edge, hamburger on the right edge */
+  .header__inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
   .nav__toggle {
     display: inline-grid;
     place-items: center;
