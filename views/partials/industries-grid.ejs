@@ -1,6 +1,13 @@
 <div class="industriesShowcase__grid">
   <% (locals.items || []).forEach(function(item, idx){ %>
-    <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= item.image %>')" aria-label="عرض تفاصيل <%= item.title %>">
+    <%
+      // Downscaled card variant to cut page weight; falls back to original if no match.
+      var __ifull = item.image || '/assets/ATEX-logo.svg';
+      var __icard = /^\/assets\/solutions\/[^\/]+\.webp$/i.test(__ifull)
+        ? __ifull.replace('/assets/solutions/', '/assets/solutions/cards/')
+        : __ifull;
+    %>
+    <a class="industriesShowcase__card" data-tilt href="/industries/<%= item.slug %>" style="--industry-bg:url('<%= __icard %>')" aria-label="عرض تفاصيل <%= item.title %>">
       <span class="industriesShowcase__index" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
       <h3><%= item.title %></h3>
     </a>

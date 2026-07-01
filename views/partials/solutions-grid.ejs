@@ -1,6 +1,14 @@
 <div class="grid grid--cards">
   <% (locals.items || []).forEach(function(c, idx){ %>
-    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= c.primaryImage || '/assets/ATEX-logo.svg' %>')" aria-label="عرض تفاصيل <%= c.title %>">
+    <%
+      // Card thumbnails use a downscaled variant (720x480) to cut page weight;
+      // detail pages keep the full-res original. Fall back to original/logo if no match.
+      var __full = c.primaryImage || '/assets/ATEX-logo.svg';
+      var __card = /^\/assets\/solutions\/[^\/]+\.webp$/i.test(__full)
+        ? __full.replace('/assets/solutions/', '/assets/solutions/cards/')
+        : __full;
+    %>
+    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= __card %>')" aria-label="عرض تفاصيل <%= c.title %>">
       <span class="solutionCard__num" aria-hidden="true"><%= String(idx + 1).padStart(2, '0') %></span>
       <div class="solutionCard__body">
         <h3 class="card__title"><%= c.title %></h3>

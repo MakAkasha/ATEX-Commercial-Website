@@ -249,12 +249,16 @@ router.get("/", (req, res) => {
     latestPosts,
     ...baseRenderData(req),
     structuredData,
-    meta: withMeta(req, applyPageSeo("/", {
+    meta: withMeta(req, {
+      ...applyPageSeo("/", {
       title: "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
       description:
         "أتكس مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
       ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
-    })),
+      }),
+      // Preload the hero poster (LCP element — CSS background on .heroVideo__media)
+      preloadImage: "/assets/hero-video/video-keeper.webp",
+    }),
   });
 });
 
