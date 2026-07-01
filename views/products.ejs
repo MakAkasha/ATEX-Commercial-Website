@@ -56,10 +56,23 @@
           <h2 class="products-page__sectTitle">كل المنتجات</h2>
         </div>
         <div class="products-page__grid products-page__grid--collapsed" id="catalogGrid">
-          <% items.forEach((p) => { %>
-            <a class="products-page__tile" href="#" title="<%= p.title %>">
-              <img src="<%= p.image %>" alt="<%= p.title %>" loading="lazy" />
-            </a>
+          <% items.forEach((p) => {
+               const model = String(p.slug || '').toUpperCase();
+               const altText = model ? (p.title + ' — الطراز ' + model) : p.title;
+          %>
+            <article class="products-page__card">
+              <div class="products-page__cardMedia">
+                <img src="<%= p.image %>" alt="<%= altText %>" loading="lazy" />
+              </div>
+              <div class="products-page__cardBody">
+                <% if (p.category) { %><span class="products-page__cardTag"><%= p.category %></span><% } %>
+                <h3 class="products-page__cardName"><%= p.title %></h3>
+                <% if (p.description) { %><p class="products-page__cardSpec"><%= p.description %></p><% } %>
+                <div class="products-page__cardActions">
+                  <a class="btn btn--primary btn--small" href="/contact-us" aria-label="اطلب عرض سعر — <%= p.title %>">اطلب عرض سعر</a>
+                </div>
+              </div>
+            </article>
           <% }); %>
         </div>
         <div class="products-page__expandWrap">

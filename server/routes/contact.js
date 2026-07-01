@@ -72,22 +72,22 @@ router.post("/", contactLimiter, async (req, res) => {
   const whatsapp = normalizeText(nonEmptyString(req.body?.whatsapp) || "", 20);
   const message = normalizeText(nonEmptyString(req.body?.message) || "", 3000);
 
-  if (!name || !companyName || !commercialRegister || !whatsapp || !message) {
+  if (!name || !whatsapp) {
     return res.status(400).json({ error: "MISSING_FIELDS" });
   }
   if (name.length < 2) {
     return res.status(400).json({ error: "INVALID_NAME" });
   }
-  if (companyName.length < 2) {
+  if (companyName && companyName.length < 2) {
     return res.status(400).json({ error: "INVALID_COMPANY_NAME" });
   }
-  if (!isValidCommercialRegister(commercialRegister)) {
+  if (commercialRegister && !isValidCommercialRegister(commercialRegister)) {
     return res.status(400).json({ error: "INVALID_COMMERCIAL_REGISTER" });
   }
   if (!isValidWhatsapp(whatsapp)) {
     return res.status(400).json({ error: "INVALID_WHATSAPP" });
   }
-  if (message.length < 10) {
+  if (message && message.length < 10) {
     return res.status(400).json({ error: "MESSAGE_TOO_SHORT" });
   }
 

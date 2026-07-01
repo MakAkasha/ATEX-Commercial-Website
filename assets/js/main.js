@@ -410,7 +410,7 @@ function initContactForm() {
       return null;
     }
 
-    if (commercialRegister.length < 5) {
+    if (commercialRegister.length > 0 && commercialRegister.length < 5) {
       const msg = "يرجى إدخال رقم سجل تجاري صحيح.";
       markInvalid(commercialRegisterInput, msg);
       setNote(msg, "error");

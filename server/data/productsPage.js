@@ -22,12 +22,12 @@ const SMALL_BANNERS = CATEGORIES.filter((c) => !c.big);
 /**
  * Flat list of published catalog products (images only), ordered for display.
  * @param {import('better-sqlite3').Database} db
- * @returns {Array<{ id:number, slug:string, title:string, category:string, image:string }>}
+ * @returns {Array<{ id:number, slug:string, title:string, category:string, description:string, image:string }>}
  */
 function getCatalog(db) {
   return db
     .prepare(
-      "SELECT id, slug, title, category, image FROM products WHERE published = 1 AND is_catalog = 1 ORDER BY sort_order ASC, id ASC"
+      "SELECT id, slug, title, category, description, image FROM products WHERE published = 1 AND is_catalog = 1 ORDER BY sort_order ASC, id ASC"
     )
     .all();
 }
