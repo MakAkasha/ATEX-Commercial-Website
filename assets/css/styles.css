@@ -2516,10 +2516,22 @@ body.nav-open .nav__toggleLines::after {
 }
 
 .footer__inner {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr 0.8fr;
-  gap: calc(28px * var(--font-scale));
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(26px * var(--font-scale)) calc(64px * var(--font-scale));
   align-items: start;
+}
+
+/* brand block = its own dedicated full-width row, divided from the links below */
+.footer__inner > .footer__col--brand {
+  flex: 0 0 100%;
+  max-width: none;
+  padding-bottom: calc(26px * var(--font-scale));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.footer__inner > .footer__col:not(.footer__col--brand) {
+  flex: 0 0 auto;
 }
 
 .footer__col {
@@ -2537,15 +2549,30 @@ body.nav-open .nav__toggleLines::after {
 }
 
 .footer__brandLogo {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  margin-bottom: var(--s-5);
+  margin-bottom: var(--s-4);
+  padding-bottom: var(--s-5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .footer__brandLogo img {
-  width: clamp(calc(144px * var(--font-scale)), 18vw, calc(256px * var(--font-scale)));
+  width: clamp(calc(220px * var(--font-scale)), 26vw, calc(380px * var(--font-scale)));
   height: auto;
   display: block;
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 768px) {
+  .footer__brandLogo img {
+    width: clamp(calc(240px * var(--font-scale)), 62vw, calc(320px * var(--font-scale)));
+  }
+  /* separate the brand block from the link columns on mobile */
+  .footer__col--brand {
+    padding-bottom: var(--s-4);
+    margin-bottom: var(--s-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
 }
 
 .footer__title {
@@ -2560,6 +2587,15 @@ body.nav-open .nav__toggleLines::after {
   font-weight: 700;
   font-size: calc(13.5px * var(--font-scale));
   line-height: 1.6;
+}
+
+.footer__descLead {
+  display: block;
+  margin-bottom: calc(10px * var(--font-scale));
+  color: #fff;
+  font-weight: 800;
+  font-size: calc(21px * var(--font-scale));
+  line-height: 1.35;
 }
 
 .footer__links {
@@ -2583,8 +2619,39 @@ body.nav-open .nav__toggleLines::after {
   align-items: center;
 }
 
+/* Desktop (mouse): tighten footer link rows — the 48px touch target leaves
+   too much air. Mobile keeps var(--tap-min) for accessible tapping. */
+@media (pointer: fine) {
+  .footer__links {
+    gap: 2px;
+  }
+  .footer__links .footer__link {
+    min-height: 0;
+    padding-block: calc(4px * var(--font-scale));
+  }
+}
+
 .footer__link:hover {
   color: var(--primary);
+}
+
+/* "الدعم الفني" placeholder — not live yet; reveal "قريباً" on hover/focus/press */
+.footer__link--soon {
+  cursor: default;
+}
+.footer__soon {
+  margin-inline-start: 8px;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.footer__link--soon:hover .footer__soon,
+.footer__link--soon:focus .footer__soon,
+.footer__link--soon:focus-visible .footer__soon,
+.footer__link--soon:active .footer__soon {
+  opacity: 1;
 }
 
 .footer__bottom {
@@ -3305,11 +3372,18 @@ body.nav-open .nav__toggleLines::after {
   }
 
   .footer__inner {
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    column-gap: calc(40px * var(--font-scale));
   }
 
   .footer__col--brand {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
+  }
+
+  .footer__inner > .footer__col:not(.footer__col--brand) {
+    flex: 0 0 100%;
   }
 
   .footer__bottomInner {
@@ -5901,4 +5975,261 @@ body.consent-open .waBtn {
   /* mobile 2 cols -> 2 rows = 4 tiles; hide from the 5th. */
   .products-page__grid--collapsed .products-page__tile:nth-child(n + 7) { display: revert; }
   .products-page__grid--collapsed .products-page__tile:nth-child(n + 5) { display: none; }
+}
+
+/* ============================================================
+   Footer v2 — amini-inspired: brand+CTA row, link grid,
+   tracked labels, legal bar, giant faint watermark. RTL.
+   ============================================================ */
+.footer--v2 {
+  position: relative;
+  overflow: hidden;
+  background: var(--black, #0a0a0a);
+  color: #fff;
+  padding: clamp(48px, 6vw, 88px) 0 0;
+}
+.footer--v2 .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* top: brand + CTA */
+.footer--v2 .footer__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: clamp(32px, 5vw, 72px);
+  padding-bottom: clamp(32px, 4vw, 56px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.footer--v2 .footer__brand { max-width: 460px; }
+.footer--v2 .footer__brandLogo {
+  display: flex;
+  margin-bottom: 22px;
+  padding: 0 0 20px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+.footer--v2 .footer__brandLogo img {
+  width: clamp(270px, 30vw, 380px);
+  height: auto;
+  filter: brightness(0) invert(1);
+}
+.footer--v2 .footer__tagline {
+  font-family: var(--pp-head, 'Tajawal', sans-serif);
+  font-weight: 800;
+  font-size: clamp(20px, 2.4vw, 24px);
+  line-height: 1.3;
+  color: var(--primary, #ff9933);
+  margin: 0 0 10px;
+}
+.footer--v2 .footer__desc {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 40ch;
+  margin: 0;
+}
+.footer--v2 .footer__cta {
+  max-width: 420px;
+  align-self: center;
+}
+.footer--v2 .footer__ctaTitle {
+  font-family: var(--pp-head, 'Tajawal', sans-serif);
+  font-weight: 800;
+  font-size: clamp(19px, 2vw, 24px);
+  color: #fff;
+  margin: 0 0 10px;
+}
+.footer--v2 .footer__ctaText {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14.5px;
+  line-height: 1.75;
+  margin: 0 0 22px;
+}
+
+/* link columns */
+.footer--v2 .footer__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  padding: clamp(36px, 4vw, 56px) 0;
+}
+.footer--v2 .footer__col { min-width: 0; }
+.footer--v2 .footer__label {
+  font-family: var(--pp-lat, 'Tajawal', sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary, #ff9933);
+  margin: 0 0 18px;
+}
+.footer--v2 .footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.footer--v2 .footer__link {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 15px;
+  font-weight: 500;
+  min-height: 0;
+  padding: 0;
+  transition: color 0.2s;
+  width: fit-content;
+}
+.footer--v2 .footer__link:hover {
+  color: #fff;
+}
+.footer--v2 .footer__phone {
+  direction: rtl;
+  unicode-bidi: plaintext;
+}
+.footer--v2 .footer__meta {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* bottom legal bar */
+.footer--v2 .footer__bottom {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 0;
+  padding: 22px 0 26px;
+}
+.footer--v2 .footer__bottomInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer--v2 .footer__copyright,
+.footer--v2 .footer__version {
+  font-family: var(--pp-lat, 'Tajawal', sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* giant faint brand watermark bleeding off the bottom */
+.footer--v2 .footer__watermark {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(-24px, -2vw, -12px);
+  transform: translateX(-50%);
+  z-index: 1;
+  font-family: var(--pp-head, 'Tajawal', sans-serif);
+  font-weight: 800;
+  font-size: clamp(120px, 26vw, 400px);
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .footer--v2 .footer__top { gap: 28px; }
+  .footer--v2 .footer__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .footer--v2 { padding-top: clamp(36px, 9vw, 56px); }
+  .footer--v2 .footer__top { gap: 20px; padding-bottom: 24px; }
+  .footer--v2 .footer__grid {
+    grid-template-columns: max-content max-content;
+    justify-content: start;
+    gap: 24px 10px;
+    padding: 28px 0;
+  }
+  .footer--v2 .footer__bottomInner { justify-content: center; text-align: center; }
+}
+
+/* footer map (PC only) — replaces the CTA block on desktop.
+   Cross-origin iframe: controls can't be removed from the DOM, so we
+   crop the edges (corner controls clipped) + disable interaction + gray it. */
+.footer--v2 .footer__map {
+  position: relative;
+  flex: 0 1 400px;
+  max-width: 400px;
+  align-self: center;
+  height: 210px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.footer--v2 .footer__map iframe {
+  position: absolute;
+  /* crop top + left (hides camera / "open in maps" / satellite toggle),
+     keep bottom-right flush so the zoom +/- controls stay visible */
+  top: -56px;
+  left: -84px;
+  width: calc(100% + 84px);
+  height: calc(100% + 56px);
+  border: 0;
+  filter: grayscale(1) contrast(0.92) brightness(0.9);
+}
+@media (max-width: 980px) {
+  .footer--v2 .footer__map { display: none; }
+}
+
+/* footer contact popups (خدمة العملاء / قسم المبيعات) — WhatsApp + call icons */
+.footer--v2 .footer__contact {
+  position: relative;
+  width: fit-content;
+}
+.footer--v2 .footer__contactBtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.68);
+  transition: color 0.2s;
+}
+.footer--v2 .footer__contact:hover .footer__contactBtn,
+.footer--v2 .footer__contact.is-open .footer__contactBtn {
+  color: #fff;
+}
+.footer--v2 .footer__pop {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  inset-inline-start: 0;
+  z-index: 4;
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #14161a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+.footer--v2 .footer__contact.is-open .footer__pop {
+  display: flex;
+}
+.footer--v2 .footer__popBtn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+.footer--v2 .footer__popBtn:hover {
+  background: var(--primary, #ff9933);
+  color: #0a0a0a;
+}
+.footer--v2 .footer__popBtn--wa:hover {
+  background: #25d366;
+  color: #fff;
 }

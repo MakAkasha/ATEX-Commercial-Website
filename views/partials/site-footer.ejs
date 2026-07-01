@@ -1,53 +1,117 @@
-<footer class="footer">
+<footer class="footer footer--v2">
   <% const __homeContent = (typeof content !== 'undefined') ? content : null; %>
-  <div class="container footer__inner">
-    <div class="footer__col footer__col--brand">
-      <a class="footer__brandLogo" href="/" aria-label="ATEX">
-        <img src="/assets/ATEX-footer-logo.svg" alt="ATEX" width="170" height="32" />
-      </a>
-      <p class="footer__desc">شركة سعودية متخصصة في حلول إنترنت الأشياء للشركات.</p>
-      <p class="muted" style="margin-bottom: 2px; font-size: 13px;"><%= (__homeContent?.contact?.address || 'جدة، المملكة العربية السعودية') %></p>
-      <p class="muted" style="margin-top: 0; font-size: 13px;">الرقم الوطني الموحد: <span dir="ltr">7051668007</span></p>
-    </div>
-    <div class="footer__col">
-      <h3 class="footer__title">روابط سريعة</h3>
-      <div class="footer__links">
-        <a class="footer__link" href="/">الرئيسية</a>
-        <a class="footer__link" href="/solutions">الحلول والخدمات</a>
-        <a class="footer__link" href="/blog">المدونة</a>
-        <a class="footer__link" href="/contact-us">تواصل معنا</a>
+  <% const __email = (__homeContent?.contact?.email || 'contact@atex.sa'); %>
+  <div class="container">
+    <!-- Top: brand + CTA -->
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a class="footer__brandLogo" href="/" aria-label="ATEX">
+          <img src="/assets/ATEX-footer-logo.svg" alt="ATEX" />
+        </a>
+        <p class="footer__tagline">ذكاء متكامل ... تحكم بلا حدود</p>
+        <p class="footer__desc">شركة سعودية متخصصة في حلول إنترنت الأشياء للشركات — من التصميم إلى التشغيل.</p>
+      </div>
+      <div class="footer__map" aria-label="موقع أتكس على الخريطة">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3711.905082875168!2d39.184737575551324!3d21.51143748026141!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c3cfc39c08669b%3A0xeff744e629dd2e00!2z2KfYqtmD2LM!5e0!3m2!1sen!2ssa!4v1782903414981!5m2!1sen!2ssa"
+          title="موقع أتكس على خرائط جوجل"
+          style="border:0"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </div>
     </div>
-    <div class="footer__col">
-      <h3 class="footer__title">تواصل</h3>
-      <div class="footer__links">
-        <a class="footer__link" href="mailto:<%= (__homeContent?.contact?.email || 'contact@atex.sa') %>"><%= (__homeContent?.contact?.email || 'contact@atex.sa') %></a>
-        <a class="footer__link footer__phone" href="tel:0580102121">خدمة العملاء : 0580102121</a>
-        <a class="footer__link footer__phone" href="tel:0509330008">المبيعات : 0509330008</a>
+
+    <!-- Link columns -->
+    <div class="footer__grid">
+      <nav class="footer__col" aria-label="روابط سريعة">
+        <h4 class="footer__label">روابط سريعة</h4>
+        <div class="footer__links">
+          <a class="footer__link" href="/">الصفحة الرئيسية</a>
+          <a class="footer__link" href="/solutions">الحلول والخدمات</a>
+          <a class="footer__link" href="/blog">المدونة والمقالات</a>
+          <a class="footer__link" href="/contact-us">تواصل معنا</a>
+        </div>
+      </nav>
+
+      <div class="footer__col">
+        <h4 class="footer__label">الدعم والتواصل</h4>
+        <div class="footer__links">
+          <a class="footer__link footer__link--soon" role="link" tabindex="0" aria-label="منصة الدعم الفني — قريباً" title="قريباً" data-href="https://help.atex.sa">منصة الدعم الفني <span class="footer__soon" aria-hidden="true">قريباً</span></a>
+          <a class="footer__link" href="mailto:<%= __email %>">إرسال بريد إلكتروني</a>
+          <div class="footer__contact">
+            <button class="footer__link footer__contactBtn" type="button" aria-haspopup="true">خدمة العملاء</button>
+            <div class="footer__pop" role="group" aria-label="التواصل مع خدمة العملاء">
+              <a class="footer__popBtn footer__popBtn--wa" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer" aria-label="واتساب خدمة العملاء"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+              <a class="footer__popBtn" href="tel:0580102121" aria-label="اتصال خدمة العملاء"><i class="fa-solid fa-phone" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <div class="footer__contact">
+            <button class="footer__link footer__contactBtn" type="button" aria-haspopup="true">قسم المبيعات</button>
+            <div class="footer__pop" role="group" aria-label="التواصل مع قسم المبيعات">
+              <a class="footer__popBtn footer__popBtn--wa" href="https://wa.me/966509330008" target="_blank" rel="noopener noreferrer" aria-label="واتساب قسم المبيعات"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+              <a class="footer__popBtn" href="tel:0509330008" aria-label="اتصال قسم المبيعات"><i class="fa-solid fa-phone" aria-hidden="true"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="footer__col" aria-label="روابط قانونية">
+        <h4 class="footer__label">قانوني</h4>
+        <div class="footer__links">
+          <a class="footer__link" href="/privacy">سياسة الخصوصية</a>
+          <a class="footer__link" href="/terms">الشروط والأحكام</a>
+        </div>
+      </nav>
+
+      <div class="footer__col">
+        <h4 class="footer__label">العنوان</h4>
+        <div class="footer__links">
+          <a class="footer__link footer__meta" href="https://maps.app.goo.gl/SXCnFM3kn96yRbk58" target="_blank" rel="noopener noreferrer">مركز الهدى للأعمال، الشرفية، جدة</a>
+          <span class="footer__meta">الرقم الوطني الموحد: <span dir="ltr">7051668007</span></span>
+          <span class="footer__meta">الرقم الضريبي: <span dir="ltr">314231577900003</span></span>
+        </div>
       </div>
     </div>
   </div>
+
   <div class="footer__bottom">
     <div class="container footer__bottomInner">
-      <div class="footer__copyright">
-        <span>© 2026 إي تي إي إكس التجارية. جميع الحقوق محفوظة</span>
-      </div>
-      <div class="footer__versionTag">
-        <span class="footer__version" dir="ltr">v4.5.48</span>
-      </div>
-      <div class="footer__legal">
-        <a class="footer__link" href="/privacy">سياسة الخصوصية</a>
-        <span class="footer__sep" aria-hidden="true">·</span>
-        <a class="footer__link" href="/terms">الشروط والأحكام</a>
-      </div>
+      <span class="footer__copyright">© 2026 إي تي إي إكس التجارية. جميع الحقوق محفوظة</span>
+      <span class="footer__version" dir="ltr">v4.5.48</span>
     </div>
   </div>
+
+  <div class="footer__watermark" aria-hidden="true">ATEX</div>
 </footer>
 
-<!-- WhatsApp floating button -->
-<a class="waBtn" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer" aria-label="تواصل عبر واتساب">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.528 5.845L0 24l6.335-1.506A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.797 9.797 0 01-5.006-1.373l-.36-.214-3.762.894.952-3.665-.234-.374A9.794 9.794 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-</a>
+<script>
+  (function () {
+    var items = Array.prototype.slice.call(document.querySelectorAll('.footer--v2 .footer__contact'));
+    if (!items.length) return;
+    function closeAll(except) {
+      items.forEach(function (it) {
+        if (it === except) return;
+        it.classList.remove('is-open');
+        var b = it.querySelector('.footer__contactBtn');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
+    }
+    items.forEach(function (it) {
+      var btn = it.querySelector('.footer__contactBtn');
+      if (!btn) return;
+      btn.setAttribute('aria-expanded', 'false');
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = it.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        closeAll(it);
+      });
+    });
+    document.addEventListener('click', function () { closeAll(null); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  })();
+</script>
 
 <!-- GSAP -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
