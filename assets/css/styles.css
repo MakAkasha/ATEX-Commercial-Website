@@ -6141,9 +6141,8 @@ body.consent-open .waBtn {
   .footer--v2 { padding-top: clamp(36px, 9vw, 56px); }
   .footer--v2 .footer__top { gap: 20px; padding-bottom: 24px; }
   .footer--v2 .footer__grid {
-    grid-template-columns: max-content max-content;
-    justify-content: start;
-    gap: 24px 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 18px;
     padding: 28px 0;
   }
   .footer--v2 .footer__bottomInner { justify-content: center; text-align: center; }
