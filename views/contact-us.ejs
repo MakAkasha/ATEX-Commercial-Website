@@ -8,7 +8,7 @@
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="subpage" id="main-content" tabindex="-1">
+    <main class="subpage" id="main-content" tabindex="-1" aria-label="المحتوى الرئيسي">
       <div class="container">
         <header class="subpage__head">
           <span class="subpage__kicker">CONTACT ATEX</span>
@@ -51,9 +51,9 @@
 
             <div aria-live="polite" aria-atomic="true" id="contactFormStatus" class="sr-only"></div>
             <form id="contactForm" class="cta__form contactPage__form" novalidate aria-describedby="contactFormStatus">
-              <p class="formNote is-info">*الحقول المطلوبة</p>
+              <p class="formNote is-info"><span aria-hidden="true">* </span>الحقول المطلوبة</p>
               <div class="field">
-                <label class="field__label" for="contactName">الاسم الكامل</label>
+                <label class="field__label" for="contactName">الاسم الكامل<span aria-hidden="true"> *</span></label>
                 <input class="field__input" id="contactName" name="name" type="text"
                        placeholder="محمد العمري" autocomplete="name" required enterkeyhint="next"
                        aria-invalid="false" aria-describedby="contactName-error" />
@@ -70,12 +70,13 @@
                 <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري<span aria-hidden="true"> *</span></label>
                 <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
                        type="text" placeholder="4030XXXXXX" required inputmode="numeric" enterkeyhint="next"
-                       aria-invalid="false" aria-describedby="contactCommercialRegister-error" />
+                       aria-invalid="false" aria-describedby="contactCommercialRegister-hint contactCommercialRegister-error" />
+                <span id="contactCommercialRegister-hint" class="field__hint">رقم مكوّن من 10 أرقام</span>
                 <span id="contactCommercialRegister-error" class="field__error" aria-live="polite"></span>
               </div>
 
               <div class="field">
-                <label class="field__label" for="contactWhatsapp">رقم الواتساب</label>
+                <label class="field__label" for="contactWhatsapp">رقم الواتساب<span aria-hidden="true"> *</span></label>
                 <input
                   class="field__input contactPhoneInput"
                   id="contactWhatsapp"

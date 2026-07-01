@@ -1,3 +1,4 @@
+<a class="skip-link" href="#main-content">انتقل إلى المحتوى الرئيسي</a>
 <div class="scrollProgress" id="scrollProgress" aria-hidden="true"></div>
 <!-- Top bar -->
 <% const __homeContent = (typeof content !== 'undefined') ? content : null; %>
@@ -19,7 +20,7 @@
     </div>
     <div class="topbar__item">
       <span class="topbar__tagline"><%= (__homeContent?.topbar?.tagline || 'حلول إنترنت الأشياء') %></span>
-      <a class="topbar__textLink" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer">
+      <a class="topbar__textLink" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" aria-label="بوابة العملاء — الشريط العلوي، يفتح في تبويب جديد">
         <span>بوابة العملاء</span>
         <span class="topbar__extIcon" aria-hidden="true">↗</span>
       </a>
@@ -51,7 +52,7 @@
         <a class="nav__link" data-route href="/solutions">الأنظمة والحلول</a>
         <a class="nav__link" data-route href="/blog">المدونة</a>
         <a class="nav__link" data-route href="/contact-us">تواصل معنا</a>
-        <a class="btn btn--primary btn--small" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" dir="rtl">
+        <a class="btn btn--primary btn--small" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" dir="rtl" aria-label="بوابة العملاء — القائمة الرئيسية، يفتح في تبويب جديد">
           <span class="nav__extIcon" aria-hidden="true">↗</span>
           <span>بوابة العملاء</span>
         </a>

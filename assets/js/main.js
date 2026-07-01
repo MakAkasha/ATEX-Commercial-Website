@@ -144,7 +144,6 @@ function initHeaderMotion() {
     if (links.length) {
       window.gsap.from(links, {
         y: -8,
-        opacity: 0,
         duration: 0.45,
         ease: "power2.out",
         stagger: 0.035,
