@@ -6230,6 +6230,7 @@ body.consent-open .waBtn {
   line-height: 0.8;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.035);
+  white-space: nowrap;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
