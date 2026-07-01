@@ -3507,7 +3507,7 @@ body.nav-open .nav__toggleLines::after {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .solutionsPage__hero {
     padding-top: calc(26px * var(--font-scale));
   }
@@ -4410,7 +4410,7 @@ body.consent-open .waBtn {
   border-radius: var(--radius-pill);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .trustStrip__item {
     min-height: calc(100px * var(--font-scale));
     height: auto;
@@ -4422,7 +4422,7 @@ body.consent-open .waBtn {
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 560px) {
   /* Task 8: removed .trustStrip__inner grid override so the ≤760 horizontal
      carousel persists below 540 (grid was defeating the scroll layout). */
 
@@ -4595,7 +4595,7 @@ body.consent-open .waBtn {
 /* nav collapses to hamburger at ≤980, so the desktop nav (≥981)
    no longer needs link shrinking to avoid overflow. */
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .nav__menu {
     background: linear-gradient(180deg, var(--white-98), rgba(255, 249, 242, 0.96));
     border-color: var(--navy-14);
@@ -4770,7 +4770,7 @@ body.consent-open .waBtn {
   grid-column: 1 / -1;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .subpage__cover img {
     height: calc(220px * var(--font-scale));
   }
@@ -5384,7 +5384,7 @@ body.consent-open .waBtn {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .subpage {
     padding: calc(30px * var(--font-scale)) 0 calc(58px * var(--font-scale));
   }
@@ -6054,7 +6054,7 @@ body.consent-open .waBtn {
   border-color: var(--pp-ink);
 }
 
-@media (max-width: 780px) {
+@media (max-width: 768px) {
   .products-page__brow--2 { grid-template-columns: 1fr; }
   .products-page__brow--dsk { display: none; }
   .products-page__marquee {
