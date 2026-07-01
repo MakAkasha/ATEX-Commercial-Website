@@ -550,7 +550,7 @@ body.nav-open .nav__toggleLines::after {
   display: none;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 980px) {
   .nav__backdrop {
     display: block;
     position: fixed;
@@ -3444,8 +3444,8 @@ body.nav-open .nav__toggleLines::after {
 
 }
 
-/* ── Batch C: hamburger nav collapse moved 760 → 880 (tablet overflow fix) ── */
-@media (max-width: 880px) {
+/* ── hamburger nav collapse at ≤980 (fits 5 desktop nav links + portal button) ── */
+@media (max-width: 980px) {
   /* mobile: logo on the left edge, hamburger on the right edge */
   .header__inner {
     flex-direction: row;
@@ -3472,7 +3472,9 @@ body.nav-open .nav__toggleLines::after {
     pointer-events: none;
     visibility: hidden;
     backdrop-filter: blur(var(--s-4));
-    transition: opacity 200ms ease, transform 200ms ease, visibility 200ms ease;
+    /* visibility flips instantly on open (so focus() works), and is delayed on
+       close so the opacity/transform fade-out still plays before it hides */
+    transition: opacity 200ms ease, transform 200ms ease, visibility 0s linear 200ms;
     z-index: 1100;
     gap: 10px;
   }
@@ -3482,6 +3484,7 @@ body.nav-open .nav__toggleLines::after {
     transform: translateY(0);
     pointer-events: auto;
     visibility: visible;
+    transition: opacity 200ms ease, transform 200ms ease, visibility 0s;
   }
 
   .nav__menu .nav__link {
@@ -4589,8 +4592,8 @@ body.consent-open .waBtn {
   font-weight: 800;
 }
 
-/* Batch C: removed 761–980 nav-shrink hack — nav now collapses at ≤880,
-   so the desktop nav (≥881) no longer needs link shrinking to avoid overflow. */
+/* nav collapses to hamburger at ≤980, so the desktop nav (≥981)
+   no longer needs link shrinking to avoid overflow. */
 
 @media (max-width: 760px) {
   .nav__menu {
@@ -6230,7 +6233,6 @@ body.consent-open .waBtn {
   line-height: 0.8;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.035);
-  white-space: nowrap;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
