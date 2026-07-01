@@ -6051,7 +6051,7 @@ body.consent-open .waBtn {
 /* link columns */
 .footer--v2 .footer__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(24px, 4vw, 56px);
   padding: clamp(36px, 4vw, 56px) 0;
 }
@@ -6236,4 +6236,14 @@ body.consent-open .waBtn {
 .footer--v2 .footer__popBtn--wa:hover {
   background: #25d366;
   color: #fff;
+}
+
+/* address block moved into the brand column, separated from the desc */
+.footer--v2 .footer__brandMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
