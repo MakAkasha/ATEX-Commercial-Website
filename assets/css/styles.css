@@ -157,14 +157,14 @@ body.has-hero-video .topbar {
 }
 
 body.has-hero-video .topbar.is-scrolled {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  background: var(--black) !important;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  background: transparent;
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
 }
 
 .topbar.is-scrolled .topbar__inner {
@@ -259,7 +259,7 @@ body.has-hero-video .header {
 
 body.has-hero-video .header.is-scrolled {
   position: fixed;
-  top: var(--overlay-topbar-h);
+  top: 0;
   left: 0;
   right: 0;
   background: linear-gradient(135deg, var(--white-98), rgba(255, 248, 241, 0.96)) !important;
