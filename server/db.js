@@ -208,6 +208,40 @@ function migrate() {
     }
   }
 
+  // Seed the /products catalog (is_catalog=1) from the committed manifest when
+  // absent. Images are committed under assets/products/ — no external/Q-System
+  // dependency, so this populates on any deploy target. Idempotent: runs only
+  // when there are zero catalog rows, and never clobbers an existing slug.
+  const catalogCount = Number(db.prepare("SELECT COUNT(*) as c FROM products WHERE is_catalog = 1").get()?.c || 0);
+  if (catalogCount === 0) {
+    try {
+      const manifestPath = path.join(ROOT_DIR, "server", "data", "catalog-products.json");
+      const rows = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      if (Array.isArray(rows) && rows.length) {
+        const insertCatalog = db.prepare(
+          "INSERT INTO products (slug, category, title, description, image, brochure_url, published, sort_order, is_catalog) VALUES (?, ?, ?, ?, ?, '', 1, ?, 1)"
+        );
+        const findBySlug = db.prepare("SELECT id FROM products WHERE slug = ? LIMIT 1");
+        const seedCatalog = db.transaction((items) => {
+          items.forEach((r, idx) => {
+            if (findBySlug.get(String(r.slug))) return;
+            insertCatalog.run(
+              String(r.slug),
+              String(r.category || ""),
+              String(r.title || ""),
+              String(r.description || ""),
+              String(r.image || ""),
+              Number.isFinite(r.sort_order) ? r.sort_order : idx
+            );
+          });
+        });
+        seedCatalog(rows);
+      }
+    } catch {
+      // Manifest is optional; empty catalog is still valid.
+    }
+  }
+
   // Optional default-admin seed (explicitly enabled via env)
   // Useful for first bootstrap; rotate immediately before go-live.
   const defaultAdminEnabled = parseBool(process.env.DEFAULT_ADMIN_ENABLED, false);

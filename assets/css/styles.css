@@ -2648,8 +2648,9 @@ body.nav-open .nav__toggleLines::after {
 .footer__phone {
   width: 100%;
   text-align: right;
-  direction: ltr;
+  direction: rtl;
   unicode-bidi: plaintext;
+  justify-content: flex-start;
 }
 
 /* Dedicated solutions page */
@@ -5816,21 +5817,31 @@ body.consent-open .waBtn {
   to { transform: translateX(calc(-50% - 9px)); }
 }
 
+/* breathing space after the product grid, before the CTA */
+.products-page__spacer { height: clamp(40px, 7vw, 96px); }
+
 /* expandable image grid */
 .products-page__gridsec { padding: 50px 0 6px; }
-.products-page__sectHead { margin-bottom: 18px; }
+.products-page__sectHead { margin-bottom: 28px; text-align: center; }
 .products-page__sectTitle { font-size: clamp(22px, 2.8vw, 32px); margin-top: 8px; }
+.products-page__sectTitle::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin: 16px auto 0;
+  border-radius: 999px;
+  background: var(--pp-accent);
+}
 .products-page__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   align-items: center;
 }
-.products-page__grid--collapsed {
-  max-height: 546px;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent);
-  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+/* collapsed = first 2 rows only. Desktop 3 cols -> hide from the 7th tile. */
+.products-page__grid--collapsed .products-page__tile:nth-child(n + 7) {
+  display: none;
 }
 .products-page__tile {
   display: block;
@@ -5886,5 +5897,8 @@ body.consent-open .waBtn {
     min-height: 200px;
   }
   .products-page__banner--big { min-height: 300px; }
-  .products-page__grid--collapsed { max-height: 360px; }
+  .products-page__grid { grid-template-columns: repeat(2, 1fr); }
+  /* mobile 2 cols -> 2 rows = 4 tiles; hide from the 5th. */
+  .products-page__grid--collapsed .products-page__tile:nth-child(n + 7) { display: revert; }
+  .products-page__grid--collapsed .products-page__tile:nth-child(n + 5) { display: none; }
 }

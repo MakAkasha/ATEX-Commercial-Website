@@ -53,7 +53,6 @@
 
       <section class="products-page__wrap products-page__gridsec">
         <div class="products-page__sectHead">
-          <p class="products-page__eyebrow">الكتالوج</p>
           <h2 class="products-page__sectTitle">كل المنتجات</h2>
         </div>
         <div class="products-page__grid products-page__grid--collapsed" id="catalogGrid">
@@ -67,6 +66,16 @@
           <button class="products-page__expand" id="productsExpandBtn" aria-expanded="false">عرض كل المنتجات ▾</button>
         </div>
       </section>
+
+      <div class="products-page__spacer" aria-hidden="true"></div>
+
+      <%- include('partials/final-cta', {
+        heading: 'هل تبحث عن نظام ذكي متكامل لمشروعك؟',
+        subheading: 'أرسل لنا نوع المشروع والكمية المطلوبة، وسيقترح فريق أتكس التشكيلة المناسبة من الأقفال والإنتركوم والمفاتيح والشاشات مع خطة تنفيذ واضحة.',
+        mainAction: '<a class="btn btn--primary" href="/contact-us">اطلب عرض سعر</a>',
+        cardHeading: 'لم تجد المنتج المناسب؟',
+        cardDesc: 'تواصل معنا مباشرة وسنساعدك في اختيار الحل الأنسب لمشروعك خلال وقت قصير.'
+      }) %>
     </main>
 
     <%- include('partials/site-footer', { content }) %>
