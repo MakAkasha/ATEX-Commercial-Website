@@ -6382,16 +6382,6 @@ body.consent-open .waBtn {
   overflow: hidden;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
-/* thin gold hairline inset on the leading edge (RTL: visually the right edge) */
-.products-page__flipFace--back::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--pp-accent), var(--pp-gold-d));
-  opacity: 0.85;
-}
 /* subtle ATEX-orange corner glow for depth, kept low-contrast so text stays readable */
 .products-page__flipFace--back::after {
   content: '';
