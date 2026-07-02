@@ -20,6 +20,7 @@
 
           <!-- Info panel -->
           <aside class="contactPage__info" aria-label="معلومات التواصل">
+            <span class="contactPage__badge"><i class="fa-solid fa-bolt" aria-hidden="true"></i> نرد خلال يوم عمل واحد</span>
             <h2 class="contactPage__title">نبني حلولك معك خطوة بخطوة</h2>
             <p class="contactPage__lead">أرسل لنا تفاصيل مشروعك وسنعود إليك بتصور تقني واضح يشمل الأجهزة والاتصال والمنصة والجدول الزمني.</p>
 
@@ -28,7 +29,7 @@
                 <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
                 <span><%= content?.contact?.phone || '+966580102121' %></span>
                 <a href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
-                   target="_blank" rel="noopener noreferrer" class="contactPage__infoLink">ابدأ محادثة</a>
+                   target="_blank" rel="noopener noreferrer" class="contactPage__infoLink contactPage__infoLink--primary">ابدأ محادثة</a>
               </li>
               <li>
                 <i class="fa-regular fa-envelope" aria-hidden="true"></i>
@@ -40,6 +41,15 @@
                 <span><%= content?.contact?.address || 'جدة، المملكة العربية السعودية' %></span>
               </li>
             </ul>
+
+            <div class="contactPage__steps">
+              <h3 class="contactPage__stepsTitle">ماذا يحدث بعد إرسال طلبك؟</h3>
+              <ol class="contactPage__stepList">
+                <li><span class="contactPage__stepNum" aria-hidden="true">1</span><span>نستلم طلبك ونراجع تفاصيل مشروعك.</span></li>
+                <li><span class="contactPage__stepNum" aria-hidden="true">2</span><span>نتواصل معك خلال يوم عمل واحد.</span></li>
+                <li><span class="contactPage__stepNum" aria-hidden="true">3</span><span>نقدّم تصوراً تقنياً واضحاً مع جدول زمني للتنفيذ.</span></li>
+              </ol>
+            </div>
           </aside>
 
           <!-- Form panel -->

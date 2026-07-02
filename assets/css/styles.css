@@ -4991,6 +4991,114 @@ body.consent-open .waBtn {
   font-size: calc(17px * var(--font-scale));
 }
 
+/* ── Contact page: polish + trust + form-state cues ── */
+/* Accent bar across the top of the form panel */
+.contactPage__formWrap {
+  position: relative;
+  overflow: hidden;
+}
+.contactPage__formWrap::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: calc(4px * var(--font-scale));
+  background: linear-gradient(90deg, var(--primary), var(--accent-text-deep));
+}
+
+/* Response-time badge */
+.contactPage__badge {
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: calc(6px * var(--font-scale)) calc(12px * var(--font-scale));
+  border-radius: 999px;
+  background: rgba(255, 153, 51, 0.14);
+  border: calc(1px * var(--font-scale)) solid rgba(255, 153, 51, 0.32);
+  color: var(--accent-text-deep);
+  font-weight: 800;
+  font-size: calc(12.5px * var(--font-scale));
+}
+.contactPage__badge i {
+  color: var(--primary);
+}
+
+/* Channel rows as subtle cards */
+.contactPage__infoList li {
+  padding: calc(12px * var(--font-scale)) calc(14px * var(--font-scale));
+  border: calc(1px * var(--font-scale)) solid var(--navy-10);
+  border-radius: calc(14px * var(--font-scale));
+  background: rgba(255, 255, 255, 0.6);
+  transition: border-color 150ms ease;
+}
+.contactPage__infoList li:hover {
+  border-color: rgba(255, 153, 51, 0.4);
+}
+
+/* WhatsApp-first: primary channel action */
+.contactPage__infoLink--primary {
+  background: var(--primary);
+  color: #3a1c00 !important;
+  padding: calc(6px * var(--font-scale)) calc(12px * var(--font-scale));
+  border-radius: 999px;
+  border-bottom: 0 !important;
+  font-weight: 800;
+}
+.contactPage__infoLink--primary:hover {
+  filter: brightness(1.05);
+}
+
+/* What happens next — numbered steps */
+.contactPage__steps {
+  border-top: calc(1px * var(--font-scale)) dashed var(--navy-16);
+  padding-top: var(--s-4);
+}
+.contactPage__stepsTitle {
+  margin: 0 0 var(--s-3);
+  font-size: calc(15px * var(--font-scale));
+  font-weight: 800;
+  color: var(--navy);
+}
+.contactPage__stepList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: calc(12px * var(--font-scale));
+}
+.contactPage__stepList li {
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--font-scale));
+  font-size: calc(14px * var(--font-scale));
+  font-weight: 600;
+  color: rgba(11, 31, 42, 0.8);
+}
+.contactPage__stepNum {
+  flex-shrink: 0;
+  width: calc(28px * var(--font-scale));
+  height: calc(28px * var(--font-scale));
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 800;
+  font-size: calc(13px * var(--font-scale));
+}
+
+/* Form UX — invalid + busy cues (JS already toggles aria-invalid) */
+.contactPage__form .field__input[aria-invalid="true"] {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 calc(3px * var(--font-scale)) rgba(192, 57, 43, 0.12);
+}
+.contactPage__submitBtn[disabled],
+.contactPage__submitBtn[aria-busy="true"] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .blogGrid {
   display: grid;
   gap: var(--s-4);
