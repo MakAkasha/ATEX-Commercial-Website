@@ -2,7 +2,7 @@
  * Static config + data access for the dedicated /products catalog page.
  *
  * Banners are file/code-config (no admin UI). Images live at
- * /assets/products/banners/<key>.png and are produced by
+ * /assets/products/banners/<key>.webp and are produced by
  * tools/import-qsystem-products.js. Products are admin-managed in the DB
  * (is_catalog=1) and rendered images-only.
  */
@@ -14,7 +14,7 @@ const CATEGORIES = [
   { key: "switches", label: "مفاتيح التحكم الذكية", sub: "منزل ذكي", big: false },
   { key: "doorplates", label: "لوحات الجرس", sub: "مداخل ذكية", big: false },
   { key: "screens", label: "شاشات التحكم", sub: "لوحات ذكية", big: false },
-].map((c) => ({ ...c, banner: `/assets/products/banners/${c.key}.png` }));
+].map((c) => ({ ...c, banner: `/assets/products/banners/${c.key}.webp` }));
 
 const BIG_BANNERS = CATEGORIES.filter((c) => c.big);
 const SMALL_BANNERS = CATEGORIES.filter((c) => !c.big);
