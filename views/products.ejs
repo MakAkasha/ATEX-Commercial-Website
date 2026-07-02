@@ -80,7 +80,6 @@
                         <span class="products-page__flipDivider" aria-hidden="true"></span>
                         <p class="products-page__flipDesc"><%= p.description %></p>
                       <% } %>
-                      <a class="products-page__flipCta" href="/contact-us" aria-label="اطلب عرض سعر — <%= p.title %>"><span>اطلب عرض سعر</span><i aria-hidden="true">←</i></a>
                     </div>
                   </div>
                 </div>
@@ -124,10 +123,7 @@
           el.setAttribute('aria-pressed', String(flipped));
         }
         document.querySelectorAll('.products-page__flip').forEach(function (el) {
-          el.addEventListener('click', function (e) {
-            if (e.target.closest('a')) return; // let the CTA navigate without re-flipping
-            toggleFlip(el);
-          });
+          el.addEventListener('click', function () { toggleFlip(el); });
           el.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
               e.preventDefault();
