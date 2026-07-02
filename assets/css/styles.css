@@ -332,6 +332,12 @@ body.has-hero-video .header.is-scrolled {
   display: block;
 }
 
+/* Logo variant swap: dark-bg logo only while the header sits transparent over
+   the hero video (home, not scrolled); light logo everywhere else. */
+.brand__logoImg--dark { display: none; }
+body.has-hero-video .header:not(.is-scrolled) .brand__logoImg--light { display: none; }
+body.has-hero-video .header:not(.is-scrolled) .brand__logoImg--dark { display: block; }
+
 .brand__mark--accent {
   color: var(--primary);
   text-shadow: 0 0 var(--s-3) rgba(255, 153, 51, 0.28);
