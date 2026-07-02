@@ -346,6 +346,7 @@ function initContactForm() {
   const messageInput = qs('textarea[name="message"]', form);
 
   const inputs = [nameInput, companyNameInput, commercialRegisterInput, whatsappInput, messageInput].filter(Boolean);
+  let resetWizard = () => {};
   const iti =
     whatsappInput && window.intlTelInput
       ? window.intlTelInput(whatsappInput, {
@@ -388,10 +389,15 @@ function initContactForm() {
 
   const getWhatsappE164 = () => {
     if (!whatsappInput) return "";
-    if (iti && typeof iti.getNumber === "function") {
-      return String(iti.getNumber() || "").trim();
+    // intl-tel-input's getNumber() needs the (unloaded) utils module, so build
+    // E164 directly from the selected dial code + typed national digits.
+    const national = String(whatsappInput.value || "").replace(/\D/g, "").replace(/^0+/, "");
+    if (!national) return "";
+    let dial = "";
+    if (iti && typeof iti.getSelectedCountryData === "function") {
+      dial = String(iti.getSelectedCountryData()?.dialCode || "");
     }
-    return String(whatsappInput.value || "").trim();
+    return "+" + dial + national;
   };
 
   const validate = () => {
@@ -497,6 +503,7 @@ function initContactForm() {
         iti.setCountry("sa");
       }
       clearInputState();
+      resetWizard();
       setNote("تم استلام طلبك بنجاح ✅ سنقوم بالتواصل معك قريباً.", "success");
     } catch {
       setNote("تعذر الاتصال بالخادم حالياً. يرجى المحاولة لاحقاً.", "error");
@@ -519,6 +526,98 @@ function initContactForm() {
       }
     });
   });
+
+  // --- Multi-step wizard ---
+  const steps = Array.from(form.querySelectorAll(".formStep"));
+  if (steps.length > 1) {
+    const dots = Array.from(form.querySelectorAll("[data-step-dot]"));
+    const fill = form.querySelector("[data-step-fill]");
+    const prevBtn = form.querySelector("[data-step-prev]");
+    const nextBtn = form.querySelector("[data-step-next]");
+    const live = form.querySelector("[data-step-live]");
+    const stepFocus = [nameInput, commercialRegisterInput, messageInput];
+    let cur = 0;
+
+    // Validate only the fields belonging to the given step; reuses shared rules.
+    const validateStep = (i) => {
+      clearInputState();
+      if (i === 0) {
+        const name = String(nameInput?.value || "").trim();
+        if (name.length < 2) {
+          const msg = "يرجى إدخال اسم صحيح (حرفين على الأقل).";
+          markInvalid(nameInput, msg);
+          setNote(msg, "error");
+          return false;
+        }
+      } else if (i === 1) {
+        const cr = cleanCommercialRegister(commercialRegisterInput?.value || "");
+        if (cr.length > 0 && cr.length < 5) {
+          const msg = "يرجى إدخال رقم سجل تجاري صحيح.";
+          markInvalid(commercialRegisterInput, msg);
+          setNote(msg, "error");
+          return false;
+        }
+        const whatsapp = getWhatsappE164();
+        if (!whatsapp || !/^\+\d{8,16}$/.test(whatsapp)) {
+          const msg = "يرجى إدخال رقم واتساب صحيح مع مفتاح الدولة.";
+          markInvalid(whatsappInput, msg);
+          setNote(msg, "error");
+          return false;
+        }
+      } else if (i === 2) {
+        const message = String(messageInput?.value || "").trim();
+        if (message.length > 0 && message.length < 10) {
+          const msg = "الرسالة قصيرة جدًا. يرجى إضافة تفاصيل أكثر.";
+          markInvalid(messageInput, msg);
+          setNote(msg, "error");
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const render = (focus) => {
+      steps.forEach((s, idx) => s.classList.toggle("is-active", idx === cur));
+      dots.forEach((d, idx) => {
+        d.classList.toggle("is-active", idx === cur);
+        d.classList.toggle("is-done", idx < cur);
+      });
+      if (fill) fill.style.width = (cur / (steps.length - 1)) * 100 + "%";
+      const last = cur === steps.length - 1;
+      if (prevBtn) prevBtn.hidden = cur === 0;
+      if (nextBtn) nextBtn.hidden = last;
+      if (submitBtn) submitBtn.hidden = !last;
+      if (live) live.textContent = `الخطوة ${cur + 1} من ${steps.length}`;
+      if (focus && stepFocus[cur]) {
+        try { stepFocus[cur].focus({ preventScroll: true }); } catch { /* noop */ }
+      }
+    };
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        if (!validateStep(cur)) return;
+        if (cur < steps.length - 1) {
+          cur += 1;
+          render(true);
+        }
+      });
+    }
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        if (cur > 0) {
+          cur -= 1;
+          render(true);
+        }
+      });
+    }
+
+    resetWizard = () => {
+      cur = 0;
+      render(false);
+    };
+
+    render(false);
+  }
 }
 
 const FALLBACK_IMG = "/assets/ATEX-logo.svg";

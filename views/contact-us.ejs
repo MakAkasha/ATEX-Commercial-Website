@@ -8,48 +8,40 @@
   <body>
     <%- include('partials/site-header', { content }) %>
 
-    <main class="subpage" id="main-content" tabindex="-1" aria-label="المحتوى الرئيسي">
-      <div class="container">
-        <header class="subpage__head">
-          <span class="subpage__kicker">أتكس · تواصل معنا</span>
-          <h1 class="subpage__title">تواصل مع فريق اتكس</h1>
-          <p class="subpage__desc">يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم، مع تصور مبدئي واضح لمسار التنفيذ والمدة المتوقعة.</p>
-        </header>
+    <main class="subpage subpage--contact" id="main-content" tabindex="-1" aria-label="المحتوى الرئيسي">
+      <section class="contactHero" aria-labelledby="contactTitle">
+        <div class="container contactHero__inner">
+          <span class="contactHero__eyebrow">أتكس · تواصل معنا</span>
+          <h1 id="contactTitle" class="contactHero__title">تواصل مع فريق اتكس</h1>
+          <p class="contactHero__lead">يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم، مع تصور مبدئي واضح لمسار التنفيذ والمدة المتوقعة.</p>
+          <ul class="contactHero__points">
+            <li><i class="fa-solid fa-bolt" aria-hidden="true"></i> رد خلال يوم عمل واحد</li>
+            <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> تنفيذ داخل المملكة</li>
+            <li><i class="fa-solid fa-headset" aria-hidden="true"></i> دعم مستمر على مدار الساعة</li>
+          </ul>
+        </div>
+      </section>
 
+      <div class="container">
         <section class="contactPage__layout" aria-label="نموذج التواصل مع اتكس">
 
           <!-- Info panel -->
           <aside class="contactPage__info" aria-label="معلومات التواصل">
-            <span class="contactPage__badge"><i class="fa-solid fa-bolt" aria-hidden="true"></i> نرد خلال يوم عمل واحد</span>
-            <h2 class="contactPage__title">نبني حلولك معك خطوة بخطوة</h2>
-            <p class="contactPage__lead">أرسل لنا تفاصيل مشروعك وسنعود إليك بتصور تقني واضح يشمل الأجهزة والاتصال والمنصة والجدول الزمني.</p>
-
             <ul class="contactPage__infoList">
               <li>
                 <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-                <span><%= content?.contact?.phone || '+966580102121' %></span>
-                <a href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
-                   target="_blank" rel="noopener noreferrer" class="contactPage__infoLink contactPage__infoLink--primary">ابدأ محادثة</a>
+                <a dir="ltr" href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
+                   target="_blank" rel="noopener noreferrer"><%= content?.contact?.phone || '+966580102121' %></a>
               </li>
               <li>
                 <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-                <span><%= content?.contact?.email || 'contact@atex.sa' %></span>
-                <a href="mailto:<%= content?.contact?.email || 'contact@atex.sa' %>" class="contactPage__infoLink">راسلنا</a>
+                <a href="mailto:<%= content?.contact?.email || 'contact@atex.sa' %>"><%= content?.contact?.email || 'contact@atex.sa' %></a>
               </li>
               <li>
                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
                 <span><%= content?.contact?.address || 'جدة، المملكة العربية السعودية' %></span>
               </li>
             </ul>
-
-            <div class="contactPage__steps">
-              <h3 class="contactPage__stepsTitle">ماذا يحدث بعد إرسال طلبك؟</h3>
-              <ol class="contactPage__stepList">
-                <li><span class="contactPage__stepNum" aria-hidden="true">1</span><span>نستلم طلبك ونراجع تفاصيل مشروعك.</span></li>
-                <li><span class="contactPage__stepNum" aria-hidden="true">2</span><span>نتواصل معك خلال يوم عمل واحد.</span></li>
-                <li><span class="contactPage__stepNum" aria-hidden="true">3</span><span>نقدّم تصوراً تقنياً واضحاً مع جدول زمني للتنفيذ.</span></li>
-              </ol>
-            </div>
           </aside>
 
           <!-- Form panel -->
@@ -61,60 +53,85 @@
 
             <div aria-live="polite" aria-atomic="true" id="contactFormStatus" class="sr-only"></div>
             <form id="contactForm" class="cta__form contactPage__form" novalidate aria-describedby="contactFormStatus">
+              <div class="formSteps__progress">
+                <div class="formSteps__bar"><span class="formSteps__barFill" data-step-fill></span></div>
+                <ol class="formSteps__dots">
+                  <li class="is-active" data-step-dot="0"><span aria-hidden="true">1</span><b>معلوماتك</b></li>
+                  <li data-step-dot="1"><span aria-hidden="true">2</span><b>التواصل</b></li>
+                  <li data-step-dot="2"><span aria-hidden="true">3</span><b>مشروعك</b></li>
+                </ol>
+              </div>
+              <p class="sr-only" aria-live="polite" data-step-live></p>
+
               <p class="formNote is-info"><span aria-hidden="true">* </span>الحقول المطلوبة</p>
-              <div class="field">
-                <label class="field__label" for="contactName">الاسم الكامل<span aria-hidden="true"> *</span></label>
-                <input class="field__input" id="contactName" name="name" type="text"
-                       placeholder="محمد العمري" autocomplete="name" required enterkeyhint="next"
-                       aria-invalid="false" aria-describedby="contactName-error" />
-                <span id="contactName-error" class="field__error" aria-live="polite"></span>
+
+              <div class="formStep is-active" data-step="0">
+                <div class="field">
+                  <label class="field__label" for="contactName">الاسم الكامل<span aria-hidden="true"> *</span></label>
+                  <input class="field__input" id="contactName" name="name" type="text"
+                         placeholder="محمد العمري" autocomplete="name" required enterkeyhint="next"
+                         aria-invalid="false" aria-describedby="contactName-error" />
+                  <span id="contactName-error" class="field__error" aria-live="polite"></span>
+                </div>
+
+                <div class="field">
+                  <label class="field__label" for="contactCompanyName">اسم الشركة</label>
+                  <input class="field__input" id="contactCompanyName" name="companyName" type="text"
+                         placeholder="شركة المستقبل للتقنية" autocomplete="organization" enterkeyhint="next" />
+                </div>
               </div>
 
-              <div class="field">
-                <label class="field__label" for="contactCompanyName">اسم الشركة</label>
-                <input class="field__input" id="contactCompanyName" name="companyName" type="text"
-                       placeholder="شركة المستقبل للتقنية" autocomplete="organization" enterkeyhint="next" />
+              <div class="formStep" data-step="1">
+                <div class="field">
+                  <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري</label>
+                  <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
+                         type="text" placeholder="4030XXXXXX" inputmode="numeric" enterkeyhint="next"
+                         aria-invalid="false" aria-describedby="contactCommercialRegister-hint contactCommercialRegister-error" />
+                  <span id="contactCommercialRegister-hint" class="field__hint">رقم مكوّن من 10 أرقام</span>
+                  <span id="contactCommercialRegister-error" class="field__error" aria-live="polite"></span>
+                </div>
+
+                <div class="field">
+                  <label class="field__label" for="contactWhatsapp">رقم الواتساب<span aria-hidden="true"> *</span></label>
+                  <input
+                    class="field__input contactPhoneInput"
+                    id="contactWhatsapp"
+                    name="whatsapp"
+                    type="tel"
+                    placeholder="5XXXXXXXX"
+                    required
+                    dir="ltr"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    enterkeyhint="next"
+                    aria-invalid="false"
+                    aria-describedby="contactWhatsapp-error"
+                  />
+                  <span id="contactWhatsapp-error" class="field__error" aria-live="polite"></span>
+                </div>
               </div>
 
-              <div class="field">
-                <label class="field__label" for="contactCommercialRegister">رقم السجل التجاري</label>
-                <input class="field__input" id="contactCommercialRegister" name="commercialRegister"
-                       type="text" placeholder="4030XXXXXX" inputmode="numeric" enterkeyhint="next"
-                       aria-invalid="false" aria-describedby="contactCommercialRegister-hint contactCommercialRegister-error" />
-                <span id="contactCommercialRegister-hint" class="field__hint">رقم مكوّن من 10 أرقام</span>
-                <span id="contactCommercialRegister-error" class="field__error" aria-live="polite"></span>
+              <div class="formStep" data-step="2">
+                <div class="field">
+                  <label class="field__label" for="contactMessage">تفاصيل المشروع</label>
+                  <textarea class="field__input" id="contactMessage" name="message" rows="5" enterkeyhint="send"
+                            placeholder="صف باختصار ما تحتاجه: نوع المبنى، عدد الأجهزة المتوقع، والميزة الرئيسية التي تبحث عنها…"></textarea>
+                </div>
+
+                <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
               </div>
 
-              <div class="field">
-                <label class="field__label" for="contactWhatsapp">رقم الواتساب<span aria-hidden="true"> *</span></label>
-                <input
-                  class="field__input contactPhoneInput"
-                  id="contactWhatsapp"
-                  name="whatsapp"
-                  type="tel"
-                  placeholder="5XXXXXXXX"
-                  required
-                  dir="ltr"
-                  inputmode="tel"
-                  autocomplete="tel"
-                  enterkeyhint="next"
-                  aria-invalid="false"
-                  aria-describedby="contactWhatsapp-error"
-                />
-                <span id="contactWhatsapp-error" class="field__error" aria-live="polite"></span>
+              <div class="formSteps__nav">
+                <button class="btn btn--ghost" type="button" data-step-prev hidden>السابق</button>
+                <button class="btn btn--primary" type="button" data-step-next>
+                  التالي
+                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                </button>
+                <button class="btn btn--primary contactPage__submitBtn" type="submit" data-contact-submit hidden>
+                  إرسال الطلب
+                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                </button>
               </div>
-
-              <div class="field">
-                <label class="field__label" for="contactMessage">تفاصيل المشروع</label>
-                <textarea class="field__input" id="contactMessage" name="message" rows="5" enterkeyhint="send"
-                          placeholder="صف باختصار ما تحتاجه: نوع المبنى، عدد الأجهزة المتوقع، والميزة الرئيسية التي تبحث عنها…"></textarea>
-              </div>
-
-              <p class="formNote is-info" data-contact-note>سنقوم بالتواصل معك في أقرب وقت ممكن.</p>
-              <button class="btn btn--primary contactPage__submitBtn" type="submit" data-contact-submit>
-                إرسال الطلب
-                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-              </button>
             </form>
           </div>
 
