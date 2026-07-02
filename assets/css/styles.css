@@ -6234,59 +6234,40 @@ body.consent-open .waBtn {
   color: var(--pp-body);
 }
 
-/* banners */
+/* banners — full-bleed, minimal gaps, image-led */
+.products-page__wrap--flush {
+  max-width: none;
+  padding-inline: clamp(4px, 0.6vw, 10px);
+}
 .products-page__banners {
   padding: 34px 0 6px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
-.products-page__brow { display: grid; gap: 12px; }
+.products-page__brow { display: grid; gap: 6px; }
 .products-page__brow--2 { grid-template-columns: repeat(2, 1fr); }
 .products-page__brow--3 { grid-template-columns: repeat(3, 1fr); }
 .products-page__banner {
   position: relative;
-  border-radius: 24px;
+  border-radius: 14px;
   overflow: hidden;
   display: flex;
   isolation: isolate;
-  min-height: 240px;
+  aspect-ratio: 16 / 10;
+  background: #f4f6f8;
 }
-.products-page__banner--big { min-height: 380px; }
+.products-page__banner--big { aspect-ratio: 16 / 9; }
 .products-page__bannerMedia {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .products-page__banner:hover .products-page__bannerMedia { transform: scale(1.04); }
-.products-page__bannerInner {
-  margin-top: auto;
-  display: flex;
-  direction: ltr;
-  justify-content: flex-start;
-  padding: 30px 32px 24px;
-}
-.products-page__ulink {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  direction: rtl;
-  font-family: var(--pp-lat);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--pp-accent);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
-  border-bottom: 1.5px solid var(--pp-accent);
-  padding-bottom: 2px;
-  transition: gap 0.35s;
-}
-.products-page__ulink i { font-style: normal; transition: transform 0.35s; }
-.products-page__banner:hover .products-page__ulink { gap: 14px; }
-.products-page__banner:hover .products-page__ulink i { transform: translateX(-6px); }
 
 /* mobile infinite marquee (small banners) — container is LTR to anchor the loop */
 .products-page__marquee { display: none; }
@@ -6314,7 +6295,7 @@ body.consent-open .waBtn {
 .products-page__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 14px;
   align-items: stretch;
 }
 /* collapsed = first 2 rows only. Desktop 3 cols -> hide from the 7th card. */
@@ -6336,10 +6317,10 @@ body.consent-open .waBtn {
   border-color: rgba(255, 153, 51, 0.5);
 }
 .products-page__cardMedia {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
-  padding: 18px;
+  padding: 22px;
   background: linear-gradient(180deg, #ffffff, #f6f8fb);
 }
 .products-page__cardMedia img {
@@ -6353,38 +6334,6 @@ body.consent-open .waBtn {
   transition: transform 0.4s;
 }
 .products-page__card:hover .products-page__cardMedia img { transform: scale(1.05); }
-.products-page__cardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  padding: 14px 16px 18px;
-}
-.products-page__cardTag {
-  font-family: var(--pp-lat);
-  font-weight: 700;
-  font-size: 11.5px;
-  color: var(--pp-gold-d);
-}
-.products-page__cardName {
-  font-family: var(--pp-head);
-  font-weight: 800;
-  font-size: 16px;
-  line-height: 1.3;
-  color: var(--pp-ink);
-  margin: 0;
-}
-.products-page__cardSpec {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--pp-body);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.products-page__cardActions { margin-top: auto; padding-top: 6px; }
 .products-page__expandWrap { display: flex; justify-content: center; margin-top: 22px; }
 .products-page__expand {
   font-family: var(--pp-head);
@@ -6423,9 +6372,7 @@ body.consent-open .waBtn {
   .products-page__marquee .products-page__banner {
     flex: 0 0 78vw;
     flex-shrink: 0;
-    min-height: 200px;
   }
-  .products-page__banner--big { min-height: 300px; }
   .products-page__grid { grid-template-columns: repeat(2, 1fr); }
   /* mobile 2 cols -> 2 rows = 4 cards; hide from the 5th. */
   .products-page__grid--collapsed .products-page__card:nth-child(n + 7) { display: revert; }

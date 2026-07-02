@@ -15,13 +15,9 @@
 
       function bannerMarkup(c) {
         const cls = 'products-page__banner' + (c.big ? ' products-page__banner--big' : '') + ' products-page__banner--img';
-        const link = c.big
-          ? ''
-          : '<div class="products-page__bannerInner"><span class="products-page__ulink">استكشف <i>←</i></span></div>';
         return (
           '<a class="' + cls + '" href="#catalogGrid" aria-label="' + c.label + '">' +
           '<span class="products-page__bannerMedia" style="background-image:url(\'' + c.banner + '\')"></span>' +
-          link +
           '</a>'
         );
       }
@@ -37,7 +33,7 @@
         </header>
       </div>
 
-      <div class="products-page__wrap">
+      <div class="products-page__wrap products-page__wrap--flush">
         <section class="products-page__banners" aria-label="فئات المنتجات">
           <div class="products-page__brow products-page__brow--2">
             <%- bigB.map(bannerMarkup).join('') %>
@@ -63,14 +59,6 @@
             <article class="products-page__card">
               <div class="products-page__cardMedia">
                 <img src="<%= p.image %>" alt="<%= altText %>" loading="lazy" />
-              </div>
-              <div class="products-page__cardBody">
-                <% if (p.category) { %><span class="products-page__cardTag"><%= p.category %></span><% } %>
-                <h3 class="products-page__cardName"><%= p.title %></h3>
-                <% if (p.description) { %><p class="products-page__cardSpec"><%= p.description %></p><% } %>
-                <div class="products-page__cardActions">
-                  <a class="btn btn--primary btn--small" href="/contact-us" aria-label="اطلب عرض سعر — <%= p.title %>">اطلب عرض سعر</a>
-                </div>
               </div>
             </article>
           <% }); %>
