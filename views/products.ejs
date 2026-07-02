@@ -119,6 +119,13 @@
 
       (function () {
         function toggleFlip(el) {
+          // Single-flip behavior: opening one card closes any other flipped card.
+          if (!el.classList.contains('is-flipped')) {
+            document.querySelectorAll('.products-page__flip.is-flipped').forEach(function (other) {
+              other.classList.remove('is-flipped');
+              other.setAttribute('aria-pressed', 'false');
+            });
+          }
           var flipped = el.classList.toggle('is-flipped');
           el.setAttribute('aria-pressed', String(flipped));
         }

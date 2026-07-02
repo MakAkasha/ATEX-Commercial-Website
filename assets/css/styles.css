@@ -6406,7 +6406,7 @@ body.consent-open .waBtn {
 .products-page__flipBack {
   position: relative;
   z-index: 1;
-  padding: 22px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -6435,7 +6435,7 @@ body.consent-open .waBtn {
   align-items: center;
   gap: 6px;
   font-family: var(--pp-lat);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -6453,7 +6453,7 @@ body.consent-open .waBtn {
   font-family: var(--pp-head);
   color: var(--pp-ink);
   font-weight: 800;
-  font-size: 18px;
+  font-size: 21px;
   line-height: 1.3;
   margin: 0;
   display: -webkit-box;
@@ -6466,7 +6466,7 @@ body.consent-open .waBtn {
   align-items: baseline;
   gap: 4px;
   font-family: var(--pp-lat);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--pp-gold-d);
@@ -6488,8 +6488,8 @@ body.consent-open .waBtn {
 }
 .products-page__flipDesc {
   font-family: var(--pp-body-f);
-  font-size: 12.5px;
-  line-height: 1.6;
+  font-size: 14.5px;
+  line-height: 1.7;
   color: var(--pp-body);
   margin: 0;
   display: -webkit-box;
