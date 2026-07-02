@@ -382,20 +382,6 @@
         </div>
       </section>
 
-      <% const showProductsSection = content?.sections?.productsEnabled !== false; %>
-      <% if (showProductsSection) { %>
-        <!-- Products (rendered from JSON/API later) -->
-        <section class="section" id="products">
-          <div class="container">
-            <div class="section__head">
-              <h2>منتجات جاهزة للتوسّع</h2>
-              <p>منتجات يتم إدارتها مباشرة من لوحة التحكم مع إمكانية النشر والإخفاء.</p>
-            </div>
-            <div class="grid grid--products" id="productsGrid" aria-live="polite"></div>
-          </div>
-        </section>
-      <% } %>
-
       <% const showBlogSection = content?.sections?.blogEnabled === true; %>
       <% if (showBlogSection) { %>
         <!-- Blog teaser -->

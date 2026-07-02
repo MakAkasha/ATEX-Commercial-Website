@@ -1096,10 +1096,13 @@ async function bootstrap() {
   // Data-driven render
   try {
     const [productsRes, postsRes] = await Promise.all([
-      fetch("/api/products/public", { cache: "default" }).then(async (r) => {
-        if (!r.ok) throw new Error("PUBLIC_PRODUCTS_API_FAILED");
-        return r.json();
-      }),
+      // Products grid only exists on pages that render it; skip the fetch otherwise.
+      qs("#productsGrid")
+        ? fetch("/api/products/public", { cache: "default" }).then(async (r) => {
+            if (!r.ok) throw new Error("PUBLIC_PRODUCTS_API_FAILED");
+            return r.json();
+          })
+        : Promise.resolve({ products: [] }),
       fetch("/api/posts/public", { cache: "default" }).then(async (r) => {
         if (!r.ok) throw new Error("PUBLIC_POSTS_API_FAILED");
         return r.json();
