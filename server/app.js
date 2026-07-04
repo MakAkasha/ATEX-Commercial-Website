@@ -213,6 +213,67 @@ ${allUrls.map(url => `  <url>
   }
 });
 
+// Blog RSS source data (request-independent). Cached 60s; 50 most-recent published posts.
+const RSS_TTL_MS = 60_000;
+const loadRssPosts = memoize(() => {
+  const db = getDb();
+  return db
+    .prepare(
+      "SELECT slug, title, excerpt, created_at, updated_at FROM posts WHERE published = 1 ORDER BY datetime(created_at) DESC LIMIT 50"
+    )
+    .all();
+}, RSS_TTL_MS);
+
+const escapeXml = (str) =>
+  String(str || "").replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]));
+
+const toRfc822 = (ts) => {
+  const d = ts ? new Date(ts.replace(" ", "T") + "Z") : new Date();
+  return (isNaN(d) ? new Date() : d).toUTCString();
+};
+
+// Blog RSS 2.0 feed
+app.get("/blog/rss.xml", (req, res) => {
+  try {
+    const proto = req.get("x-forwarded-proto") || req.protocol;
+    const baseUrl = `${proto}://${req.get("host")}`;
+    const posts = loadRssPosts();
+    const buildDate = posts.length ? toRfc822(posts[0].updated_at || posts[0].created_at) : new Date().toUTCString();
+
+    const items = posts
+      .map((p) => {
+        const link = `${baseUrl}/blog/${p.slug}`;
+        return `    <item>
+      <title>${escapeXml(p.title)}</title>
+      <link>${link}</link>
+      <guid isPermaLink="true">${link}</guid>
+      <pubDate>${toRfc822(p.created_at)}</pubDate>
+      <description>${escapeXml(p.excerpt)}</description>
+    </item>`;
+      })
+      .join("\n");
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>مدونة أتكس | ATEX Blog</title>
+    <link>${baseUrl}/blog</link>
+    <description>أحدث المقالات والرؤى من أتكس حول حلول إنترنت الأشياء والمباني الذكية.</description>
+    <language>ar</language>
+    <lastBuildDate>${buildDate}</lastBuildDate>
+    <atom:link href="${baseUrl}/blog/rss.xml" rel="self" type="application/rss+xml" />
+${items}
+  </channel>
+</rss>`;
+
+    res.set("Content-Type", "application/rss+xml; charset=utf-8");
+    res.send(xml);
+  } catch (err) {
+    console.error("Error generating RSS feed:", err);
+    res.status(500).send("Error generating RSS feed");
+  }
+});
+
 // robots.txt
 app.get("/robots.txt", (req, res) => {
   const host = req.get("host") || "atex.sa";
@@ -240,6 +301,7 @@ app.get("/robots.txt", (req, res) => {
       "Allow: /",
       "",
       `Sitemap: ${proto}://${host}/sitemap.xml`,
+      `# Blog RSS feed: ${proto}://${host}/blog/rss.xml`,
       `# LLM-readable site summary: ${proto}://${host}/llms.txt`,
       "",
     ].join("\n")
