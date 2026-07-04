@@ -33,9 +33,11 @@ function buildCspDirectives() {
       "https://cdnjs.cloudflare.com",
       "https://www.googletagmanager.com",
       "https://www.google-analytics.com",
+      "https://tracker.metricool.com",
+      "https://analytics.tiktok.com",
     ],
     scriptSrcAttr: ["'unsafe-inline'"],
-    connectSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
+    connectSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://tracker.metricool.com", "https://analytics.tiktok.com"],
     frameSrc: ["'self'", "https://www.youtube-nocookie.com", "https://www.youtube.com", "https://www.google.com"],
     mediaSrc: ["'self'", "https:", "blob:"],
   };

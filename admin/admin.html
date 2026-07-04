@@ -912,6 +912,14 @@
                       <label class="form-label">معرّف GTM (اختياري)</label>
                       <input class="form-control" id="gtmContainerId" type="text" dir="ltr" placeholder="GTM-XXXXXXX" />
                     </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Metricool Hash (اختياري)</label>
+                      <input class="form-control" id="metricoolHash" type="text" dir="ltr" placeholder="b15755a4d851c57f1a0869ee701a42b5" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">TikTok Pixel ID (اختياري)</label>
+                      <input class="form-control" id="tiktokPixelId" type="text" dir="ltr" placeholder="D94GBEBC77UFCF7AK2Q0" />
+                    </div>
                   </div>
                   <div class="d-flex gap-2 align-items-center mb-3">
                     <button class="btn btn-primary" type="submit">
@@ -934,7 +942,7 @@
                   <div class="form-hint" id="analyticsUpdatedAt"></div>
                   <div class="alert alert-warning alert-sm">
                     <i class="ti ti-alert-triangle me-1"></i>
-                    عند التفعيل يتم حقن سكربتات GA/GTM لجميع الزوّار مباشرةً (بدون انتظار موافقة على الكوكيز).
+                    عند التفعيل تُحقن سكربتات التتبّع (GA/GTM/Metricool/TikTok) فقط بعد موافقة الزائر على التحليلات في شريط الخصوصية.
                   </div>
                 </form>
               </div>

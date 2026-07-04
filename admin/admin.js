@@ -1552,9 +1552,20 @@
   loadDashboardStats().catch(() => {});
 
   // --- Analytics settings page ---
-  function buildAnalyticsSnippet(enabled, gaId, gtmId) {
+  function buildAnalyticsSnippet(enabled, gaId, gtmId, metricoolHash, tiktokPixelId) {
     if (!enabled) return "// Analytics disabled\n// لا يتم حقن أي سكربت حتى يتم التفعيل + موافقة الزائر.";
     const parts = [];
+    if (metricoolHash) {
+      parts.push(
+        "<!-- Metricool -->",
+        "<script>function loadScript(a){var b=document.getElementsByTagName(\"head\")[0],c=document.createElement(\"script\");c.type=\"text/javascript\",c.src=\"https://tracker.metricool.com/resources/be.js\",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:\"" + metricoolHash + "\"})});</script>"
+      );
+    }
+    if (tiktokPixelId) {
+      parts.push(
+        "<!-- TikTok Pixel: " + tiktokPixelId + " -->"
+      );
+    }
     if (gaId) {
       parts.push(
         "<script async src=\"https://www.googletagmanager.com/gtag/js?id=" + gaId + "\"></script>",
@@ -1577,8 +1588,10 @@
     const enabled = !!$("#analyticsEnabled")?.checked;
     const gaId = String($("#gaMeasurementId")?.value || "").trim();
     const gtmId = String($("#gtmContainerId")?.value || "").trim();
+    const metricoolHash = String($("#metricoolHash")?.value || "").trim();
+    const tiktokPixelId = String($("#tiktokPixelId")?.value || "").trim();
     const source = meta.source || "db";
-    const hasId = !!(gaId || gtmId);
+    const hasId = !!(gaId || gtmId || metricoolHash || tiktokPixelId);
 
     const statusEl = $("#analyticsConnectionStatus");
     if (statusEl) {
@@ -1600,7 +1613,7 @@
     }
 
     const snippetEl = $("#analyticsSnippet");
-    if (snippetEl) snippetEl.value = buildAnalyticsSnippet(enabled, gaId, gtmId);
+    if (snippetEl) snippetEl.value = buildAnalyticsSnippet(enabled, gaId, gtmId, metricoolHash, tiktokPixelId);
 
     const updatedEl = $("#analyticsUpdatedAt");
     if (updatedEl) {
@@ -1619,6 +1632,8 @@
       $("#analyticsEnabled").checked = !!settings.enabled;
       $("#gaMeasurementId").value = settings.gaMeasurementId || "";
       $("#gtmContainerId").value = settings.gtmContainerId || "";
+      $("#metricoolHash").value = settings.metricoolHash || "";
+      $("#tiktokPixelId").value = settings.tiktokPixelId || "";
       updateAnalyticsMeta(settings);
       setDirty("analytics", false);
       status.textContent = "";
@@ -1627,7 +1642,7 @@
     }
   }
 
-  ["#analyticsEnabled", "#gaMeasurementId", "#gtmContainerId"].forEach((sel) => {
+  ["#analyticsEnabled", "#gaMeasurementId", "#gtmContainerId", "#metricoolHash", "#tiktokPixelId"].forEach((sel) => {
     $(sel)?.addEventListener("input", () => updateAnalyticsMeta());
     $(sel)?.addEventListener("change", () => updateAnalyticsMeta());
   });
@@ -1642,12 +1657,20 @@
         enabled: $("#analyticsEnabled").checked,
         gaMeasurementId: $("#gaMeasurementId").value.trim(),
         gtmContainerId: $("#gtmContainerId").value.trim(),
+        metricoolHash: $("#metricoolHash").value.trim(),
+        tiktokPixelId: $("#tiktokPixelId").value.trim(),
       };
       if (payload.gaMeasurementId && !/^G-[A-Z0-9]+$/i.test(payload.gaMeasurementId)) {
         throw new Error("INVALID_GA_ID");
       }
       if (payload.gtmContainerId && !/^GTM-[A-Z0-9]+$/i.test(payload.gtmContainerId)) {
         throw new Error("INVALID_GTM_ID");
+      }
+      if (payload.metricoolHash && !/^[a-f0-9]{16,64}$/i.test(payload.metricoolHash)) {
+        throw new Error("INVALID_METRICOOL_HASH");
+      }
+      if (payload.tiktokPixelId && !/^[A-Z0-9]{10,40}$/i.test(payload.tiktokPixelId)) {
+        throw new Error("INVALID_TIKTOK_ID");
       }
       const res = await api("/api/settings/analytics", { method: "PUT", body: JSON.stringify(payload) });
       status.textContent = "تم الحفظ";
@@ -1661,6 +1684,10 @@
           ? "صيغة GA غير صحيحة (مثال: G-XXXXXXXXXX)"
           : err?.message === "INVALID_GTM_ID"
           ? "صيغة GTM غير صحيحة (مثال: GTM-XXXXXXX)"
+          : err?.message === "INVALID_METRICOOL_HASH"
+          ? "صيغة Metricool Hash غير صحيحة (أحرف سداسية عشرية)"
+          : err?.message === "INVALID_TIKTOK_ID"
+          ? "صيغة TikTok Pixel ID غير صحيحة (أحرف وأرقام)"
           : "فشل الحفظ";
       showToast(status.textContent, "error");
     }

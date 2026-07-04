@@ -51,19 +51,40 @@ function savePageSeoSettings(next) {
   return clean;
 }
 
+// Format guards (mirror admin client-side checks; defense-in-depth against direct API calls).
+const ANALYTICS_FORMATS = {
+  gaMeasurementId: /^G-[A-Z0-9]+$/i,
+  gtmContainerId: /^GTM-[A-Z0-9]+$/i,
+  metricoolHash: /^[a-f0-9]{16,64}$/i,
+  tiktokPixelId: /^[A-Z0-9]{10,40}$/i,
+};
+
+// Returns an error code string for the first invalid field, or null if all valid.
+function validateAnalyticsInput(body) {
+  for (const [field, re] of Object.entries(ANALYTICS_FORMATS)) {
+    const raw = String(body?.[field] || "").trim();
+    if (raw && !re.test(raw)) return `INVALID_${field}`;
+  }
+  return null;
+}
+
 function envAnalyticsOverride() {
   // Env overrides (highest precedence)
   const ga4 = (process.env.GA_MEASUREMENT_ID || "").trim();
   const gtm = (process.env.GTM_CONTAINER_ID || "").trim();
+  const metricool = (process.env.METRICOOL_HASH || "").trim();
+  const tiktok = (process.env.TIKTOK_PIXEL_ID || "").trim();
   const enabledRaw = (process.env.ANALYTICS_ENABLED || "").trim();
 
   const enabled = enabledRaw ? enabledRaw === "1" || enabledRaw.toLowerCase() === "true" : null;
-  if (!ga4 && !gtm && enabled === null) return null;
+  if (!ga4 && !gtm && !metricool && !tiktok && enabled === null) return null;
 
   return {
     enabled: enabled === null ? true : enabled,
     gaMeasurementId: ga4,
     gtmContainerId: gtm,
+    metricoolHash: metricool,
+    tiktokPixelId: tiktok,
     source: "env",
   };
 }
@@ -72,7 +93,7 @@ function loadAnalyticsSettings() {
   const env = envAnalyticsOverride();
   const db = getDb();
   const row = db.prepare("SELECT value_json FROM settings WHERE key = ?").get(KEY_ANALYTICS);
-  let value = { enabled: false, gaMeasurementId: "", gtmContainerId: "" };
+  let value = { enabled: false, gaMeasurementId: "", gtmContainerId: "", metricoolHash: "", tiktokPixelId: "" };
   const parsed = safeJsonParse(row && row.value_json ? row.value_json : "", null);
   if (parsed && typeof parsed === "object") value = { ...value, ...parsed };
   if (env) {
@@ -81,6 +102,8 @@ function loadAnalyticsSettings() {
       enabled: typeof env.enabled === "boolean" ? env.enabled : parseBoolean(value.enabled, false),
       gaMeasurementId: env.gaMeasurementId || value.gaMeasurementId || "",
       gtmContainerId: env.gtmContainerId || value.gtmContainerId || "",
+      metricoolHash: env.metricoolHash || value.metricoolHash || "",
+      tiktokPixelId: env.tiktokPixelId || value.tiktokPixelId || "",
       source: "env",
     };
   }
@@ -92,6 +115,8 @@ function saveAnalyticsSettings(next) {
     enabled: parseBoolean(next.enabled, false),
     gaMeasurementId: String(next.gaMeasurementId || "").trim(),
     gtmContainerId: String(next.gtmContainerId || "").trim(),
+    metricoolHash: String(next.metricoolHash || "").trim(),
+    tiktokPixelId: String(next.tiktokPixelId || "").trim(),
   };
   const db = getDb();
   db.prepare(
@@ -150,6 +175,8 @@ router.get("/analytics", requireAdmin, (req, res) => {
 // but returned `source` will remain "env".
 router.put("/analytics", requireAdmin, (req, res) => {
   const body = req.body || {};
+  const invalid = validateAnalyticsInput(body);
+  if (invalid) return res.status(400).json({ ok: false, error: invalid });
   const saved = saveAnalyticsSettings(body);
   return res.json({ ok: true, saved, effective: loadAnalyticsSettings() });
 });
