@@ -75,8 +75,9 @@
 <% const __analytics = (typeof analytics !== 'undefined') ? analytics : null; %>
 <% const __consent = (typeof consent !== 'undefined') ? consent : 'unknown'; %>
 
-<%# Trackers inject only after the visitor grants analytics consent (see consent.js). %>
-<% if (__analytics && __analytics.enabled && __consent === 'analytics') { %>
+<%# GA/GTM are consent-gated; Metricool + TikTok fire on every load when analytics is enabled. %>
+<% if (__analytics && __analytics.enabled) { %>
+  <% if (__consent === 'analytics') { %>
   <% if (__analytics.gtmContainerId) { %>
     <!-- Google Tag Manager -->
     <script>
@@ -98,6 +99,7 @@
       gtag('js', new Date());
       gtag('config', '<%= __analytics.gaMeasurementId %>');
     </script>
+  <% } %>
   <% } %>
 
   <% if (__analytics.metricoolHash) { %>
