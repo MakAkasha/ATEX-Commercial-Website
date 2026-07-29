@@ -11,6 +11,7 @@ const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
 const { CATEGORIES, getCatalog } = require("../data/productsPage");
 const { getTestimonials } = require("../data/testimonials");
+const { getBlogRedirectTarget } = require("../data/blogRedirects");
 const { safeJsonParse } = require("../utils/safe");
 const { memoize } = require("../utils/ttlCache");
 
@@ -345,6 +346,16 @@ router.get("/blog", (req, res) => {
 });
 
 router.get("/blog/:slug", (req, res) => {
+  // Retired machine-generated slugs -> readable slugs. Checked before the DB
+  // lookup so the redirect still fires once the old row has been renamed away.
+  // One O(1) Map hit for every other slug.
+  const redirectTo = getBlogRedirectTarget(req.params.slug);
+  if (redirectTo) {
+    const qsIndex = String(req.originalUrl || "").indexOf("?");
+    const queryString = qsIndex === -1 ? "" : req.originalUrl.slice(qsIndex);
+    return res.redirect(301, `/blog/${redirectTo}${queryString}`);
+  }
+
   const db = getDb();
   const content = loadHomeContent();
   const rawPost = db.prepare("SELECT * FROM posts WHERE published = 1 AND slug = ?").get(req.params.slug);
