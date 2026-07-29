@@ -6740,8 +6740,8 @@ body.consent-open .waBtn {
 /* link columns */
 .footer--v2 .footer__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(24px, 4vw, 56px);
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(20px, 3vw, 44px);
   padding: clamp(36px, 4vw, 56px) 0;
 }
 .footer--v2 .footer__col { min-width: 0; }
