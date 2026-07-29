@@ -10,6 +10,8 @@ const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
 const { CATEGORIES, getCatalog } = require("../data/productsPage");
+const { getTestimonials } = require("../data/testimonials");
+const { getBlogRedirectTarget } = require("../data/blogRedirects");
 const { safeJsonParse } = require("../utils/safe");
 const { memoize } = require("../utils/ttlCache");
 
@@ -36,14 +38,7 @@ function loadPartnerLogos() {
     // ignore and fallback
   }
 
-  return [
-    "/assets/social-logos/roshn.svg",
-    "/assets/social-logos/red-sea.svg",
-    "/assets/social-logos/stc.svg",
-    "/assets/social-logos/new-murabba.svg",
-    "/assets/social-logos/almarai.svg",
-    "/assets/social-logos/aramco-digital.svg",
-  ];
+  return [];
 }
 
 function loadHomeContentRaw() {
@@ -176,6 +171,8 @@ router.get("/", (req, res) => {
   const content = loadHomeContent();
   const db = getDb();
   const socialLogos = []; // partner logos hidden pending verification of client relationships
+  // Empty until at least MIN_VISIBLE entries are free of bracketed placeholders.
+  const testimonials = getTestimonials();
   const pageSolutions = solutions;
   const pageIndustries = industries;
   const latestPosts = db
@@ -246,6 +243,7 @@ router.get("/", (req, res) => {
     pageSolutions,
     pageIndustries,
     socialLogos,
+    testimonials,
     latestPosts,
     ...baseRenderData(req),
     structuredData,
@@ -348,6 +346,16 @@ router.get("/blog", (req, res) => {
 });
 
 router.get("/blog/:slug", (req, res) => {
+  // Retired machine-generated slugs -> readable slugs. Checked before the DB
+  // lookup so the redirect still fires once the old row has been renamed away.
+  // One O(1) Map hit for every other slug.
+  const redirectTo = getBlogRedirectTarget(req.params.slug);
+  if (redirectTo) {
+    const qsIndex = String(req.originalUrl || "").indexOf("?");
+    const queryString = qsIndex === -1 ? "" : req.originalUrl.slice(qsIndex);
+    return res.redirect(301, `/blog/${redirectTo}${queryString}`);
+  }
+
   const db = getDb();
   const content = loadHomeContent();
   const rawPost = db.prepare("SELECT * FROM posts WHERE published = 1 AND slug = ?").get(req.params.slug);

@@ -4,29 +4,29 @@ const Database = require("better-sqlite3");
 
 const ROOT = path.resolve(__dirname, "..");
 const DB_PATH = path.join(ROOT, "server", "data.sqlite");
-const SEED_DIR = path.join(ROOT, "assets", "blog-seed");
+const SEED_DIR = path.join(ROOT, "content-src", "blog-seed");
 
 const IMAGE_MAP = {
   smart_home_system_saudi_arabia_guide: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
+    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-home-featured.jpg",
+    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-home-controls.jpg",
+    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-home-lock.jpg",
+    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-home-security.jpg",
+    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-home-thermostat.jpg",
   },
   smart_building_systems_saudi_arabia: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
+    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-building-featured.jpg",
+    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-building-dashboard.jpg",
+    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-building-access.jpg",
+    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-building-security.jpg",
+    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-building-hvac.jpg",
   },
   smart_hotel_systems_saudi_arabia: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "https://i0.wp.com/boingboing.net/wp-content/uploads/2015/10/29.gif?fit=1&ssl=1&resize=620%2C4000",
+    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-hotel-featured.jpg",
+    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-hotel-panel.jpg",
+    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-hotel-lock.jpg",
+    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-hotel-security.jpg",
+    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-hotel-room-control.jpg",
   },
 };
 
