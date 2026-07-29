@@ -77,11 +77,9 @@
 <% if (meta?.preloadImage) { %><link rel="preload" as="image" href="<%= meta.preloadImage %>" fetchpriority="high" /><% } %>
 
 <% const __analytics = (typeof analytics !== 'undefined') ? analytics : null; %>
-<% const __consent = (typeof consent !== 'undefined') ? consent : 'unknown'; %>
 
-<%# GA/GTM are consent-gated; Metricool + TikTok fire on every load when analytics is enabled. %>
+<%# Consent-by-default: all tags fire on every load when analytics is enabled (governed by the privacy policy). %>
 <% if (__analytics && __analytics.enabled) { %>
-  <% if (__consent === 'analytics') { %>
   <% if (__analytics.gtmContainerId) { %>
     <!-- Google Tag Manager -->
     <script>
@@ -103,7 +101,6 @@
       gtag('js', new Date());
       gtag('config', '<%= __analytics.gaMeasurementId %>');
     </script>
-  <% } %>
   <% } %>
 
   <% if (__analytics.metricoolHash) { %>

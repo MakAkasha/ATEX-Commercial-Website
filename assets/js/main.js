@@ -498,6 +498,19 @@ function initContactForm() {
         return;
       }
 
+      // Notify analytics (GTM / GA4 / Google Ads) of the successful lead.
+      // AJAX submit never navigates, so Google auto-detection can't see it —
+      // fire an explicit event and let the conversion trigger on it.
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: "contact_form_submit", form_id: "contactForm" });
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "generate_lead", { form_id: "contactForm" });
+        }
+      } catch {
+        // Analytics must never block the success flow.
+      }
+
       form.reset();
       if (iti && typeof iti.setCountry === "function") {
         iti.setCountry("sa");
