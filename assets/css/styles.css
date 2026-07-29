@@ -2743,7 +2743,7 @@ body.nav-open .nav__toggleLines::after {
   color: var(--primary);
 }
 
-/* "الدعم الفني" placeholder — not live yet; reveal "قريباً" on hover/focus/press */
+/* "الدعم الفني" — reveal "قريباً" on hover/focus/press */
 .footer__link--soon {
   cursor: default;
   background: none;
