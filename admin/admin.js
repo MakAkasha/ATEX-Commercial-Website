@@ -798,43 +798,36 @@
   function fillHomeFieldsFromDraft() {
     if (!homeDraft) return;
 
-    // Topbar
     $("#topbarSupportText").value = homeDraft.topbar?.supportText || "";
     $("#topbarPhone").value = homeDraft.topbar?.phone || "";
     $("#topbarTagline").value = homeDraft.topbar?.tagline || "";
     $("#topbarCtaText").value = homeDraft.topbar?.ctaText || "";
     $("#topbarCtaHref").value = homeDraft.topbar?.ctaHref || "";
 
-    // Hero
     $("#heroKicker").value = homeDraft.hero?.kicker || "";
     $("#heroTitle").value = homeDraft.hero?.title || "";
     $("#heroDesc").value = homeDraft.hero?.desc || "";
     $("#heroCtaPrimary").value = homeDraft.hero?.ctaPrimary || "";
     $("#heroCtaSecondary").value = homeDraft.hero?.ctaSecondary || "";
 
-    // Hero video
     const sourceType = homeDraft.heroVideo?.sourceType === "upload" ? "upload" : "youtube";
     $("#heroVideoSourceType").value = sourceType;
     $("#heroVideoYoutubeUrl").value = homeDraft.heroVideo?.youtubeUrl || "https://www.youtube.com/watch?v=xwYbULh3aRE";
     $("#heroVideoUploadedUrl").value = homeDraft.heroVideo?.uploadedVideoUrl || "";
     setHeroVideoModeUI();
 
-    // Solutions
     $("#solutionsHeading").value = homeDraft.solutions?.heading || "";
     $("#solutionsSubheading").value = homeDraft.solutions?.subheading || "";
 
-    // Platform
     $("#platformKicker").value = homeDraft.platform?.kicker || "";
     $("#platformTitle").value = homeDraft.platform?.title || "";
     $("#platformDesc").value = homeDraft.platform?.desc || "";
     $("#platformCtaPrimary").value = homeDraft.platform?.ctaPrimary || "";
     $("#platformCtaSecondary").value = homeDraft.platform?.ctaSecondary || "";
 
-    // Why
     $("#whyHeading").value = homeDraft.why?.heading || "";
     $("#whySubheading").value = homeDraft.why?.subheading || "";
 
-    // Process
     $("#processHeading").value = homeDraft.process?.heading || "";
     $("#processSubheading").value = homeDraft.process?.subheading || "";
     const productsToggle = $("#sectionsProductsEnabled");
@@ -842,15 +835,12 @@
     const blogToggle = $("#sectionsBlogEnabled");
     if (blogToggle) blogToggle.checked = homeDraft.sections?.blogEnabled === true;
 
-    // Integrations
     $("#integrationsHeading").value = homeDraft.integrations?.heading || "";
     $("#integrationsSubheading").value = homeDraft.integrations?.subheading || "";
 
-    // FAQ
     $("#faqHeading").value = homeDraft.faq?.heading || "";
     $("#faqSubheading").value = homeDraft.faq?.subheading || "";
 
-    // Contact
     $("#contactHeading").value = homeDraft.contact?.heading || "";
     $("#contactSubheading").value = homeDraft.contact?.subheading || "";
     $("#contactEmail").value = homeDraft.contact?.email || "";
@@ -938,41 +928,34 @@
     homeDraft.faq = homeDraft.faq || {};
     homeDraft.contact = homeDraft.contact || {};
 
-    // Topbar
     homeDraft.topbar.supportText = $("#topbarSupportText").value.trim();
     homeDraft.topbar.phone = $("#topbarPhone").value.trim();
     homeDraft.topbar.tagline = $("#topbarTagline").value.trim();
     homeDraft.topbar.ctaText = $("#topbarCtaText").value.trim();
     homeDraft.topbar.ctaHref = $("#topbarCtaHref").value.trim();
 
-    // Hero
     homeDraft.hero.kicker = $("#heroKicker").value.trim();
     homeDraft.hero.title = $("#heroTitle").value.trim();
     homeDraft.hero.desc = $("#heroDesc").value.trim();
     homeDraft.hero.ctaPrimary = $("#heroCtaPrimary").value.trim();
     homeDraft.hero.ctaSecondary = $("#heroCtaSecondary").value.trim();
 
-    // Hero video
     homeDraft.heroVideo.sourceType = $("#heroVideoSourceType").value === "upload" ? "upload" : "youtube";
     homeDraft.heroVideo.youtubeUrl = $("#heroVideoYoutubeUrl").value.trim();
     homeDraft.heroVideo.uploadedVideoUrl = $("#heroVideoUploadedUrl").value.trim();
 
-    // Solutions
     homeDraft.solutions.heading = $("#solutionsHeading").value.trim();
     homeDraft.solutions.subheading = $("#solutionsSubheading").value.trim();
 
-    // Platform
     homeDraft.platform.kicker = $("#platformKicker").value.trim();
     homeDraft.platform.title = $("#platformTitle").value.trim();
     homeDraft.platform.desc = $("#platformDesc").value.trim();
     homeDraft.platform.ctaPrimary = $("#platformCtaPrimary").value.trim();
     homeDraft.platform.ctaSecondary = $("#platformCtaSecondary").value.trim();
 
-    // Why
     homeDraft.why.heading = $("#whyHeading").value.trim();
     homeDraft.why.subheading = $("#whySubheading").value.trim();
 
-    // Process
     homeDraft.process.heading = $("#processHeading").value.trim();
     homeDraft.process.subheading = $("#processSubheading").value.trim();
     const productsToggle = $("#sectionsProductsEnabled");
@@ -980,15 +963,12 @@
     const blogToggle = $("#sectionsBlogEnabled");
     homeDraft.sections.blogEnabled = blogToggle ? !!blogToggle.checked : homeDraft.sections.blogEnabled === true;
 
-    // Integrations
     homeDraft.integrations.heading = $("#integrationsHeading").value.trim();
     homeDraft.integrations.subheading = $("#integrationsSubheading").value.trim();
 
-    // FAQ
     homeDraft.faq.heading = $("#faqHeading").value.trim();
     homeDraft.faq.subheading = $("#faqSubheading").value.trim();
 
-    // Contact
     homeDraft.contact.heading = $("#contactHeading").value.trim();
     homeDraft.contact.subheading = $("#contactSubheading").value.trim();
     homeDraft.contact.email = $("#contactEmail").value.trim();
@@ -1168,9 +1148,7 @@
       console.error("TinyMCE not loaded");
       return;
     }
-    
-    console.log("Initializing TinyMCE...");
-    
+
     window.tinymce.init({
       selector: "#postEditorSurface",
       license_key: "gpl",

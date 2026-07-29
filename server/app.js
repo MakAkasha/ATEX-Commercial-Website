@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 
 const { migrate, getDb } = require("./db");
 const { getConfig } = require("./config");
+const { requireAdminPage } = require("./auth");
 const SqliteStore = require("./sessionStore");
 const authRoutes = require("./routes/auth");
 const contentRoutes = require("./routes/content");
@@ -159,7 +160,6 @@ app.get("/sitemap.xml", (req, res) => {
     const baseUrl = `${proto}://${req.get("host")}`;
     const { solutionSlugs, industrySlugs, posts } = loadSitemapData();
 
-    // Get all static routes
     const staticUrls = [
       { loc: baseUrl, priority: "1.0", changefreq: "daily" },
       { loc: `${baseUrl}/solutions`, priority: "0.9", changefreq: "weekly" },
@@ -183,7 +183,6 @@ app.get("/sitemap.xml", (req, res) => {
       changefreq: "weekly",
     }));
 
-    // Get all published blog posts
     const postUrls = posts.map(p => ({
       loc: `${baseUrl}/blog/${p.slug}`,
       priority: "0.7",
@@ -191,10 +190,8 @@ app.get("/sitemap.xml", (req, res) => {
       lastmod: p.updated_at ? new Date(p.updated_at.replace(' ', 'T') + 'Z').toISOString() : new Date().toISOString()
     }));
 
-    // Combine all URLs
     const allUrls = [...staticUrls, ...solutionUrls, ...industryUrls, ...postUrls];
 
-    // Generate XML
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls.map(url => `  <url>
@@ -427,9 +424,16 @@ app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" 
 app.use("/uploads", express.static(UPLOADS_DIR, { maxAge: "30d" }));
 app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce"), { maxAge: "1y", immutable: true }));
 
-// Admin static (disable directory redirect so /admin can be handled by router)
+// Admin static, behind the admin session check (disable directory redirect so
+// /admin can be handled by router). Exception: the logged-out login page
+// (/admin-login, served from routes/pages.js) loads these two files by absolute
+// path, and admin.js carries the login form handler — gating them locks
+// everyone out of the panel. Allowlist, so any other path stays gated.
+const ADMIN_LOGIN_ASSETS = new Set(["/admin.css", "/admin.js"]);
 app.use(
   "/admin",
+  (req, res, next) =>
+    ADMIN_LOGIN_ASSETS.has(req.path) ? next() : requireAdminPage(req, res, next),
   express.static(path.join(ROOT_DIR, "admin"), {
     redirect: false,
   })

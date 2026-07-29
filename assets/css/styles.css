@@ -13,7 +13,7 @@
   --radius: calc(16px * var(--font-scale));
   --radius-sm: calc(12px * var(--font-scale));
 
-  /* ── Batch B: token layer (value-identical aliases, zero visual change) ── */
+  /* Token layer (value-identical aliases) */
   /* Neutrals / brand hex */
   --black: #000;
   --ink-900: #111;
@@ -420,7 +420,7 @@ body.has-hero-video .header:not(.is-scrolled) .brand__logoImg--dark { display: b
   top: calc(6px * var(--font-scale));
 }
 
-/* Task 5: hamburger → X when menu open (JS toggles body.nav-open + aria-label) */
+/* hamburger → X when menu open (JS toggles body.nav-open + aria-label) */
 body.nav-open .nav__toggleLines {
   background: transparent;
 }
@@ -1440,7 +1440,7 @@ body.nav-open .nav__toggleLines::after {
   padding: calc(68px * var(--font-scale)) 0;
 }
 
-/* ── Batch C: section rhythm variants (break uniform vertical pace) ── */
+/* ===== Section rhythm variants (break uniform vertical pace) ===== */
 .section--tight {
   padding-block: var(--s-7);
 }
@@ -1472,7 +1472,7 @@ body.nav-open .nav__toggleLines::after {
   font-weight: 700;
 }
 
-/* ── Batch C: display font pairing — Tajawal on impact/heading type only ── */
+/* ===== Display font pairing — Tajawal on impact/heading type only ===== */
 .hero__title,
 .heroVideo__title,
 .heroVideo__kicker,
@@ -1621,7 +1621,7 @@ body.nav-open .nav__toggleLines::after {
   line-height: 1.75;
 }
 
-/* ── Batch C: featured lead solution tile (break the uniform 3-up) ── */
+/* ===== Featured lead solution tile (break the uniform 3-up) ===== */
 #solutions .grid.grid--cards .solutionCard:first-child {
   grid-column: span 2;
   min-height: calc(420px * var(--font-scale));
@@ -2541,6 +2541,51 @@ body.nav-open .nav__toggleLines::after {
   color: #b42323;
 }
 
+/* Contact form success panel (replaces the form after a successful submit) */
+.cta__form[hidden],
+.contactPage__formHead[hidden],
+.formSuccess[hidden] {
+  display: none !important;
+}
+
+.formSuccess {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  padding: calc(28px * var(--font-scale)) var(--s-4);
+}
+
+.formSuccess:focus {
+  outline: none;
+}
+
+.formSuccess__mark {
+  display: grid;
+  place-items: center;
+  width: calc(64px * var(--font-scale));
+  height: calc(64px * var(--font-scale));
+  border-radius: 50%;
+  background: var(--primary-15);
+  color: var(--accent-text-deep);
+  font-size: calc(26px * var(--font-scale));
+}
+
+.formSuccess__title {
+  margin: 0;
+  font-size: clamp(calc(20px * var(--font-scale)), 2.2vw, calc(26px * var(--font-scale)));
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.formSuccess__text {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1.8;
+}
+
 .cta__form .btn[disabled] {
   opacity: 0.75;
   cursor: not-allowed;
@@ -3223,7 +3268,7 @@ body.nav-open .nav__toggleLines::after {
 
 /* Responsive */
 @media (max-width: 980px) {
-  /* Task 6: footer column rhythm */
+  /* footer column rhythm */
   .footer__inner {
     gap: var(--s-4);
   }
@@ -3441,7 +3486,7 @@ body.nav-open .nav__toggleLines::after {
 
 }
 
-/* ── hamburger nav collapse at ≤980 (fits 5 desktop nav links + portal button) ── */
+/* ===== Hamburger nav collapse at ≤980 (fits 5 desktop nav links + portal button) ===== */
 @media (max-width: 980px) {
   /* mobile: logo on the left edge, hamburger on the right edge */
   .header__inner {
@@ -3846,7 +3891,7 @@ body.nav-open .nav__toggleLines::after {
   box-shadow: 0 var(--s-3) var(--s-6) rgba(37, 211, 102, 0.55), 0 var(--s-1) var(--s-3) rgba(0,0,0,0.16);
 }
 
-/* Task 11: lift WhatsApp FAB above the consent banner while it is shown
+/* lift WhatsApp FAB above the consent banner while it is shown
    (consent.js adds body.consent-open; banner is ~bottom:16px, end-side overlap) */
 body.consent-open .waBtn {
   bottom: calc(var(--s-5) + 150px);
@@ -3863,7 +3908,6 @@ body.consent-open .waBtn {
 /* ============================================================
    DESIGN UPGRADE — Precision Gulf
    Industrial data precision meets Gulf corporate authority.
-   Appended block; all rules here intentionally override above.
    ============================================================ */
 
 /* --- Typography scale boost --- */
@@ -4003,7 +4047,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 6 — Platform section: dashboard widget panel
+   Platform section: dashboard widget panel
    ============================================================ */
 
 /* Panel — dark-glass dashboard (contained, not a section) */
@@ -4154,7 +4198,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 5 — Process flow: diagonal stagger layout
+   Process flow: diagonal stagger layout
    ============================================================ */
 
 /* Custom property stagger — hover still works cleanly */
@@ -4216,7 +4260,7 @@ body.consent-open .waBtn {
   .processFlow__item { --stagger: 0px !important; }
   .processFlow { padding-bottom: calc(26px * var(--font-scale)); }
 
-  /* Task 6: tighten section vertical rhythm on small phones */
+  /* tighten section vertical rhythm on small phones */
   .section { padding-block: var(--s-7); }
   .section--feature { padding-block: var(--s-8); }
   .section--tight { padding-block: var(--s-6); }
@@ -4225,7 +4269,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 4 — Solution cards: full-bleed bg, amber top border, number, hover zoom
+   Solution cards: full-bleed bg, amber top border, number, hover zoom
    ============================================================ */
 
 /* Amber top border on solution cards */
@@ -4286,7 +4330,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 3 — Section heading alternating alignment + amber border
+   Section heading alternating alignment + amber border
    ============================================================ */
 
 /* Centered sections: industries, process, integrations, faq, blog */
@@ -4303,7 +4347,7 @@ body.consent-open .waBtn {
   margin-inline: auto;
 }
 
-/* Batch C: #process + #integrations heads opt into editorial start-align
+/* #process + #integrations heads opt into editorial start-align
    via .section__head--start (removed from the centered group above). */
 #process .section__head--start h2::after,
 #integrations .section__head--start h2::after {
@@ -4335,7 +4379,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 2 — Trust strip: editorial big numbers
+   Trust strip: editorial big numbers
    ============================================================ */
 
 .trustStrip__item {
@@ -4420,7 +4464,7 @@ body.consent-open .waBtn {
 }
 
 @media (max-width: 560px) {
-  /* Task 8: removed .trustStrip__inner grid override so the ≤760 horizontal
+  /* removed .trustStrip__inner grid override so the ≤760 horizontal
      carousel persists below 540 (grid was defeating the scroll layout). */
 
   .trustStrip__item {
@@ -4434,7 +4478,7 @@ body.consent-open .waBtn {
 }
 
 /* ============================================================
-   STEP 1 — Hero upgrade: frosted glass + massive title + word cycle
+   Hero: frosted glass + massive title + word cycle
    ============================================================ */
 
 /* Frosted glass panel behind hero content */
@@ -4669,7 +4713,7 @@ body.consent-open .waBtn {
   overflow-wrap: anywhere;
 }
 
-/* Task 7: keep wide tables / code blocks from breaking the layout */
+/* keep wide tables / code blocks from breaking the layout */
 .richText :is(table, pre) {
   display: block;
   max-width: 100%;
@@ -4991,7 +5035,7 @@ body.consent-open .waBtn {
   font-size: calc(17px * var(--font-scale));
 }
 
-/* ── Contact page: polish + trust + form-state cues ── */
+/* ===== Contact page: polish + trust + form-state cues ===== */
 /* Accent bar across the top of the form panel */
 .contactPage__formWrap {
   position: relative;
@@ -5099,7 +5143,7 @@ body.consent-open .waBtn {
   cursor: not-allowed;
 }
 
-/* ═══ Contact page — single-column, form-first professional layout ═══ */
+/* ===== Contact page — single-column, form-first professional layout ===== */
 .contactPage__layout {
   display: flex;
   flex-direction: column;
@@ -5243,7 +5287,7 @@ body.consent-open .waBtn {
   text-decoration: underline;
 }
 
-/* ── Multi-step form wizard ── */
+/* ===== Multi-step form wizard ===== */
 .formStep {
   display: none;
 }
@@ -5350,7 +5394,7 @@ body.consent-open .waBtn {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* ── Batch C: featured lead card (editorial bento) ── */
+/* ===== Featured lead card (editorial bento) ===== */
 .blogGrid .blogCard:first-child {
   grid-column: span 2;
 }
@@ -5800,7 +5844,7 @@ body.consent-open .waBtn {
   }
 }
 
-/* ───── Breadcrumb ───── */
+/* ===== Breadcrumb ===== */
 .breadcrumbNav {
   margin-bottom: var(--s-3);
 }
@@ -5832,7 +5876,7 @@ body.consent-open .waBtn {
 .breadcrumbNav__item a:hover { opacity: 0.75; }
 .breadcrumbNav__item--current { color: rgba(11,31,42,0.45); }
 
-/* ───── Reading time ───── */
+/* ===== Reading time ===== */
 .blogReadingTime {
   display: inline-flex;
   align-items: center;
@@ -5850,7 +5894,7 @@ body.consent-open .waBtn {
   border: calc(1px * var(--font-scale)) solid rgba(0,43,68,0.1);
 }
 
-/* ───── Blog card meta right group ───── */
+/* ===== Blog card meta right group ===== */
 .blogCard__metaRight {
   display: flex;
   align-items: center;
@@ -5860,7 +5904,7 @@ body.consent-open .waBtn {
   font-weight: 800;
 }
 
-/* ───── Tag chips ───── */
+/* ===== Tag chips ===== */
 .blogTagChips {
   display: flex;
   flex-wrap: wrap;
@@ -5883,7 +5927,7 @@ body.consent-open .waBtn {
   color: rgba(11,31,42,0.72);
 }
 
-/* ───── Share buttons ───── */
+/* ===== Share buttons ===== */
 .blogShare {
   display: flex;
   align-items: center;
@@ -5927,7 +5971,7 @@ body.consent-open .waBtn {
 .blogShare__btn--native { border-color: rgba(255,153,51,0.35); background: rgba(255,153,51,0.09); color: #7a3d00; }
 .blogShare__btn--copy { border-color: rgba(0,43,68,0.16); }
 
-/* ───── Related posts ───── */
+/* ===== Related posts ===== */
 .blogRelated {
   margin-top: var(--s-7);
 }
@@ -5943,7 +5987,7 @@ body.consent-open .waBtn {
   gap: var(--s-4);
 }
 
-/* ───── Empty blog state ───── */
+/* ===== Empty blog state ===== */
 .blogEmpty {
   text-align: center;
   padding: var(--s-7) var(--s-4);
@@ -5959,7 +6003,7 @@ body.consent-open .waBtn {
   .blogShare { flex-direction: column; align-items: flex-start; }
 }
 
-/* ───── 404 Not Found page ───── */
+/* ===== 404 Not Found page ===== */
 .nf {
   display: flex;
   flex-direction: column;
@@ -6121,10 +6165,10 @@ body.consent-open .waBtn {
   opacity: 0.7;
 }
 
-/* ── Accessibility additions (WCAG 2.2) ─────────────────────────── */
+/* ===== Accessibility additions (WCAG 2.2) ===== */
 
-/* Task 1: Skip link */
-/* Task 5: Screen-reader-only utility */
+/* Skip link */
+/* Screen-reader-only utility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -6137,7 +6181,7 @@ body.consent-open .waBtn {
   border: 0;
 }
 
-/* Task 6: Topbar link touch targets (raw px — thin bar, keep ≥40) */
+/* Topbar link touch targets (raw px — thin bar, keep ≥40) */
 .topbar__item a {
   min-height: 40px;
   display: inline-flex;

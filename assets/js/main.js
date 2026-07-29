@@ -1,7 +1,5 @@
 /*
   main.js
-  - بنية جاهزة للتوسع: لاحقاً يمكن ربط المنتجات/المدونة/لوحة الإدارة بواجهة API.
-  - حالياً: البيانات تأتي من ملفات JSON محلية.
 */
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -359,6 +357,37 @@ function initContactForm() {
         })
       : null;
 
+  const successPanel = qs("[data-contact-success]");
+  const formHead = qs(".contactPage__formHead");
+
+  const showSuccessPanel = () => {
+    const st = document.getElementById("contactFormStatus");
+    if (st) st.textContent = "تم استلام طلبك بنجاح. سيتواصل معك فريقنا خلال يوم عمل واحد.";
+    if (!successPanel) return;
+    if (formHead) formHead.hidden = true;
+    form.hidden = true;
+    successPanel.hidden = false;
+    successPanel.focus();
+    successPanel.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "center",
+    });
+  };
+
+  const hideSuccessPanel = () => {
+    if (!successPanel) return;
+    successPanel.hidden = true;
+    form.hidden = false;
+    if (formHead) formHead.hidden = false;
+    form.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "center",
+    });
+  };
+
+  const againBtn = qs("[data-contact-again]");
+  if (againBtn) againBtn.addEventListener("click", hideSuccessPanel);
+
   const setNote = (text, type = "info") => {
     const st = document.getElementById("contactFormStatus");
     if (st) st.textContent = text;
@@ -504,7 +533,8 @@ function initContactForm() {
       }
       clearInputState();
       resetWizard();
-      setNote("تم استلام طلبك بنجاح ✅ سنقوم بالتواصل معك قريباً.", "success");
+      setNote("سنقوم بالتواصل معك في أقرب وقت ممكن.", "info");
+      showSuccessPanel();
     } catch {
       setNote("تعذر الاتصال بالخادم حالياً. يرجى المحاولة لاحقاً.", "error");
     } finally {
@@ -1042,24 +1072,8 @@ function initHeroVideoLazyLoad() {
   // Lazy load hero video and YouTube iframe after page is interactive
   const heroVideo = qs("#heroVideo");
   const heroYoutubeVideo = qs("#heroYoutubeVideo");
-  const loadingOverlay = qs("#loadingOverlay");
-  
-  if (!heroVideo && !heroYoutubeVideo) {
-    // If no video, hide overlay immediately
-    if (loadingOverlay) {
-      loadingOverlay.classList.add("is-hidden");
-    }
-    return;
-  }
 
-  const hideLoadingOverlay = () => {
-    if (loadingOverlay) {
-      loadingOverlay.classList.add("is-hidden");
-    }
-  };
-
-  // Hard cap: overlay never lingers past 2s on slow connections
-  setTimeout(hideLoadingOverlay, 2000);
+  if (!heroVideo && !heroYoutubeVideo) return;
 
   const loadVideo = () => {
     // Load native video
@@ -1085,24 +1099,14 @@ function initHeroVideoLazyLoad() {
         }
         heroVideo.load();
 
-        // Hide overlay when video metadata is loaded and ready
         heroVideo.addEventListener("loadedmetadata", () => {
-          hideLoadingOverlay();
           if (prefersReducedMotion) {
             heroVideo.pause();
             return;
           }
-          heroVideo.play().catch(() => {
-            // Auto-play may be blocked by browser policy
-            console.log("Video autoplay blocked by browser policy");
-          });
+          // Auto-play may be blocked by browser policy
+          heroVideo.play().catch(() => {});
         });
-
-        // Fallback: hide overlay after 3 seconds even if video fails
-        setTimeout(hideLoadingOverlay, 3000);
-      } else {
-        // No video source, hide overlay
-        hideLoadingOverlay();
       }
     }
 

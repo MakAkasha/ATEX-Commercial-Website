@@ -36,14 +36,7 @@ function loadPartnerLogos() {
     // ignore and fallback
   }
 
-  return [
-    "/assets/social-logos/roshn.svg",
-    "/assets/social-logos/red-sea.svg",
-    "/assets/social-logos/stc.svg",
-    "/assets/social-logos/new-murabba.svg",
-    "/assets/social-logos/almarai.svg",
-    "/assets/social-logos/aramco-digital.svg",
-  ];
+  return [];
 }
 
 function loadHomeContentRaw() {
