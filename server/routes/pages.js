@@ -10,6 +10,7 @@ const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries } = require("../data/contentRegistry");
 const { CATEGORIES, getCatalog } = require("../data/productsPage");
+const { getTestimonials } = require("../data/testimonials");
 const { safeJsonParse } = require("../utils/safe");
 const { memoize } = require("../utils/ttlCache");
 
@@ -169,6 +170,8 @@ router.get("/", (req, res) => {
   const content = loadHomeContent();
   const db = getDb();
   const socialLogos = []; // partner logos hidden pending verification of client relationships
+  // Empty until at least MIN_VISIBLE entries are free of bracketed placeholders.
+  const testimonials = getTestimonials();
   const pageSolutions = solutions;
   const pageIndustries = industries;
   const latestPosts = db
@@ -239,6 +242,7 @@ router.get("/", (req, res) => {
     pageSolutions,
     pageIndustries,
     socialLogos,
+    testimonials,
     latestPosts,
     ...baseRenderData(req),
     structuredData,

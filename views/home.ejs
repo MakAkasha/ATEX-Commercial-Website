@@ -415,7 +415,9 @@
         </section>
       <% } %>
 
-      <!-- Social proof -->
+      <!-- Social proof — hidden entirely while fewer than 2 testimonials are ready -->
+      <% var quotes = Array.isArray(locals.testimonials) ? locals.testimonials : []; %>
+      <% if (quotes.length) { %>
       <section class="section socialProof" id="social-proof">
         <div class="container">
           <div class="section__head">
@@ -448,30 +450,48 @@
           <% } %>
 
           <div class="grid grid--cards quotesGrid">
-            <article class="card quoteCard" data-tilt>
-              <span class="quoteCard__mark" aria-hidden="true">“</span>
-              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
-              <h3 class="card__title">"تنفيذ احترافي وسرعة استجابة ممتازة"</h3>
-              <span class="quoteCard__sector">الضيافة</span>
-              <p class="card__desc">مدير مشروع – قطاع الضيافة</p>
-            </article>
-            <article class="card quoteCard" data-tilt>
-              <span class="quoteCard__mark" aria-hidden="true">“</span>
-              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
-              <h3 class="card__title">"تحسن واضح في كفاءة التشغيل بعد التكامل"</h3>
-              <span class="quoteCard__sector">العقارات</span>
-              <p class="card__desc">مدير تشغيل – قطاع العقارات</p>
-            </article>
-            <article class="card quoteCard" data-tilt>
-              <span class="quoteCard__mark" aria-hidden="true">“</span>
-              <div class="quoteCard__stars" aria-hidden="true">★★★★★</div>
-              <h3 class="card__title">"فريق داعم وخطة تنفيذ واضحة من البداية"</h3>
-              <span class="quoteCard__sector">السكني</span>
-              <p class="card__desc">مالك مشروع – قطاع سكني</p>
-            </article>
+            <% quotes.forEach(function(t){ %>
+              <figure class="quoteCard">
+                <span class="quoteCard__mark" aria-hidden="true">”</span>
+
+                <div class="quoteCard__stars" role="img" aria-label="التقييم <%= t.rating %> من 5">
+                  <% for (var s = 1; s <= 5; s++) { %><span class="quoteCard__star<%= s <= t.rating ? ' is-on' : '' %>" aria-hidden="true">★</span><% } %>
+                </div>
+
+                <blockquote class="quoteCard__quote"><%= t.quote %></blockquote>
+
+                <% if (t.sector) { %>
+                  <span class="quoteCard__sector"><%= t.sector %></span>
+                <% } %>
+
+                <figcaption class="quoteCard__person">
+                  <% if (t.photo) { %>
+                    <span class="quoteCard__avatar">
+                      <img src="<%= t.photo %>" alt="<%= t.name || 'صورة العميل' %>" loading="lazy" width="88" height="88" />
+                    </span>
+                  <% } else if (t.initial) { %>
+                    <span class="quoteCard__avatar quoteCard__avatar--monogram" aria-hidden="true"><%= t.initial %></span>
+                  <% } else { %>
+                    <span class="quoteCard__avatar quoteCard__avatar--glyph" aria-hidden="true">”</span>
+                  <% } %>
+                  <span class="quoteCard__identity">
+                    <% if (t.name) { %>
+                      <span class="quoteCard__name"><%= t.name %></span>
+                    <% } %>
+                    <% if (t.role || t.company) { %>
+                      <span class="quoteCard__role"><%= [t.role, t.company].filter(Boolean).join(' — ') %></span>
+                    <% } %>
+                    <% if (t.project) { %>
+                      <span class="quoteCard__project"><%= t.project %></span>
+                    <% } %>
+                  </span>
+                </figcaption>
+              </figure>
+            <% }) %>
           </div>
         </div>
       </section>
+      <% } %>
 
       <!-- Final CTA -->
       <%- include('partials/final-cta', { id: 'contact', badge: 'يتم الرد في أقل من 24 ساعة' }) %>
