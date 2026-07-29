@@ -1114,15 +1114,6 @@ function initHeroVideoLazyLoad() {
     if (heroYoutubeVideo) {
       const iframeSrc = heroYoutubeVideo.getAttribute("data-src");
       if (iframeSrc) {
-        // Hide overlay when YouTube iframe loads
-        heroYoutubeVideo.addEventListener("load", () => {
-          // Give YouTube a moment to initialize
-          setTimeout(hideLoadingOverlay, 500);
-        });
-        
-        // Fallback: hide overlay after 3 seconds
-        setTimeout(hideLoadingOverlay, 3000);
-        
         heroYoutubeVideo.src = iframeSrc;
       }
     }
