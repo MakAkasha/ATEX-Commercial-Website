@@ -102,7 +102,9 @@
       </section>
 
       <% if (Array.isArray(relatedSolutions) && relatedSolutions.length) { %>
-        <section class="section" aria-label="حلول مناسبة لهذا القطاع">
+        <%# id="solutions" is load-bearing: the .solutionCard photo treatment
+            (image reveal, white text, lead tile) is scoped to #solutions. %>
+        <section class="section" id="solutions" aria-label="حلول مناسبة لهذا القطاع">
           <div class="container">
             <div class="section__head">
               <p class="solutionsPage__sectionKicker">RECOMMENDED SOLUTIONS</p>
