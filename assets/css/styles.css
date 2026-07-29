@@ -4460,8 +4460,8 @@ body.consent-open .waBtn {
 .trustStrip__item span {
   font-size: calc(13px * var(--font-scale));
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  /* No text-transform/letter-spacing here: this text is Arabic, and letter
+     spacing severs the letter joins that Arabic script depends on. */
   color: rgba(0, 43, 68, 0.65);
   line-height: 1.4;
   max-width: calc(130px * var(--font-scale));
