@@ -57,7 +57,11 @@
         </div>
       </section>
 
-      <section class="section" id="solutions-catalog">
+      <%# id must stay "solutions": the whole photo-card treatment for
+          .solutionCard (image reveal, white text, featured lead tile) is
+          scoped to #solutions in styles.css. Renaming this id silently
+          reverts these cards to invisible photos and unreadable text. %>
+      <section class="section" id="solutions">
         <div class="container">
           <div class="section__head">
             <p class="solutionsPage__sectionKicker">SOLUTIONS CATALOG</p>
