@@ -40,6 +40,15 @@
         </div>
       </nav>
 
+      <nav class="footer__col" aria-label="القطاعات">
+        <h4 class="footer__label">القطاعات</h4>
+        <div class="footer__links">
+          <% (typeof footerIndustries !== 'undefined' ? footerIndustries : []).forEach(function (industry) { %>
+            <a class="footer__link" href="/industries/<%= industry.slug %>"><%= industry.title %></a>
+          <% }) %>
+        </div>
+      </nav>
+
       <div class="footer__col">
         <h4 class="footer__label">الدعم والتواصل</h4>
         <div class="footer__links">

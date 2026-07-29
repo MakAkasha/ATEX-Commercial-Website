@@ -51,6 +51,10 @@ app.locals.assetVer = (() => {
   }
 })();
 
+// Sector links for the site footer — available to every rendered view,
+// so the footer list can never drift from server/data/industries.js.
+app.locals.footerIndustries = getIndustries();
+
 // Migrate DB on boot
 migrate();
 
