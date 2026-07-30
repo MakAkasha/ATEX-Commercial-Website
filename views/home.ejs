@@ -425,30 +425,6 @@
             <p>آراء من فرق المشاريع التي عملت مع أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
           </div>
 
-          <% if (Array.isArray(socialLogos) && socialLogos.length) { %>
-          <div class="socialProof__logos marquee" data-marquee aria-label="شعارات شركات سعودية">
-            <div class="marquee__viewport" data-marquee-viewport>
-              <div class="marquee__runner" data-marquee-runner>
-                <div class="marquee__content" data-marquee-content>
-                  <% (Array.isArray(socialLogos) ? socialLogos : []).forEach(function(logoPath, i){ %>
-                    <div class="socialProof__logo" aria-label="شريك <%= i + 1 %>">
-                      <img src="<%= logoPath %>" alt="شعار الشريك <%= i + 1 %>" loading="lazy" width="160" height="160" />
-                    </div>
-                  <% }) %>
-                </div>
-
-                <div class="marquee__content" data-marquee-static-clone aria-hidden="true">
-                  <% (Array.isArray(socialLogos) ? socialLogos : []).forEach(function(logoPath){ %>
-                    <div class="socialProof__logo">
-                      <img src="<%= logoPath %>" alt="" loading="lazy" width="160" height="160" />
-                    </div>
-                  <% }) %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <% } %>
-
           <div class="grid grid--cards quotesGrid">
             <% quotes.forEach(function(t){ %>
               <figure class="quoteCard">

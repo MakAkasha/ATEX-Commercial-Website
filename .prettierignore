@@ -7,8 +7,6 @@ index-reports/
 # Browser bundles and legacy static markup — not formatted by this project yet
 assets/
 admin/
-public/
-index.html
 content-src/
 perf/
 
