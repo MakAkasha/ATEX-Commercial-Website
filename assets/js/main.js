@@ -663,70 +663,6 @@ function initContactForm() {
   }
 }
 
-const FALLBACK_IMG = "/assets/ATEX-logo.svg";
-
-function safeImg(src, alt) {
-  const s = src || FALLBACK_IMG;
-  return `<img src="${s}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_IMG}'" />`;
-}
-
-function renderProducts(items) {
-  const grid = qs("#productsGrid");
-  if (!grid) return;
-  grid.innerHTML = "";
-
-  items.forEach((p) => {
-    const el = document.createElement("article");
-    el.className = "item";
-    el.setAttribute("data-tilt", "");
-    el.innerHTML = `
-      <div class="item__media">
-        ${safeImg(p.image, p.title)}
-      </div>
-      <div class="item__body">
-        <div class="item__tag">${p.category || ""}</div>
-        <h3 class="item__title">${p.title}</h3>
-        <p class="item__desc">${p.description || ""}</p>
-        <div class="item__actions">
-          <a class="btn btn--primary btn--small" href="/contact-us">اطلب عرضاً</a>
-          <a class="btn btn--ghost btn--small" href="#" aria-disabled="true" tabindex="-1">تحميل كتيّب (قريباً)</a>
-        </div>
-      </div>
-    `;
-    grid.appendChild(el);
-  });
-}
-
-function renderPosts(items) {
-  const grid = qs("#postsGrid");
-  if (!grid) return;
-  grid.innerHTML = "";
-
-  items.forEach((p) => {
-    const slug = p.slug || "";
-    const href = slug ? `/blog/${encodeURIComponent(slug)}` : "/blog";
-    const img = p.cover_image || p.image || FALLBACK_IMG;
-    const tag = Array.isArray(p.tags) ? p.tags[0] : (p.meta || "");
-    const el = document.createElement("article");
-    el.className = "item";
-    el.setAttribute("data-tilt", "");
-    el.innerHTML = `
-      <div class="item__media">
-        ${safeImg(img, p.title)}
-      </div>
-      <div class="item__body">
-        <div class="item__tag">${tag}</div>
-        <h3 class="item__title">${p.title}</h3>
-        <p class="item__desc">${p.excerpt || ""}</p>
-        <div class="item__actions">
-          <a class="btn btn--ghost btn--small" href="${href}">اقرأ المزيد</a>
-        </div>
-      </div>
-    `;
-    grid.appendChild(el);
-  });
-}
-
 function initTilt() {
   // Micro-interaction without external libs.
   const motion = getMotionContext();
@@ -1199,30 +1135,6 @@ async function bootstrap() {
   initScrollSpy();
   initMarquee();
   initContactForm();
-
-  // Data-driven render
-  try {
-    const [productsRes, postsRes] = await Promise.all([
-      // Products grid only exists on pages that render it; skip the fetch otherwise.
-      qs("#productsGrid")
-        ? fetch("/api/products/public", { cache: "default" }).then(async (r) => {
-            if (!r.ok) throw new Error("PUBLIC_PRODUCTS_API_FAILED");
-            return r.json();
-          })
-        : Promise.resolve({ products: [] }),
-      fetch("/api/posts/public", { cache: "default" }).then(async (r) => {
-        if (!r.ok) throw new Error("PUBLIC_POSTS_API_FAILED");
-        return r.json();
-      }),
-    ]);
-    const products = Array.isArray(productsRes?.products) ? productsRes.products : [];
-    const posts = Array.isArray(postsRes?.posts) ? postsRes.posts : [];
-    renderProducts(products);
-    renderPosts(posts);
-  } catch (e) {
-    // Public APIs are the single source of truth; raw /data JSON is no longer served.
-    console.warn(e);
-  }
 
   initTilt();
   initGsap();
