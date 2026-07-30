@@ -27,16 +27,16 @@ const EXPECTED_CSP_DIRECTIVES = {
   objectSrc: ["'none'"],
   frameAncestors: ["'self'"],
   imgSrc: ["'self'", "data:", "blob:", "https:"],
-  fontSrc: [
-    "'self'",
-    "https://fonts.gstatic.com",
-    "https://cdnjs.cloudflare.com",
-    "https://cdn.jsdelivr.net",
-  ],
+  // fontSrc dropped "https://fonts.gstatic.com" and styleSrc dropped
+  // "https://fonts.googleapis.com" when Cairo and Tajawal moved from the Google
+  // Fonts CDN to /assets/fonts. No template served by this app references either
+  // origin any more (fonts.selfhosted.test.js is the guard that keeps it that
+  // way). cdnjs stays for Font Awesome and jsdelivr for Tabler — both are still
+  // CSS + webfonts. This is a tightening, never a widening.
+  fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
   styleSrc: [
     "'self'",
     "'unsafe-inline'",
-    "https://fonts.googleapis.com",
     "https://cdnjs.cloudflare.com",
     "https://cdn.jsdelivr.net",
   ],

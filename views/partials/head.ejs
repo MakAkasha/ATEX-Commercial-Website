@@ -62,13 +62,12 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
 <!-- Preconnect and Preload Critical Resources -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 
-<!-- Preload critical fonts -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Tajawal:wght@500;700;800&display=swap" as="style" />
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet" />
+<!-- Preload the one font file first paint always needs: Cairo's arabic subset.
+     Cairo is a variable font, so this single file backs body text (400) and
+     every bold/extrabold rule (700/800). @font-face lives in styles.css. -->
+<link rel="preload" href="/assets/fonts/cairo/cairo-v31-var-arabic.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/css/styles.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>" />

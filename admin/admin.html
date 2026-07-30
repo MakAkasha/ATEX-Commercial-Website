@@ -6,9 +6,10 @@
     <title>ATEX | لوحة الإدارة</title>
     <link rel="icon" href="/assets/atex-icon.ico" />
     <link rel="icon" type="image/svg+xml" href="/assets/ATEX-logo.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Cairo is self-hosted: @font-face lives at the top of admin.css and the
+         WOFF2 files are served from /assets/fonts. Cairo is a variable font, so
+         this one preload backs every admin weight (400/600/700/800). -->
+    <link rel="preload" href="/assets/fonts/cairo/cairo-v31-var-arabic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.rtl.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
     <link rel="stylesheet" href="/admin/admin.css" />
