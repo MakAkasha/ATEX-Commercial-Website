@@ -44,6 +44,7 @@ app.locals.assetVer = (() => {
     const files = [
       path.join(ROOT_DIR, "assets", "css", "styles.css"),
       path.join(ROOT_DIR, "assets", "js", "main.js"),
+      path.join(ROOT_DIR, "assets", "js", "consent.js"),
     ];
     const newest = Math.max(...files.map((f) => fs.statSync(f).mtimeMs));
     return String(Math.floor(newest));

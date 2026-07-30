@@ -89,7 +89,7 @@ function envAnalyticsOverride() {
   };
 }
 
-function loadAnalyticsSettings() {
+function loadAnalyticsSettingsRaw() {
   const env = envAnalyticsOverride();
   const db = getDb();
   const row = db.prepare("SELECT value_json FROM settings WHERE key = ?").get(KEY_ANALYTICS);
@@ -110,6 +110,11 @@ function loadAnalyticsSettings() {
   return { ...value, source: "db" };
 }
 
+// 60s TTL cache; busted on save below. Analytics settings are global, not per-user.
+// baseRenderData() reads this on every page render, so the cache removes one
+// synchronous SQLite read per page view.
+const loadAnalyticsSettings = memoize(loadAnalyticsSettingsRaw, SETTINGS_TTL_MS);
+
 function saveAnalyticsSettings(next) {
   const clean = {
     enabled: parseBoolean(next.enabled, false),
@@ -122,6 +127,7 @@ function saveAnalyticsSettings(next) {
   db.prepare(
     "INSERT INTO settings (key, value_json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json"
   ).run(KEY_ANALYTICS, JSON.stringify(clean));
+  loadAnalyticsSettings.bust();
   return clean;
 }
 
@@ -201,7 +207,9 @@ router.put("/page-seo", requireAdmin, (req, res) => {
 
 // Public effective read (for SSR injection)
 router.get("/public/analytics", (req, res) => {
-  const s = loadAnalyticsSettings();
+  // Copy first: loadAnalyticsSettings() is memoized, so deleting from the
+  // returned object would mutate the shared cache entry for every later caller.
+  const s = { ...loadAnalyticsSettings() };
   // Do not expose where it came from publicly.
   delete s.source;
   return res.json({ settings: s });
