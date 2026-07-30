@@ -12,7 +12,8 @@
     "regression": "node tools/regression.js",
     "test": "node --test \"test/**/*.test.js\"",
     "lint": "eslint .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "fix:product-images": "node tools/fix-product-image-paths.js"
   },
   "keywords": [],
   "author": "ATEX",

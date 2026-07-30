@@ -131,6 +131,42 @@ Database resolution order is the same for all three, and matches the server (`se
 
 The resolved absolute path is printed before anything else. A missing database file is an error — these tools never create one.
 
+### Fix product image paths
+
+Repairs two problems that live in the database rather than in the code (the
+catalog seed only runs when the catalog is empty, so it never corrects an
+existing row):
+
+- **Broken images** — a row points at a file that is not on disk while a sibling
+  with the same name and a different extension is (for example `.png` recorded
+  when only `.jpg` was committed).
+- **Oversized images** — a row still points at a `.png` when a much smaller
+  `.webp` sits next to it.
+
+Preview first (this is the default — an argument-less run writes nothing):
+
+```bash
+npm run fix:product-images
+```
+
+Apply. **Back up the database first** — this rewrites live product rows:
+
+```bash
+npm run backup:db
+npm run fix:product-images -- --apply --i-have-a-backup
+```
+
+Both flags are required to write; `--apply` on its own is refused. Only the
+`image` column is written, inside one transaction. Rows with no file and no
+usable sibling are reported for manual attention, never guessed at.
+
+Options:
+
+- `--db <path>` — database file (default `$DB_PATH`, else `server/data.sqlite`)
+- `--assets-root <path>` — directory served as `/assets` (default `<repo>/assets`)
+- `--dry-run` — alias for the default preview mode
+- `--help` — usage
+
 ## Scripts
 
 - `npm run dev` — run with nodemon
@@ -138,6 +174,7 @@ The resolved absolute path is printed before anything else. A missing database f
 - `npm run backup:db` — backup SQLite files
 - `npm run create-admin -- <u> <p>` — create admin account
 - `npm run regression -- ...` — run regression script
+- `npm run fix:product-images` — preview product image path repairs (add `-- --apply --i-have-a-backup` to write)
 
 ## Developer
 
