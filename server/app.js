@@ -428,9 +428,18 @@ app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "t
 // Admin static, behind the admin session check (disable directory redirect so
 // /admin can be handled by router). Exception: the logged-out login page
 // (/admin-login, served from routes/pages.js) loads these two files by absolute
-// path, and admin.js carries the login form handler — gating them locks
-// everyone out of the panel. Allowlist, so any other path stays gated.
-const ADMIN_LOGIN_ASSETS = new Set(["/admin.css", "/admin.js"]);
+// path, so gating them locks everyone out of the panel.
+//
+// admin.js is deliberately NOT here: at ~100 KB it maps every admin API path,
+// payload shape and field name, which is free reconnaissance for an anonymous
+// visitor. Its login-form handler was split out into admin/admin-login.js so the
+// main bundle can stay gated. admin.css stays exposed because a stylesheet is
+// only class names and layout — negligible recon value next to the JS.
+//
+// Exact-match allowlist on req.path, so anything else — including traversal or
+// percent-encoded spellings of admin.js, which never match these literals —
+// falls through to requireAdminPage. Fails closed by construction.
+const ADMIN_LOGIN_ASSETS = new Set(["/admin.css", "/admin-login.js"]);
 app.use(
   "/admin",
   (req, res, next) =>
