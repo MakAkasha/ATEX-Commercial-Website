@@ -156,6 +156,70 @@ Options:
 - `--dry-run` — alias for the default preview mode
 - `--help` — usage
 
+### Image derivatives (responsive WebP/AVIF)
+
+Every image uploaded through the admin panel keeps its **original file untouched**
+and gains a set of derivatives beside it, generated with `sharp`.
+
+**Path convention** — derivative locations are *derived*, never stored. There is
+no database column and no migration; a consumer builds the path from the
+original's URL:
+
+```
+<dir>/<basename-without-extension>-<width>.<format>
+```
+
+For an original at `/uploads/images/2026/07/1753900000000-a1b2c3.png`:
+
+```
+/uploads/images/2026/07/1753900000000-a1b2c3-320.webp    (thumbnail)
+/uploads/images/2026/07/1753900000000-a1b2c3-320.avif
+/uploads/images/2026/07/1753900000000-a1b2c3-480.webp
+/uploads/images/2026/07/1753900000000-a1b2c3-480.avif
+/uploads/images/2026/07/1753900000000-a1b2c3-768.webp
+/uploads/images/2026/07/1753900000000-a1b2c3-768.avif
+/uploads/images/2026/07/1753900000000-a1b2c3-1280.webp
+/uploads/images/2026/07/1753900000000-a1b2c3-1280.avif
+```
+
+Rules (all defined in one place, `server/utils/imageDerivatives.js`):
+
+- Widths `320, 480, 768, 1280`; formats WebP (quality 80) and AVIF (quality 52).
+- **Never upscales.** A width at or above the source's displayed width is
+  skipped, so a 200px-wide source produces nothing.
+- **Metadata is stripped** (EXIF, XMP, IPTC, GPS) and the EXIF orientation is
+  baked into the pixels of every derivative. The original keeps its metadata.
+- Sources above **50 megapixels** are rejected (`IMAGE_TOO_LARGE`) — the 5 MB
+  upload cap does not bound *decoded* size, so this is the decompression-bomb
+  guard. Unreadable/corrupt files are rejected as `INVALID_FILE_CONTENT`.
+- Animated GIF/WebP sources are left alone; a still derivative of an animation
+  would be a silent content change.
+- Derivative generation is **best effort**. If `sharp` fails, the upload still
+  succeeds with the original and a structured warning is logged.
+
+`POST /api/uploads/images` returns the derivative set alongside the unchanged
+`url` field:
+
+```json
+{ "ok": true, "url": "/uploads/images/2026/07/....png", "width": 1600, "height": 1000,
+  "derivatives": [{ "url": "...-320.webp", "width": 320, "height": 200, "format": "webp", "bytes": 7480 }] }
+```
+
+For images already committed under `assets/`, the same set is produced by a
+one-off tool. It is **preview by default** — an argument-less run encodes every
+derivative in memory to report the real byte count and writes nothing:
+
+```bash
+node tools/generate-image-derivatives.js                  # preview
+node tools/generate-image-derivatives.js --apply          # write
+node tools/generate-image-derivatives.js --dir uploads --apply
+```
+
+It never modifies or deletes a source, never overwrites an existing file without
+`--force`, and skips anything already up to date (mtime comparison), so re-runs
+are cheap. `--help` lists the full exclusion set (SVG/ICO, favicons and touch
+icons, files under 8 KB, sources 320px or narrower, animated images).
+
 ## Scripts
 
 - `npm run dev` — run with nodemon
