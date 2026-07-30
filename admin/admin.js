@@ -1098,6 +1098,13 @@
 
     window.tinymce.init({
       selector: "#postEditorSurface",
+      // Self-hosted from /vendor/tinymce (see admin.html + the static mount in
+      // server/app.js). TinyMCE would normally infer these by scanning script
+      // tags for its own filename; stating them explicitly means the skin,
+      // theme, model, icon and plugin fetches keep resolving even if the tag is
+      // ever moved, deferred or injected dynamically.
+      base_url: "/vendor/tinymce",
+      suffix: ".min",
       license_key: "gpl",
       menubar: false,
       promotion: false,

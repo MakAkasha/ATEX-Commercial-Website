@@ -40,11 +40,14 @@ const EXPECTED_CSP_DIRECTIVES = {
     "https://cdnjs.cloudflare.com",
     "https://cdn.jsdelivr.net",
   ],
+  // scriptSrc dropped "https://cdnjs.cloudflare.com" when the admin TinyMCE
+  // script moved from the CDN to the self-hosted /vendor/tinymce mount. cdnjs
+  // remains in fontSrc/styleSrc for Font Awesome, which is CSS + webfonts only.
+  // This is a tightening, never a widening.
   scriptSrc: [
     "'self'",
     "'unsafe-inline'",
     "https://cdn.jsdelivr.net",
-    "https://cdnjs.cloudflare.com",
     "https://www.googletagmanager.com",
     "https://www.google-analytics.com",
     "https://tracker.metricool.com",

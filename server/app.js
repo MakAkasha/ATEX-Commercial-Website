@@ -424,7 +424,27 @@ app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" 
 // (products.json, posts.json) are read server-side (DB seed in db.js, contentRegistry)
 // and exposed to clients only via /api/products/public and /api/posts/public.
 app.use("/uploads", express.static(UPLOADS_DIR, { maxAge: "30d" }));
-app.use("/vendor/tinymce", express.static(path.join(ROOT_DIR, "node_modules", "tinymce"), { maxAge: "1y", immutable: true }));
+// Self-hosted TinyMCE for the admin blog editor (admin/admin.html loads
+// /vendor/tinymce/tinymce.min.js; admin/admin.js pins base_url to this prefix,
+// so the skin, theme, model, icon and plugin files resolve here too).
+//
+// Resolved through Node's own module resolution rather than a hardcoded
+// ROOT_DIR/node_modules path: that hardcoding only works when npm happens to
+// install flat next to the app, and silently 404s the whole editor otherwise
+// (a git worktree with no local node_modules, a hoisted monorepo install, or
+// pnpm's linked layout). Falls back to the flat path so a missing dependency
+// degrades to a broken editor rather than a server that will not boot.
+//
+// Public by design, exactly as the CDN copy was: this is GPL library code with
+// no session or customer data in it.
+function resolveTinymceDir() {
+  try {
+    return path.dirname(require.resolve("tinymce/package.json"));
+  } catch {
+    return path.join(ROOT_DIR, "node_modules", "tinymce");
+  }
+}
+app.use("/vendor/tinymce", express.static(resolveTinymceDir(), { maxAge: "1y", immutable: true }));
 
 // Admin static, behind the admin session check (disable directory redirect so
 // /admin can be handled by router). Exception: the logged-out login page
