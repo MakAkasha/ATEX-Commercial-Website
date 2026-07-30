@@ -39,8 +39,19 @@ function getCookie() {
   return "";
 }
 
+// The /api CSRF guard (server/middleware/csrf.js) rejects any state-changing
+// request that presents no Origin. A browser always sends one; fetch() from Node
+// does not, so this smoke runner must set it explicitly to the base it targets.
+const smokeOrigin = (() => {
+  try {
+    return new URL(base).origin;
+  } catch {
+    return base;
+  }
+})();
+
 async function call(path, { method = "GET", body, cookie } = {}) {
-  const headers = {};
+  const headers = { origin: smokeOrigin };
   if (cookie) headers.cookie = cookie;
   if (body !== undefined) headers["content-type"] = "application/json";
 
@@ -63,7 +74,7 @@ async function loginAndGetCookie(username, password) {
   if (!username || !password) return "";
   const res = await fetch(base + "/api/auth/login", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", origin: smokeOrigin },
     body: JSON.stringify({ username, password }),
   });
   const getSetCookie = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie.bind(res.headers) : null;

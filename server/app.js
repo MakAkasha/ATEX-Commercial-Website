@@ -7,6 +7,7 @@ const rateLimit = require("express-rate-limit");
 const { migrate, getDb } = require("./db");
 const { getConfig } = require("./config");
 const { requireAdminPage } = require("./auth");
+const { createCsrfGuard } = require("./middleware/csrf");
 const SqliteStore = require("./sessionStore");
 const authRoutes = require("./routes/auth");
 const contentRoutes = require("./routes/content");
@@ -125,16 +126,12 @@ app.get("/healthz", (req, res) => {
   res.json({ ok: true });
 });
 
-// CSRF defense: reject cross-origin state-changing API requests
-app.use("/api", (req, res, next) => {
-  if (req.method === "GET" || req.method === "HEAD" || req.method === "OPTIONS") return next();
-  const origin = req.get("origin") || req.get("referer") || "";
-  const host = req.get("host");
-  if (origin && host && !origin.startsWith(`${req.protocol}://${host}`)) {
-    return res.status(403).json({ error: "CSRF_REJECTED" });
-  }
-  next();
-});
+// CSRF defense: reject cross-origin state-changing API requests.
+// Fails closed (a missing Origin/Referer is a rejection) and compares parsed
+// origins rather than string prefixes. See server/middleware/csrf.js for the
+// full rationale, including why it is defence-in-depth alongside the session
+// cookie's sameSite setting.
+app.use("/api", createCsrfGuard(config));
 
 app.get("/readyz", (req, res) => {
   try {
