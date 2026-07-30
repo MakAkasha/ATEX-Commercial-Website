@@ -14,14 +14,30 @@
  *
  * Safe to run repeatedly: rows with no guidance heading are left untouched.
  *
+ * Preview by default: without --apply nothing is written.
+ *
  * Usage:
- *   node tools/strip-blog-internal-guidance.js --dry-run
  *   node tools/strip-blog-internal-guidance.js
- *   node tools/strip-blog-internal-guidance.js --db /path/to/data.sqlite
+ *   node tools/strip-blog-internal-guidance.js --apply
+ *   node tools/strip-blog-internal-guidance.js --apply --db /path/to/data.sqlite
+ *   node tools/strip-blog-internal-guidance.js --help
  */
 
-const path = require("path");
-const Database = require("better-sqlite3");
+const cli = require("./lib/cli");
+
+const HELP = `
+Usage: node tools/strip-blog-internal-guidance.js [options]
+
+Trims leaked internal AI content-brief sections ("Image Plan", "Suggested
+Implementation Notes for AI Agent", ...) off the end of posts.content_html.
+Idempotent: rows with no guidance heading are left untouched.
+
+Options:
+  --apply        Write the trimmed content. Without it this tool only previews.
+  --dry-run      Accepted for backwards compatibility; same as the default preview.
+  --db <path>    Database file to use.
+  -h, --help     Show this help and exit.
+${cli.COMMON_HELP_FOOTER}`;
 
 const INTERNAL_GUIDANCE_HEADINGS = [
   "image plan",
@@ -80,25 +96,21 @@ function stripInternalGuidance(contentHtml) {
   return trimTrailingSeparators(contentHtml.slice(0, start));
 }
 
+function snippet(value, max = 120) {
+  const flat = String(value || "").replace(/\s+/g, " ").trim();
+  return flat.length > max ? `${flat.slice(0, max)}…` : flat;
+}
+
 function findMarkers(value) {
   if (typeof value !== "string") return [];
   return LEAK_MARKERS.filter((marker) => value.includes(marker));
 }
 
 function run() {
-  const args = process.argv.slice(2);
-  const dryRun = args.includes("--dry-run");
-  const dbFlag = args.indexOf("--db");
-  const dbPath =
-    dbFlag !== -1 && args[dbFlag + 1]
-      ? path.resolve(args[dbFlag + 1])
-      : path.resolve(__dirname, "..", "server", "data.sqlite");
-
-  const db = new Database(dbPath);
+  const { apply, preview, dbPath } = cli.start("strip-blog-internal-guidance", HELP);
+  const db = cli.openDb(dbPath);
   const rows = db.prepare("SELECT slug, title, excerpt, content_html FROM posts").all();
 
-  console.log(`DB: ${dbPath}`);
-  console.log(`Mode: ${dryRun ? "DRY RUN (no writes)" : "APPLY"}`);
   console.log(`Posts scanned: ${rows.length}`);
 
   const update = db.prepare(
@@ -106,6 +118,7 @@ function run() {
   );
 
   let changed = 0;
+  let skipped = 0;
   rows.forEach((row) => {
     const titleMarkers = findMarkers(row.title);
     const excerptMarkers = findMarkers(row.excerpt);
@@ -119,16 +132,18 @@ function run() {
     const cleaned = stripInternalGuidance(row.content_html || "");
     if (cleaned === null) {
       console.log(`SKIP    ${row.slug} (clean, ${(row.content_html || "").length} chars)`);
+      skipped += 1;
       return;
     }
 
     const before = row.content_html.length;
     const after = cleaned.length;
-    if (!dryRun) update.run(cleaned, row.slug);
+    if (apply) update.run(cleaned, row.slug);
     changed += 1;
     console.log(
-      `${dryRun ? "WOULD  " : "CLEANED"} ${row.slug}: ${before} -> ${after} chars (removed ${before - after})`
+      `${preview ? "WOULD  " : "CLEANED"} ${row.slug}: ${before} -> ${after} chars (removed ${before - after})`
     );
+    console.log(`        ${preview ? "would remove" : "removed"} from: ${snippet(row.content_html.slice(after))}`);
 
     const residual = findMarkers(cleaned);
     if (residual.length) {
@@ -137,7 +152,10 @@ function run() {
   });
 
   db.close();
-  console.log(`${dryRun ? "Would change" : "Changed"}: ${changed} post(s)`);
+  console.log(
+    `Summary: ${changed} post(s) ${preview ? "would be cleaned" : "cleaned"}, ${skipped} skipped, ${rows.length} scanned.`
+  );
+  if (preview && changed) console.log("Nothing was written. Re-run with --apply to write these changes.");
 }
 
 if (require.main === module) run();

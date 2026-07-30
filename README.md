@@ -108,6 +108,29 @@ Creates timestamped snapshots under `server/backups/` (main DB + WAL/SHM when pr
 npm run regression -- --base http://127.0.0.1:5173 --user <admin-user> --pass <admin-pass>
 ```
 
+### Blog content tools (database-writing)
+
+Three tools write directly to the blog `posts` table:
+
+- `tools/import-blog-seeds.js` — imports the markdown seed files in `content-src/blog-seed/` into `posts` (insert on new slug, update on existing).
+- `tools/rename-blog-slugs.js` — renames machine-generated slugs (`P422904`, ...) to the readable slugs defined in `server/data/blogRedirects.js`.
+- `tools/strip-blog-internal-guidance.js` — trims leaked internal content-brief sections off the end of `posts.content_html`.
+
+All three are **preview by default**: an argument-less run reports the exact rows and values it would change and writes nothing. Add `--apply` to write. `--dry-run` is still accepted and means the same as the default. `--help` prints usage.
+
+```bash
+node tools/import-blog-seeds.js                 # preview
+node tools/import-blog-seeds.js --apply         # write
+```
+
+Database resolution order is the same for all three, and matches the server (`server/db.js`):
+
+1. `--db <path>`
+2. `DB_PATH` environment variable
+3. `server/data.sqlite`
+
+The resolved absolute path is printed before anything else. A missing database file is an error — these tools never create one.
+
 ## Scripts
 
 - `npm run dev` — run with nodemon

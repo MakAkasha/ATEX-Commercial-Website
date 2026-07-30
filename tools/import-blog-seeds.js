@@ -1,10 +1,36 @@
+/**
+ * Imports the markdown seed files in content-src/blog-seed/ into posts.
+ *
+ * Preview by default: without --apply nothing is written.
+ *
+ * Usage:
+ *   node tools/import-blog-seeds.js
+ *   node tools/import-blog-seeds.js --apply
+ *   node tools/import-blog-seeds.js --apply --db /path/to/data.sqlite
+ *   node tools/import-blog-seeds.js --help
+ */
+
 const fs = require("fs");
 const path = require("path");
-const Database = require("better-sqlite3");
+
+const cli = require("./lib/cli");
 
 const ROOT = path.resolve(__dirname, "..");
-const DB_PATH = path.join(ROOT, "server", "data.sqlite");
 const SEED_DIR = path.join(ROOT, "content-src", "blog-seed");
+
+const HELP = `
+Usage: node tools/import-blog-seeds.js [options]
+
+Imports the three markdown seed files in content-src/blog-seed/ into the posts
+table: INSERT when the slug is new, UPDATE when it already exists. Internal
+content-brief sections are trimmed off and image placeholders resolved first.
+
+Options:
+  --apply        Write the imported posts. Without it this tool only previews.
+  --dry-run      Accepted for backwards compatibility; same as the default preview.
+  --db <path>    Database file to use.
+  -h, --help     Show this help and exit.
+${cli.COMMON_HELP_FOOTER}`;
 
 const IMAGE_MAP = {
   smart_home_system_saudi_arabia_guide: {
@@ -251,21 +277,27 @@ function upsertPost(db, post) {
   return { action: "created", slug: post.slug };
 }
 
-function run() {
-  const files = ["blog_post_no1.md", "blog_post_no2.md", "blog_post_no3.md"].map((f) => path.join(SEED_DIR, f));
-  const db = new Database(DB_PATH);
+const COMPARED_FIELDS = ["title", "excerpt", "cover_image", "content_html", "tags_json", "published"];
 
-  const changes = [];
+function buildPosts() {
+  const files = ["blog_post_no1.md", "blog_post_no2.md", "blog_post_no3.md"].map((f) => path.join(SEED_DIR, f));
+  const posts = [];
+  let skipped = 0;
+
   files.forEach((file) => {
     const raw = fs.readFileSync(file, "utf8");
     const { meta, body } = parseFrontmatter(raw);
     const slug = String(meta.slug || "").trim();
-    if (!slug) return;
+    if (!slug) {
+      console.log(`SKIP    ${path.basename(file)}: no slug in frontmatter`);
+      skipped += 1;
+      return;
+    }
 
     const cleanedBody = trimToPublishableMarkdown(body);
     const bodyWithImages = replaceImagePlaceholders(cleanedBody, slug);
     assertNoUnresolvedPlaceholders(bodyWithImages, slug);
-    const post = {
+    posts.push({
       slug,
       title: String(meta.title || "").trim(),
       excerpt: String(meta.excerpt || "").trim(),
@@ -273,15 +305,84 @@ function run() {
         (IMAGE_MAP[normalizeSlugKey(slug)] && IMAGE_MAP[normalizeSlugKey(slug)].REPLACE_WITH_FEATURED_IMAGE_URL) || "",
       content_html: markdownToHtml(bodyWithImages),
       tags: Array.isArray(meta.tags) ? meta.tags : [],
-    };
+    });
+  });
 
-    changes.push(upsertPost(db, post));
+  return { posts, skipped };
+}
+
+/** Read-only: decides whether the seed file would create, change, or match the stored row. */
+function classifyPost(db, post) {
+  const existing = db
+    .prepare("SELECT id, title, excerpt, cover_image, content_html, tags_json, published FROM posts WHERE slug = ?")
+    .get(post.slug);
+
+  const next = {
+    title: post.title,
+    excerpt: post.excerpt,
+    cover_image: post.cover_image,
+    content_html: post.content_html,
+    tags_json: JSON.stringify(post.tags),
+    published: 1,
+  };
+
+  if (!existing) return { action: "create", existing: null, next, differing: [] };
+
+  const differing = COMPARED_FIELDS.filter((f) => String(existing[f]) !== String(next[f]));
+  return { action: differing.length ? "update" : "unchanged", existing, next, differing };
+}
+
+function describeValue(value, max = 60) {
+  const s = String(value === null || value === undefined ? "" : value).replace(/\s+/g, " ");
+  if (s.length > max) return `<${s.length} chars> "${s.slice(0, max)}…"`;
+  return JSON.stringify(s);
+}
+
+function run() {
+  const { apply, preview, dbPath } = cli.start("import-blog-seeds", HELP);
+  const db = cli.openDb(dbPath);
+
+  const { posts, skipped } = buildPosts();
+  console.log(`Seed posts parsed: ${posts.length}`);
+
+  let created = 0;
+  let updated = 0;
+  let unchanged = 0;
+
+  posts.forEach((post) => {
+    const verdict = classifyPost(db, post);
+
+    if (verdict.action === "create") {
+      created += 1;
+      console.log(
+        `${preview ? "WOULD CREATE" : "CREATED     "} ${post.slug}: ${describeValue(post.title)}, ` +
+          `${post.content_html.length} chars html, tags ${JSON.stringify(post.tags)}`
+      );
+    } else if (verdict.action === "update") {
+      updated += 1;
+      console.log(
+        `${preview ? "WOULD UPDATE" : "UPDATED     "} ${post.slug} (post id ${verdict.existing.id}) — changed fields: ${verdict.differing.join(", ")}`
+      );
+      verdict.differing.forEach((field) => {
+        console.log(`        ${field}: ${describeValue(verdict.existing[field])} -> ${describeValue(verdict.next[field])}`);
+      });
+    } else {
+      unchanged += 1;
+      console.log(
+        `UNCHANGED    ${post.slug} (post id ${verdict.existing.id}) — stored values already match the seed file` +
+          (apply ? " (row re-written, updated_at bumped)" : "")
+      );
+    }
+
+    if (apply) upsertPost(db, post);
   });
 
   db.close();
-  changes.forEach((c) => {
-    console.log(`${c.action.toUpperCase()}: ${c.slug}`);
-  });
+  console.log(
+    `Summary: ${created} created, ${updated} updated, ${unchanged} unchanged, ${skipped} seed file(s) skipped` +
+      ` (${preview ? "preview only, nothing written" : "written"}).`
+  );
+  if (preview && created + updated) console.log("Nothing was written. Re-run with --apply to write these posts.");
 }
 
 run();
