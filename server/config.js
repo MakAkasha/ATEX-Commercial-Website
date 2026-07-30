@@ -24,8 +24,13 @@ function buildCspDirectives() {
     objectSrc: ["'none'"],
     frameAncestors: ["'self'"],
     imgSrc: ["'self'", "data:", "blob:", "https:"],
-    fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+    // The Google Fonts origins are deliberately absent. Cairo and Tajawal are
+    // now self-hosted from /assets/fonts (@font-face in assets/css/styles.css
+    // and admin/admin.css), so nothing served by this app loads a stylesheet
+    // from fonts.googleapis.com or a webfont from fonts.gstatic.com. cdnjs and
+    // jsdelivr stay: Font Awesome and Tabler still ship CSS + webfonts.
+    fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
     // cdnjs.cloudflare.com is deliberately absent here. It was needed only for
     // the admin TinyMCE script tag, which now loads from /vendor/tinymce. cdnjs
     // still serves Font Awesome CSS (index.html, views/partials/head.ejs) and

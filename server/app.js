@@ -419,6 +419,17 @@ app.get("/llms.txt", (req, res) => {
 
 // Static public site
 const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
+// Fonts before the general /assets mount so they get their own cache policy.
+// The filenames embed the upstream Google Fonts version (cairo-v31-*,
+// tajawal-v12-*), so a font can never change behind a URL — a new upstream
+// release lands at a new path. That makes them safe to mark immutable, the
+// same posture as the /vendor/tinymce mount below. Everything else under
+// /assets keeps 1d because those filenames are NOT content-addressed and rely
+// on the ?v= query for busting, which fonts (referenced from inside CSS) skip.
+app.use(
+  "/assets/fonts",
+  express.static(path.join(ROOT_DIR, "assets", "fonts"), { maxAge: "1y", immutable: true })
+);
 app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" }));
 // Note: /data is intentionally NOT served statically. The JSON source files
 // (products.json, posts.json) are read server-side (DB seed in db.js, contentRegistry)
