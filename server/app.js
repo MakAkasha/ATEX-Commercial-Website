@@ -23,6 +23,7 @@ const { getSolutions, getIndustries } = require("./data/contentRegistry");
 const { memoize } = require("./utils/ttlCache");
 const { createResponsiveImage, IMAGE_SIZES } = require("./utils/responsiveImage");
 const { createIconHelper } = require("./utils/icon");
+const { createAssetHelper } = require("./utils/assets");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -58,6 +59,14 @@ app.locals.assetVer = (() => {
     return "1";
   }
 })();
+
+// Stylesheet / script URLs for every rendered view.
+//
+// Emits the content-hashed /assets/build/... URLs when `npm run build` has been
+// run, and today's /assets/css/styles.css?v=<assetVer> URLs when it has not, so
+// the site is correct either way and no deploy has to change for this to be
+// safe. Decided once, here, and logged at boot. See server/utils/assets.js.
+app.locals.asset = createAssetHelper({ rootDir: ROOT_DIR, assetVer: app.locals.assetVer }).asset;
 
 // Sector links for the site footer — available to every rendered view,
 // so the footer list can never drift from server/data/industries.js.
@@ -444,6 +453,20 @@ const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(ROOT_DIR, "uploads");
 app.use(
   "/assets/fonts",
   express.static(path.join(ROOT_DIR, "assets", "fonts"), { maxAge: "1y", immutable: true })
+);
+// Vite build output, before the general /assets mount so it gets its own cache
+// policy. Every filename here carries a content hash of its own bytes, so a
+// file can never change behind a URL — the same reasoning that makes the fonts
+// above immutable, but airtight rather than convention-based.
+//
+// The directory may not exist (no build has been run); express.static is
+// perfectly happy serving nothing, and the asset helper will not have pointed
+// at it in that case anyway. The Vite manifest lives at
+// assets/build/.vite/manifest.json and stays unreachable from the web because
+// serve-static's dotfiles:"ignore" default 404s any dot-segment path.
+app.use(
+  "/assets/build",
+  express.static(path.join(ROOT_DIR, "assets", "build"), { maxAge: "1y", immutable: true })
 );
 app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" }));
 // Note: /data is intentionally NOT served statically. The JSON source files

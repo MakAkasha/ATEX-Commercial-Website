@@ -68,7 +68,10 @@
 <link rel="preload" href="/assets/fonts/cairo/cairo-v31-var-arabic.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- Stylesheets -->
-<link rel="stylesheet" href="/assets/css/styles.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>" />
+<%# asset() resolves to the content-hashed /assets/build/styles-<hash>.css when
+    a build exists, and to /assets/css/styles.css?v=<assetVer> when it does not.
+    See server/utils/assets.js. %>
+<link rel="stylesheet" href="<%= asset('styles') %>" />
 <%# Font Awesome used to load here as a whole stylesheet from cdnjs (~102 KB of
     CSS plus up to three woff2 files) to draw 22 glyphs. Those glyphs now come
     from assets/icons/sprite.svg via the icon() helper, so nothing on the public
