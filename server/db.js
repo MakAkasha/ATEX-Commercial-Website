@@ -203,8 +203,17 @@ function migrate() {
         });
         tx(rows);
       }
-    } catch {
-      // Ignore seed failures; empty table is still valid.
+    } catch (err) {
+      // Non-fatal: an empty table is still valid, but log so a corrupt or
+      // unreadable seed file does not fail silently.
+      console.warn(
+        JSON.stringify({
+          ts: new Date().toISOString(),
+          level: "warn",
+          type: "products_seed_failed",
+          message: err && err.message ? err.message : "UNKNOWN_ERROR",
+        })
+      );
     }
   }
 
@@ -237,8 +246,17 @@ function migrate() {
         });
         seedCatalog(rows);
       }
-    } catch {
-      // Manifest is optional; empty catalog is still valid.
+    } catch (err) {
+      // Non-fatal: the manifest is optional and an empty catalog is still valid,
+      // but log so a corrupt or unreadable manifest does not fail silently.
+      console.warn(
+        JSON.stringify({
+          ts: new Date().toISOString(),
+          level: "warn",
+          type: "catalog_seed_failed",
+          message: err && err.message ? err.message : "UNKNOWN_ERROR",
+        })
+      );
     }
   }
 
