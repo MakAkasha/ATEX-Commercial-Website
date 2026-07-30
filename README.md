@@ -220,6 +220,42 @@ It never modifies or deletes a source, never overwrites an existing file without
 are cheap. `--help` lists the full exclusion set (SVG/ICO, favicons and touch
 icons, files under 8 KB, sources 320px or narrower, animated images).
 
+## Icons (SVG sprite)
+
+Public-site icons come from a single local sprite, `assets/icons/sprite.svg`.
+Templates never write markup by hand — they call the `icon()` view helper:
+
+```ejs
+<%- icon('whatsapp') %>                          <!-- decorative (the default) -->
+<%- icon('bolt', { className: 'myThing__icon' }) %>
+<%- icon('phone', { label: 'اتصال' }) %>          <!-- when the icon is the only meaning -->
+```
+
+Decorative is the default and gets `aria-hidden="true"`; pass `label` only when
+the icon carries meaning that no adjacent text does.
+
+The helper reads the sprite at boot, so the set of valid names *is* the sprite.
+An unknown name renders nothing rather than a dangling `<use>` — see the header
+comment in `server/utils/icon.js` for why that is the right failure mode.
+
+To add an icon: copy the glyph from the Font Awesome Free package
+(`@fortawesome/fontawesome-free@6.5.0`, `svgs/<style>/<name>.svg`), strip the
+`<svg>` wrapper, keep the original `viewBox`, add `fill="currentColor"` to each
+path, and paste it in as `<symbol id="icon-<name>">`.
+
+This replaced a Font Awesome 6.5.0 stylesheet loaded from `cdnjs.cloudflare.com`
+(~102 KB of CSS, plus up to three woff2 files, ~300 KB) that existed to draw 22
+glyphs. Nothing on the public site loads third-party CSS or fonts any more.
+
+### Icon licence attribution
+
+Icons in `assets/icons/sprite.svg` are from **Font Awesome Free 6.5.0** by
+@fontawesome — <https://fontawesome.com>. They are licensed under
+**CC BY 4.0** (<https://creativecommons.org/licenses/by/4.0/>).
+Copyright 2023 Fonticons, Inc. Full Font Awesome Free licence:
+<https://fontawesome.com/license/free>. The same attribution is carried in a
+comment at the top of the sprite file itself.
+
 ## Scripts
 
 - `npm run dev` — run with nodemon

@@ -61,9 +61,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
-<!-- Preconnect and Preload Critical Resources -->
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-
+<!-- Preload Critical Resources -->
 <!-- Preload the one font file first paint always needs: Cairo's arabic subset.
      Cairo is a variable font, so this single file backs body text (400) and
      every bold/extrabold rule (700/800). @font-face lives in styles.css. -->
@@ -71,8 +69,10 @@
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/css/styles.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'" />
-<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" /></noscript>
+<%# Font Awesome used to load here as a whole stylesheet from cdnjs (~102 KB of
+    CSS plus up to three woff2 files) to draw 22 glyphs. Those glyphs now come
+    from assets/icons/sprite.svg via the icon() helper, so nothing on the public
+    site loads CSS or fonts from a third party any more. %>
 <%# The preload must point at the same candidate the <picture> will choose.
     A plain href to the original in front of a <picture> that then picks an
     AVIF candidate downloads the image twice. imagePreload() returns the best

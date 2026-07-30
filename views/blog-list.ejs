@@ -63,7 +63,7 @@
                     <% } %>
                     <div class="blogCard__metaRight">
                       <% if (p.readingTime) { %>
-                        <span class="blogReadingTime"><i class="fa-regular fa-clock" aria-hidden="true"></i> <%= p.readingTime %> د</span>
+                        <span class="blogReadingTime"><%- icon('clock') %> <%= p.readingTime %> د</span>
                       <% } %>
                       <% if (p.formattedDate) { %><time dir="ltr" datetime="<%= p.isoPublished || '' %>"><%= p.formattedDate %></time><% } %>
                     </div>

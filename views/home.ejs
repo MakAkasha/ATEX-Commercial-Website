@@ -107,9 +107,9 @@
             </p>
 
             <div class="hero__trust" aria-label="مزايا سريعة">
-              <div class="pill"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> أمان مؤسسي</div>
-              <div class="pill"><i class="fa-solid fa-plug-circle-bolt" aria-hidden="true"></i> تكاملات API</div>
-              <div class="pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> تنفيذ داخل المملكة</div>
+              <div class="pill"><%- icon('shield-halved') %> أمان مؤسسي</div>
+              <div class="pill"><%- icon('plug-circle-bolt') %> تكاملات API</div>
+              <div class="pill"><%- icon('location-dot') %> تنفيذ داخل المملكة</div>
             </div>
           </div>
 
@@ -172,9 +172,9 @@
               <h2 class="platformSection__title"><%= content?.platform?.title || 'منصة واحدة للأجهزة والاتصال والبيانات' %></h2>
               <p class="platformSection__desc"><%= content?.platform?.desc || 'نوفّر طبقة إدارة أجهزة، قواعد تنبيهات، لوحات، وتقارير—مع إمكانيات تكامل عبر واجهات برمجية.' %></p>
               <ul class="platformSection__points" aria-label="مزايا المنصة">
-                <li><i class="fa-solid fa-bolt" aria-hidden="true"></i> مراقبة لحظية + تنبيهات فورية</li>
-                <li><i class="fa-solid fa-code-branch" aria-hidden="true"></i> تكاملات API مع أنظمة المؤسسة</li>
-                <li><i class="fa-solid fa-table-columns" aria-hidden="true"></i> لوحات قابلة للتخصيص لكل فريق</li>
+                <li><%- icon('bolt') %> مراقبة لحظية + تنبيهات فورية</li>
+                <li><%- icon('code-branch') %> تكاملات API مع أنظمة المؤسسة</li>
+                <li><%- icon('table-columns') %> لوحات قابلة للتخصيص لكل فريق</li>
               </ul>
               <div class="platformSection__actions">
                 <a class="btn btn--primary" href="/solutions"><%= content?.platform?.ctaPrimary || 'استكشف المنتجات' %></a>
@@ -202,8 +202,8 @@
                 </div>
               </div>
               <div class="platformSection__statusRow" aria-hidden="true">
-                <span class="platformSection__statusBadge platformSection__statusBadge--ok"><i class="fa-solid fa-circle-check"></i> الأجهزة متصلة</span>
-                <span class="platformSection__statusBadge"><i class="fa-solid fa-bell"></i> 0 تنبيهات نشطة</span>
+                <span class="platformSection__statusBadge platformSection__statusBadge--ok"><%- icon('circle-check') %> الأجهزة متصلة</span>
+                <span class="platformSection__statusBadge"><%- icon('bell') %> 0 تنبيهات نشطة</span>
               </div>
             </div>
           </div>

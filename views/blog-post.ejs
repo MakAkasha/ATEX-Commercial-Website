@@ -25,7 +25,7 @@
               <div class="subpage__meta" dir="ltr"><%= post.created_at %></div>
             <% } %>
             <% if (post.readingTime) { %>
-              <span class="blogReadingTime blogReadingTime--lg"><i class="fa-regular fa-clock" aria-hidden="true"></i> وقت القراءة: <%= post.readingTime %> دقيقة</span>
+              <span class="blogReadingTime blogReadingTime--lg"><%- icon('clock') %> وقت القراءة: <%= post.readingTime %> دقيقة</span>
             <% } %>
             <% if (post.tags && post.tags.length) { %>
               <% post.tags.slice(0, 3).forEach(function(tag){ %>
@@ -64,19 +64,19 @@
             <span class="blogShare__label">شارك المقال:</span>
             <div class="blogShare__btns">
               <button class="blogShare__btn blogShare__btn--native" id="blogShareNative" aria-label="مشاركة" title="مشاركة">
-                <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+                <%- icon('share-nodes') %>
                 <span>مشاركة</span>
               </button>
               <a class="blogShare__btn blogShare__btn--wa" href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' — ' + (meta?.canonical || '')) %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة عبر واتساب">
-                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                <%- icon('whatsapp') %>
                 <span>واتساب</span>
               </a>
               <a class="blogShare__btn blogShare__btn--li" href="https://www.linkedin.com/sharing/share-offsite/?url=<%= encodeURIComponent(meta?.canonical || '') %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة على لينكدإن">
-                <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+                <%- icon('linkedin-in') %>
                 <span>لينكدإن</span>
               </a>
               <button class="blogShare__btn blogShare__btn--copy" id="blogCopyUrl" aria-label="نسخ الرابط" title="نسخ الرابط">
-                <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                <%- icon('copy') %>
                 <span>نسخ الرابط</span>
               </button>
             </div>
