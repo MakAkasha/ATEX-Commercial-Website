@@ -7,6 +7,8 @@
     "dev": "node --watch server/app.js",
     "dev:nodemon": "nodemon server/app.js",
     "start": "node server/app.js",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
     "backup:db": "node server/scripts/backup-db.js",
     "create-admin": "node server/scripts/create-admin.js",
     "regression": "node tools/regression.js",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "eslint": "^9.39.5",
     "nodemon": "^3.1.11",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "vite": "^8.2.0"
   }
 }

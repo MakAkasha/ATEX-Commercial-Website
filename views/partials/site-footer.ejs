@@ -135,5 +135,10 @@
 <!-- GSAP -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
-<script src="/assets/js/consent.js?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>" defer></script>
-<script type="module" src="/assets/js/main.js?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>"></script>
+<%# Order and attributes are load-bearing and identical in both asset modes:
+    consent.js stays a classic `defer` script (its built form is a bare IIFE
+    with no import/export, see the ESM note in vite.config.js) and main.js
+    stays `type="module"`. Both are deferred, so they run in this order after
+    parsing regardless. %>
+<script src="<%= asset('consent') %>" defer></script>
+<script type="module" src="<%= asset('main') %>"></script>

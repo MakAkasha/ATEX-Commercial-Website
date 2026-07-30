@@ -13,6 +13,13 @@ Thumbs.db
 
 .vscode/
 
+# Vite build output. NOT committed — the recommended adoption path is to run
+# `npm run build` on the server during deploy, so the built bytes are always a
+# function of the source that was just pulled and can never drift from it.
+# Until someone adds that step nothing here exists and server/utils/assets.js
+# serves the unhashed /assets/... ?v= paths, exactly as before this was added.
+assets/build/
+
 # Local runtime logs
 server_run*.log
 
