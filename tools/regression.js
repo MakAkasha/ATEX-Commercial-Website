@@ -14,6 +14,11 @@
   - Designed to run against a running dev server.
 */
 
+// FormData and Blob are Node 18+ built-ins on globalThis, but they are not in
+// the shared node globals list the lint config uses. Declare them here rather
+// than widening that list for every file.
+/* global FormData, Blob */
+
 const fs = require("fs");
 const path = require("path");
 

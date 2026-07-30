@@ -61,7 +61,6 @@ if (process.env.QSYSTEM_HTML_PERCAT) {
 }
 
 const cats = [...new Set(gallery.map((i) => i.category))].sort((a, b) => a.localeCompare(b, "ar"));
-const withImg = gallery.filter((i) => i.image).length;
 
 const cards = gallery
   .map(
