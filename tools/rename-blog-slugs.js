@@ -13,16 +13,32 @@
  * slug would throw. This script checks first and SKIPs those rows with a clear
  * message instead — it never overwrites or deletes an existing post.
  *
+ * Preview by default: without --apply nothing is written.
+ *
  * Usage:
- *   node tools/rename-blog-slugs.js --dry-run
  *   node tools/rename-blog-slugs.js
- *   node tools/rename-blog-slugs.js --db /path/to/data.sqlite
+ *   node tools/rename-blog-slugs.js --apply
+ *   node tools/rename-blog-slugs.js --apply --db /path/to/data.sqlite
+ *   node tools/rename-blog-slugs.js --help
  */
 
-const path = require("path");
-const Database = require("better-sqlite3");
+const cli = require("./lib/cli");
 
 const { RAW_REDIRECTS } = require("../server/data/blogRedirects");
+
+const HELP = `
+Usage: node tools/rename-blog-slugs.js [options]
+
+Renames the machine-generated blog slugs ("P422904", ...) to the readable slugs
+defined in server/data/blogRedirects.js. Idempotent, and skips any rename whose
+target slug is already taken instead of overwriting it.
+
+Options:
+  --apply        Write the renames. Without it this tool only previews.
+  --dry-run      Accepted for backwards compatibility; same as the default preview.
+  --db <path>    Database file to use.
+  -h, --help     Show this help and exit.
+${cli.COMMON_HELP_FOOTER}`;
 
 // old slug -> new slug. Single source of truth lives in blogRedirects.js.
 const SLUG_RENAMES = RAW_REDIRECTS;
@@ -47,19 +63,10 @@ function printTable(rows) {
 }
 
 function run() {
-  const args = process.argv.slice(2);
-  const dryRun = args.includes("--dry-run");
-  const dbFlag = args.indexOf("--db");
-  const dbPath =
-    dbFlag !== -1 && args[dbFlag + 1]
-      ? path.resolve(args[dbFlag + 1])
-      : path.resolve(__dirname, "..", "server", "data.sqlite");
-
-  const db = new Database(dbPath);
+  const { apply, preview, dbPath } = cli.start("rename-blog-slugs", HELP);
+  const db = cli.openDb(dbPath);
   const entries = Object.entries(SLUG_RENAMES);
 
-  console.log(`DB: ${dbPath}`);
-  console.log(`Mode: ${dryRun ? "DRY RUN (no writes)" : "APPLY"}`);
   console.log(`Renames defined: ${entries.length}`);
 
   const findBySlug = db.prepare("SELECT id, slug, title FROM posts WHERE slug = ?");
@@ -69,6 +76,7 @@ function run() {
 
   const table = [];
   let changed = 0;
+  let skipped = 0;
 
   entries.forEach(([oldSlug, newSlug]) => {
     const source = findBySlug.get(oldSlug);
@@ -79,6 +87,7 @@ function run() {
       const note = target ? "SKIP (already renamed)" : "SKIP (old slug not in DB)";
       console.log(`SKIP    ${oldSlug}: no post with this slug${target ? " — new slug already present" : ""}`);
       table.push([oldSlug, newSlug, note]);
+      skipped += 1;
       return;
     }
 
@@ -88,15 +97,16 @@ function run() {
         `CONFLICT ${oldSlug} -> ${newSlug}: target slug already taken by post id ${target.id} ("${target.title}"). Not renaming post id ${source.id}.`
       );
       table.push([oldSlug, newSlug, `SKIP (target taken by id ${target.id})`]);
+      skipped += 1;
       return;
     }
 
-    if (!dryRun) updateSlug.run(newSlug, oldSlug);
+    if (apply) updateSlug.run(newSlug, oldSlug);
     changed += 1;
     console.log(
-      `${dryRun ? "WOULD  " : "RENAMED"} ${oldSlug} -> ${newSlug} (post id ${source.id}: "${source.title}")`
+      `${preview ? "WOULD  " : "RENAMED"} ${oldSlug} -> ${newSlug} (post id ${source.id}: "${source.title}")`
     );
-    table.push([oldSlug, newSlug, dryRun ? "WOULD RENAME" : "RENAMED"]);
+    table.push([oldSlug, newSlug, preview ? "WOULD RENAME" : "RENAMED"]);
   });
 
   printTable(table);
@@ -113,7 +123,10 @@ function run() {
   }
 
   db.close();
-  console.log(`${dryRun ? "Would change" : "Changed"}: ${changed} post(s)`);
+  console.log(
+    `Summary: ${changed} post(s) ${preview ? "would be renamed" : "renamed"}, ${skipped} skipped, ${entries.length} rename(s) defined.`
+  );
+  if (preview && changed) console.log("Nothing was written. Re-run with --apply to write these renames.");
 }
 
 if (require.main === module) run();
