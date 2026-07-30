@@ -4,7 +4,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة انتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD لمس مقاس 4.3 بوصة بدقة 2MP, رؤية ليلية IR+LED, هيكل معدني, .",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-41.webp",
     "sort_order": 0
   },
   {
@@ -12,7 +12,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة انتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD مقاس 4.3 بوصة بدقة 2MP, رؤية ليلية IR+LED, هيكل معدني, لوحة مفاتيح لمس .",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-40.webp",
     "sort_order": 1
   },
   {
@@ -20,7 +20,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة انتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD مقاس 8 بوصة بدقة 2MP, رؤية ليلية IR+LED, هيكل معدني, لوحة مفاتيح ميكانيكية.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-39.webp",
     "sort_order": 2
   },
   {
@@ -28,7 +28,7 @@
     "category": "أقفال ذكية / فنادق",
     "title": "قفل فندقي ذكي",
     "description": "قفل فندقي إلكتروني متصل بالتطبيق ويدعم بطاقات RF M1, بواجهة من الأكريليك والألمنيوم الصلب, يعمل بـ 4 بطاريات AA, إنذار انخفاض البطارية, الأبعاد: 300×75 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/hl-01.webp",
     "sort_order": 3
   },
   {
@@ -36,7 +36,7 @@
     "category": "أقفال ذكية / فنادق",
     "title": "قفل فندقي ذكي",
     "description": "قفل فندقي إلكتروني يدعم بطاقات RF M1, بواجهة من الستانلس ستيل, يعمل بـ 4 بطاريات AA, إنذار انخفاض البطارية, الأبعاد: 296×78 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/hl-02.webp",
     "sort_order": 4
   },
   {
@@ -44,7 +44,7 @@
     "category": "أقفال ذكية / فنادق",
     "title": "قفل فندقي ذكي",
     "description": "قفل فندقي إلكتروني ببطاقات RF M1, واجهة من الستانلس ستيل ومقبض مسطح , يعمل بـ 4 بطاريات AA, إنذار انخفاض البطارية, الأبعاد: 242×77 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/hl-11.webp",
     "sort_order": 5
   },
   {
@@ -52,7 +52,7 @@
     "category": "أقفال ذكية / فنادق",
     "title": "قفل فندقي ذكي",
     "description": "قفل فندقي إلكتروني ببطاقات RF M1, بواجهة من الأكريليك والألمنيوم الصلب, يعمل بـ 4 بطاريات AA, إنذار انخفاض البطارية, الأبعاد: 300×75 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/hl-12.webp",
     "sort_order": 6
   },
   {
@@ -60,7 +60,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي برو",
     "description": "قفل ذكي بكاميرا WiFi وقفل أوتوماتيكي, بواجهة من الزجاج المقسى والزنك, يدعم الفتح عبر IC, التطبيق, الرقم السري, التعرف على الوجه, بصمة الإصبع, المفتاح الميكانيكي, يعمل ببطارية ليثيوم.",
-    "image": ".webp",
+    "image": "/assets/products/items/sf-13.webp",
     "sort_order": 7
   },
   {
@@ -68,7 +68,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي",
     "description": "قفل ذكي بلوتوث, بهيكل من سبائك الألومنيوم و ABS, يدعم الفتح عبر بصمة الإصبع, كلمة المرور, المفتاح الميكانيكي, البطاقة, والتطبيق, مع سعة لبصمات الأصابع",
-    "image": ".webp",
+    "image": "/assets/products/items/sx-16.webp",
     "sort_order": 8
   },
   {
@@ -76,7 +76,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي بلس",
     "description": "قفل ذكي بلوتوث, مصنّع من سبائك الألومنيوم و ABS, يدعم الفتح عبر بصمة الإصبع, وكلمة المرور, والمفتاح الميكانيكي, والبطاقة, والتطبيق, مع سعة لبصمات الأصابع, وبأبعاد 345 ملم طول × 75 ملم عرض",
-    "image": ".webp",
+    "image": "/assets/products/items/sxa-19.webp",
     "sort_order": 9
   },
   {
@@ -84,7 +84,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي برو",
     "description": "قفل ذكي بالتعرف على الوجه ثلاثي الأبعاد (3D) من الألومنيوم الاتصال: واي فاي اتصال داخلي (انتركم) ثنائي الاتجاه (WIFI) طرق الفتح: الوجه/ بصمة الإصبع/ كلمة المرور/ بطاقة/ مفتاح/ تطبيق سعة الوجوه: 100 وجه سعة المستخدمين: بطاقة + كلمة مرور + بصمة إصبع: 295 مستخدم كاميرا HD بدقة 1 ميجابكسل, شاشة 3.5 بوصة مصدر الطاقة: بطاريات ليثيوم 4200mAh جسم القفل (Mortise): 6068 سماكة الباب: 40 ~ 100 ملم",
-    "image": ".webp",
+    "image": "/assets/products/items/sf-21.webp",
     "sort_order": 10
   },
   {
@@ -92,7 +92,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي بلس",
     "description": "قفل ذكي بواجهة من الزجاج المقسى والألمنيوم, يدعم الفتح عبر IC, التطبيق, الرقم السري, بصمة الإصبع, المفتاح الميكانيكي, الأبعاد: 368×73 مم, يعمل بـ 8 بطاريات AA.",
-    "image": ".webp",
+    "image": "/assets/products/items/sxa-25.webp",
     "sort_order": 11
   },
   {
@@ -100,7 +100,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي خارجي",
     "description": "قفل ذكي خارجي مقاوم للعوامل الجوية بمعيار IP65, واجهة من الزجاج المقسى والألمنيوم, يدعم الفتح عبر IC, التطبيق, الرقم السري, بصمة الإصبع, المفتاح الميكانيكي, الأبعاد: 330×37 مم, يعمل بـ 4 بطاريات AAA.",
-    "image": ".webp",
+    "image": "/assets/products/items/sxo-26.webp",
     "sort_order": 12
   },
   {
@@ -108,7 +108,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي خارجي",
     "description": "قفل ذكي خارجي مقاوم للعوامل الجوية بمعيار IP65, واجهة من الزجاج المقسى والألمنيوم, يدعم الفتح عبر IC و بصمة وجه , التطبيق, الرقم السري, بصمة الإصبع, المفتاح الميكانيكي, الأبعاد: 330×37 مم, يعمل بطارية ليثيوم 3500 ملي امبير",
-    "image": ".webp",
+    "image": "/assets/products/items/sxo-34.webp",
     "sort_order": 13
   },
   {
@@ -116,7 +116,7 @@
     "category": "أقفال ذكية",
     "title": "قفل ذكي بلس",
     "description": "قفل ذكي بكاميرا WiFi, واجهة من الزجاج المقسى والألمنيوم, يدعم IC, التطبيق, الرقم السري, بصمة الإصبع, المفتاح الميكانيكي, الأبعاد: 390×75 مم, يعمل بـ 8 بطاريات AA.",
-    "image": ".webp",
+    "image": "/assets/products/items/sxa-31.webp",
     "sort_order": 14
   },
   {
@@ -124,7 +124,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "شاشة إنتركوم بابكوم",
     "description": "شاشة HD IPS مقاس 7 بوصة بنظام Linux, تدعم WiFi وتطبيق السحابة, مع عرض لكاميرات IP.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-32.webp",
     "sort_order": 15
   },
   {
@@ -132,7 +132,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "شاشة إنتركوم بابكوم",
     "description": "شاشة HD TFT مقاس 7 بوصة بنظام Linux, تدعم WiFi وتطبيق السحابة, مع عرض لكاميرات IP.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-33.webp",
     "sort_order": 16
   },
   {
@@ -140,7 +140,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "شاشة إنتركوم بابكوم",
     "description": "شاشة HD IPS مقاس8 بوصة بنظام LINUX, تدعم WiFi وتطبيق السحابة, مع عرض لكاميرات IP.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-34.webp",
     "sort_order": 17
   },
   {
@@ -148,7 +148,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "شاشة إنتركوم بابكوم",
     "description": "شاشة HD IPS مقاس8 بوصة بنظام Android, تدعم WiFi وتطبيق السحابة, مع عرض لكاميرات IP.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-35.webp",
     "sort_order": 18
   },
   {
@@ -156,7 +156,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة إنتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD مقاس 4.3 بوصة بدقة 2MP, رؤية ليلية IR+LED, هيكل ستانلس ستيل, لوحة مفاتيح ميكانيكية.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-36.webp",
     "sort_order": 19
   },
   {
@@ -164,7 +164,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة إنتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD مقاس 10 بوصة بدقة 2MP, رؤية ليلية IR+LED.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-37.webp",
     "sort_order": 20
   },
   {
@@ -172,7 +172,7 @@
     "category": "نظام إنتركوم / عائلة بابكوم",
     "title": "وحدة إنتركوم بابكوم",
     "description": "وحدة إنتركوم خارجية بشاشة LCD مقاس 8 بوصة بدقة 2MP, رؤية ليلية IR+LED, هيكل معدني, لوحة مفاتيح ميكانيكية.",
-    "image": ".webp",
+    "image": "/assets/products/items/ix-38.webp",
     "sort_order": 21
   },
   {
@@ -180,7 +180,7 @@
     "category": "شاشات التحكم وأنظمة الإنتركوم",
     "title": "شاشة فيجن برو",
     "description": "شاشة لمس مقاس 6 بوصة بنظام Android, دقة HD IPS, جيتوي مدمج, مكبر صوت لتشغيل الموسيقى, دعم WiFi وEthernet.",
-    "image": ".webp",
+    "image": "/assets/products/items/vx-53.webp",
     "sort_order": 22
   },
   {
@@ -188,7 +188,7 @@
     "category": "شاشات التحكم وأنظمة الإنتركوم",
     "title": "شاشة فيجن برو",
     "description": "شاشة لمس مقاس 8 بوصة بنظام Android, دقة HD IPS, بوابة مدمجة, تشغيل موسيقى ودعم الاتصال بسماعات BLE الخارجية, دعم WiFi بسرعة 5GHz وEthernet.",
-    "image": ".webp",
+    "image": "/assets/products/items/vx-55.webp",
     "sort_order": 23
   },
   {
@@ -196,7 +196,7 @@
     "category": "شاشات التحكم وأنظمة الإنتركوم",
     "title": "شاشة فيجن برو",
     "description": "شاشة لمس مقاس 10 بوصة بنظام Android, دقة HD IPS, جيتوي مدمج, تشغيل موسيقى امبليفير مدمج للاتصال بسماعات خارجية , دعم WiFi .",
-    "image": ".webp",
+    "image": "/assets/products/items/vx-56.webp",
     "sort_order": 24
   },
   {
@@ -204,7 +204,7 @@
     "category": "شاشات التحكم وأنظمة الإنتركوم",
     "title": "وحدة فيجن برو",
     "description": "شاشة لمس مقاس 4 بوصة بنظام Android, دقة HD IPS, جيتوي مع ربط بلوتوث لسماعات خارجية لتشغيل الصوت, دعم WiFi وEthernet.",
-    "image": ".webp",
+    "image": "/assets/products/items/vx-59.webp",
     "sort_order": 25
   },
   {
@@ -212,7 +212,7 @@
     "category": "شاشات التحكم وأنظمة الإنتركوم",
     "title": "وحدة إنتركوم فيجن",
     "description": "وحدة إنتركوم خارجية بشاشة لمس مقاس 8 بوصة بدقة IPS, زجاج مقاوم للكسر وهيكل من الألمنيوم, تدعم الفتح باستخدام بطاقة RF أو التطبيق أو الرقم السري أو التعرف على الوجه, تعمل بجهد 12 فولت, تركب بشكل مدمج.",
-    "image": ".webp",
+    "image": "/assets/products/items/vx-61.webp",
     "sort_order": 26
   },
   {
@@ -220,7 +220,7 @@
     "category": "شاشات تحكم ذكية",
     "title": "شاشة تحكم ذكية برو",
     "description": "شاشة لمس ذكية 10 بوصة بنظام أندرويد, تدعم الموسيقى عبر BLE, مدمج بها Alexa وIR+Gateway, سماعتان 2W, WiFi وإيثرنت.",
-    "image": ".webp",
+    "image": "/assets/products/items/bx-65.webp",
     "sort_order": 27
   },
   {
@@ -228,7 +228,7 @@
     "category": "شاشات تحكم ذكية",
     "title": "شاشة تحكم ذكية ميني",
     "description": "شاشة لمس صغيرة 3.5 بوصة, مفتاح رباعي, اتصال Zigbee إلى الجيتوي.",
-    "image": ".webp",
+    "image": "/assets/products/items/fx-70.webp",
     "sort_order": 28
   },
   {
@@ -236,7 +236,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط بلاستيكي بتصميم سميك, يدعم الإطار المدمج, متوافق مع Amazon Alexa وApple Siri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/pp-20.webp",
     "sort_order": 29
   },
   {
@@ -244,7 +244,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من الألمنيوم بتصميم سميك, يدعم الإطار المدمج, متوافق مع أنظمة Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/pp-21.webp",
     "sort_order": 30
   },
   {
@@ -252,7 +252,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من الفولاذ المقاوم للصدأ المصقول, تصميم سميك, يدعم الإطار المدمج, يدعم Amazon Alexa وApple Siri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/ap-22.webp",
     "sort_order": 31
   },
   {
@@ -260,7 +260,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من الزجاج المقسى, تصميم سميك, يدعم الإطار المدمج, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gp-23.webp",
     "sort_order": 32
   },
   {
@@ -268,7 +268,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح لمس زجاجي بأيقونات قابلة للتخصيص, يدعم الإطار المدمج, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gt-24.webp",
     "sort_order": 33
   },
   {
@@ -276,7 +276,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط بلاستيكي بنص قابل للتخصيص, يدعم الإطار المدمج, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/pp-25.webp",
     "sort_order": 34
   },
   {
@@ -284,7 +284,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط بلاستيكي بأيقونات قابلة للتخصيص وحواف مشطوفة بتقنية CNC, يدعم الإطار المدمج, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/pp-26.webp",
     "sort_order": 35
   },
   {
@@ -292,7 +292,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من الفولاذ المقاوم للصدأ أو الألمنيوم, بنص قابل للتخصيص, يدعم الإطار المدمج, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/ap-27.webp",
     "sort_order": 36
   },
   {
@@ -300,7 +300,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من البلاستيك , فائق النحافة بسمك 5.2 مم, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/pp-30.webp",
     "sort_order": 37
   },
   {
@@ -308,7 +308,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط من والزجاج, فائق النحافة بسمك 5.2 مم, متوافق مع Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gp-31.webp",
     "sort_order": 38
   },
   {
@@ -316,7 +316,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح لمس زجاجي مقاوم للكسر, بإطار بلاستيكي أو معدني, وأيقونات قابلة للتخصيص, يدعم Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gt-33.webp",
     "sort_order": 39
   },
   {
@@ -324,7 +324,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط زجاجي بتصميم منحني, متوافق مع Amazon Alexa وApple Siri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gp-34.webp",
     "sort_order": 40
   },
   {
@@ -332,7 +332,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح ضغط زجاجي بتصميم منحني, متوافق مع Amazon Alexa وApple Siri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gp-35.webp",
     "sort_order": 41
   },
   {
@@ -340,7 +340,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح لمس زجاجي مقاوم للكسر مع إطار يدعم أنظمة Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gt-38.webp",
     "sort_order": 42
   },
   {
@@ -348,7 +348,7 @@
     "category": "مفاتيح تحكم ذكية",
     "title": "مفتاح تحكم ذكي",
     "description": "مفتاح لمس زجاجي مقاوم للكسر بدون إطار, يدعم أنظمة Alexa وSiri وSmartThings وGoogle Home.",
-    "image": ".webp",
+    "image": "/assets/products/items/gt-39.webp",
     "sort_order": 43
   },
   {
@@ -356,7 +356,7 @@
     "category": "ستائر ذكية",
     "title": "ستارة ذكية",
     "description": "طقم ستائر ذكية (محرك, مسار 6.14 متر, تحكم عن بعد), جهد الإدخال: 110-240 فولت.",
-    "image": ".webp",
+    "image": "/assets/products/items/cut-6.webp",
     "sort_order": 44
   },
   {
@@ -364,7 +364,7 @@
     "category": "أجهزة دخول جانبي",
     "title": "جهاز دخول ذكي",
     "description": "جهاز تحكم في الدخول تقنية الاتصال: بلوتوث ذكي (Smart BLE). طرق الدخول: بصمة إصبع, بطاقات ممغنطة (RFID), ورمز سري.الحماية: مقاوم للماء والغبار بمعيار IP66 (مناسب للتركيب الخارجي).الاتصال: يدعم الربط بالبوابة (Gateway) للتحكم عن بعد.",
-    "image": ".webp",
+    "image": "/assets/products/items/sa-1.webp",
     "sort_order": 45
   },
   {
@@ -372,7 +372,7 @@
     "category": "أجهزة دخول جانبي",
     "title": "جهاز دخول ذكي",
     "description": "جهاز تحكم في الدخول تقنية الاتصال: بلوتوث ذكي (Smart BLE). طرق الدخول: بصمة إصبع, بطاقات ممغنطة (RFID), ورمز سري.الحماية: مقاوم للماء والغبار بمعيار IP66 (مناسب للتركيب الخارجي).الاتصال: يدعم الربط بالبوابة (Gateway) للتحكم عن بعد.",
-    "image": ".webp",
+    "image": "/assets/products/items/sa-2.webp",
     "sort_order": 46
   },
   {
@@ -380,7 +380,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف إطار معدني مع لوحة أمامية اكرليكباللون الأسود. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 130 مم × الارتفاع 230 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-11.webp",
     "sort_order": 47
   },
   {
@@ -388,7 +388,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف إطار معدني مع لوحة أمامية اكرليك باللون الأسود. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 130 مم × الارتفاع 230 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-12.webp",
     "sort_order": 48
   },
   {
@@ -396,7 +396,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف مصنوعة من الأكريليك والفولاذ المقاوم للصدأ باللون الفضي. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 140 مم × الارتفاع 235 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-13.webp",
     "sort_order": 49
   },
   {
@@ -404,7 +404,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف لوحة أمامية من الفولاذ المقاوم للصدأ باللون الذهبي. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 130 مم × الارتفاع 230 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-14.webp",
     "sort_order": 50
   },
   {
@@ -412,7 +412,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف مصنوعة من الأكريليك والفولاذ المقاوم للصدأ باللون الفضي. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 102 مم × الارتفاع 250 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-16.webp",
     "sort_order": 51
   },
   {
@@ -420,7 +420,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف مصنوعة من المعدن والأكريليك بواجهة عصرية. تعمل بتيار كهربائي 220 فولت AC.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-17.webp",
     "sort_order": 52
   },
   {
@@ -428,7 +428,7 @@
     "category": "لوحات الجرس",
     "title": "لوحة جرس ذكية",
     "description": "لوحة باب متعددة الوظائف واجهة زجاج مقوّى بالكامل مع شاشة لمس باللون الأسود. تعمل بتيار كهربائي 220 فولت AC. الأبعاد: العرض 140 مم × الارتفاع 225 مم.",
-    "image": ".webp",
+    "image": "/assets/products/items/dp-18.webp",
     "sort_order": 53
   },
   {
