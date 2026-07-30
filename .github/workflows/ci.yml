@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22 is the floor: `node --test` only accepts glob patterns from v22.0.0,
+        # and the test script relies on one. 24 is what the project runs locally.
+        node-version: ["22.x", "24.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Cheap, targeted guard: the catalog seed manifest is parsed with a bare
+      # try/catch in server/db.js, so invalid JSON there fails silently at runtime.
+      - name: Verify catalog seed manifest parses
+        run: node -e "JSON.parse(require('fs').readFileSync('server/data/catalog-products.json','utf8'))"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test

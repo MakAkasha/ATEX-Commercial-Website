@@ -1,0 +1,24 @@
+# Build/vendor and runtime output
+node_modules/
+uploads/
+index-reports/
+*.min.*
+
+# Browser bundles and legacy static markup — not formatted by this project yet
+assets/
+admin/
+public/
+index.html
+content-src/
+perf/
+
+# Agent scratch
+.claude/
+
+# Large generated data files — reformatting them would produce an unreviewable diff
+server/data/catalog-products.json
+data/products.json
+data/posts.json
+
+# Lockfile
+package-lock.json

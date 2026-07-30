@@ -20,9 +20,17 @@ server_run*.log
 server/data.sqlite
 server/data.sqlite-shm
 server/data.sqlite-wal
+server/data.sqlite.pre-blogfix
 server/test-*.sqlite
 server/test-*.sqlite-shm
 server/test-*.sqlite-wal
+
+# Automated-test scratch. The suite creates its databases in the OS temp dir
+# (test/helpers/server.js refuses anything else), so nothing should ever land
+# here — these patterns are a backstop against an accidental commit.
+atex-test-*.sqlite
+atex-test-*.sqlite-shm
+atex-test-*.sqlite-wal
 
 # User uploads (runtime, never tracked)
 uploads/
