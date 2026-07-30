@@ -26,11 +26,15 @@ function buildCspDirectives() {
     imgSrc: ["'self'", "data:", "blob:", "https:"],
     fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
     styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+    // cdnjs.cloudflare.com is deliberately absent here. It was needed only for
+    // the admin TinyMCE script tag, which now loads from /vendor/tinymce. cdnjs
+    // still serves Font Awesome CSS (index.html, views/partials/head.ejs) and
+    // its webfonts, so it stays in styleSrc and fontSrc — but nothing on the
+    // site loads executable code from it any more.
     scriptSrc: [
       "'self'",
       "'unsafe-inline'",
       "https://cdn.jsdelivr.net",
-      "https://cdnjs.cloudflare.com",
       "https://www.googletagmanager.com",
       "https://www.google-analytics.com",
       "https://tracker.metricool.com",

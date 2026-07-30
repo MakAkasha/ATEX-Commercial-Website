@@ -12,7 +12,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.rtl.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
     <link rel="stylesheet" href="/admin/admin.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- TinyMCE is self-hosted from the npm dependency (package.json -> "tinymce"),
+         served by the /vendor/tinymce static mount in server/app.js. Do not point
+         this back at a CDN: a third-party script tag in the admin panel runs with
+         full session privileges and cannot be integrity-checked across versions. -->
+    <script src="/vendor/tinymce/tinymce.min.js"></script>
   </head>
   <body class="antialiased">
 
