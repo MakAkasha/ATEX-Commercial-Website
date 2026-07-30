@@ -40,7 +40,14 @@
             <p class="subpage__desc"><%= post.excerpt || 'قراءة عملية من فريق أتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.' %></p>
           </header>
           <% if (post.cover_image) { %>
-            <div class="subpage__cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" /></div>
+            <%# The LCP element: eager, high priority, and preloaded from
+                head.ejs with the same sizes string (meta.preloadSizes) so the
+                hint and the markup resolve to the same candidate.
+                No width/height — .subpage__cover img pins a fixed
+                `height: min(52vw, 357px)` at `width: 100%` with
+                `object-fit: cover`, which reserves the box before the file
+                arrives whatever its ratio turns out to be. %>
+            <div class="subpage__cover"><%- picture(post.cover_image, { alt: post.title, sizes: imageSizes.blogPostCover, loading: 'eager', fetchpriority: 'high' }) %></div>
           <% } %>
           <%
             let articleHtml = post.content_html || '';
@@ -92,8 +99,10 @@
                 <article class="blogCard">
                   <a href="/blog/<%= rp.slug %>">
                     <div class="blogCard__media">
+                      <%# Same .blogCard__media fixed-height box as blog-list.ejs,
+                          in a 3/2/1-column grid — see IMAGE_SIZES.blogRelatedCover. %>
                       <% if (rp.cover_image) { %>
-                        <img src="<%= rp.cover_image %>" alt="<%= rp.title %>" loading="lazy" />
+                        <%- picture(rp.cover_image, { alt: rp.title, sizes: imageSizes.blogRelatedCover }) %>
                       <% } else { %>
                         <div class="blogCard__mediaFallback">ATEX</div>
                       <% } %>

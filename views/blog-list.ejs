@@ -40,8 +40,16 @@
             <article class="blogCard" data-tilt>
               <a href="/blog/<%= p.slug %>" aria-label="<%= p.title %>">
                 <div class="blogCard__media">
+                  <%# Covers are admin uploads, so derivatives exist only for files
+                      uploaded after the pipeline landed (or covered by a
+                      generate-image-derivatives run on the uploads dir); picture()
+                      degrades to a plain <img> for the rest. No width/height: the
+                      ratio of an arbitrary upload is unknown here, and
+                      .blogCard__media pins a fixed 158px height with the image at
+                      `width/height: 100%; object-fit: cover`, so the box cannot
+                      shift no matter what loads into it. %>
                   <% if (p.cover_image) { %>
-                    <img src="<%= p.cover_image %>" alt="" loading="lazy" />
+                    <%- picture(p.cover_image, { alt: '', sizes: imageSizes.blogCardCover }) %>
                   <% } else { %>
                     <div class="blogCard__mediaFallback">ATEX</div>
                   <% } %>

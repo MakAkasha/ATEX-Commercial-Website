@@ -258,6 +258,17 @@ a {
   text-decoration: none;
 }
 
+/* <picture> is a pure wrapper for format negotiation and must not appear in
+   the box tree. Without this it is an inline box, which would sit between an
+   <img> and the flex/grid parent that every image rule in this file was
+   written against — percentage sizes, object-fit boxes and absolute
+   positioning would all resolve against a different element than before.
+   display:contents makes the <img> lay out exactly as it did when it was a
+   direct child, so wrapping an image changes nothing visually. */
+picture {
+  display: contents;
+}
+
 .container {
   width: min(calc(1160px * var(--font-scale)), calc(100% - calc(40px * var(--font-scale))));
   margin-inline: auto;

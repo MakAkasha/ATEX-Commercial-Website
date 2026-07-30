@@ -28,9 +28,26 @@
             </div>
           </div>
 
+          <%# primaryImage is always a 1620x1080 /assets/solutions/*.webp once
+              server/data/solutions.js has swapped the .jpg for its .webp
+              sibling; the logo is the fallback for a solution with no image at
+              all, and is an SVG with no derivatives, so picture() renders it as
+              a plain <img>. Declaring 1620x1080 only when the real image is in
+              play keeps the fallback's own ratio intact.
+              This is the first section of the page, so it is the LCP element. %>
+          <% const __solImg = solution.primaryImage || '/assets/ATEX-logo.svg'; %>
+          <% const __solImgIsPhoto = __solImg.startsWith('/assets/solutions/'); %>
           <div class="solutionsPage__heroMedia solutionsPage__heroMedia--single" aria-hidden="true">
             <figure class="solutionsPage__heroPrimary">
-              <img src="<%= solution.primaryImage || '/assets/ATEX-logo.svg' %>" alt="<%= solution.title %>" loading="lazy" onerror="this.onerror=null;this.src='/assets/ATEX-logo.svg'" />
+              <%- picture(__solImg, {
+                    alt: solution.title,
+                    sizes: imageSizes.solutionDetailHero,
+                    loading: 'eager',
+                    fetchpriority: 'high',
+                    width: __solImgIsPhoto ? 1620 : 158,
+                    height: __solImgIsPhoto ? 1080 : 41,
+                    onerror: "this.onerror=null;this.src='/assets/ATEX-logo.svg'"
+                  }) %>
             </figure>
           </div>
         </div>

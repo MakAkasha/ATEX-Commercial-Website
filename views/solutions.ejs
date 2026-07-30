@@ -45,13 +45,17 @@
             </ul>
           </div>
 
+          <%# All three sources are 1620x1080. The primary is the first thing in
+              the page's first section, so it is this page's LCP element: eager
+              and high priority. The two stack figures sit beside it and stay
+              lazy — they are secondary and a third of the size. %>
           <div class="solutionsPage__heroMedia" aria-hidden="true">
             <figure class="solutionsPage__heroPrimary">
-              <img src="/assets/solutions/smart-building.webp" alt="" loading="lazy" />
+              <%- picture('/assets/solutions/smart-building.webp', { alt: '', sizes: imageSizes.solutionsHeroPrimary, loading: 'eager', fetchpriority: 'high', width: 1620, height: 1080 }) %>
             </figure>
             <div class="solutionsPage__heroStack">
-              <figure><img src="/assets/solutions/smart-office.webp" alt="" loading="lazy" /></figure>
-              <figure><img src="/assets/solutions/security-Systems.webp" alt="" loading="lazy" /></figure>
+              <figure><%- picture('/assets/solutions/smart-office.webp', { alt: '', sizes: imageSizes.solutionsHeroStack, width: 1620, height: 1080 }) %></figure>
+              <figure><%- picture('/assets/solutions/security-Systems.webp', { alt: '', sizes: imageSizes.solutionsHeroStack, width: 1620, height: 1080 }) %></figure>
             </div>
           </div>
         </div>

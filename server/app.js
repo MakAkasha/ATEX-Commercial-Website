@@ -21,6 +21,7 @@ const { router: settingsRoutes } = require("./routes/settings");
 const pagesRoutes = require("./routes/pages");
 const { getSolutions, getIndustries } = require("./data/contentRegistry");
 const { memoize } = require("./utils/ttlCache");
+const { createResponsiveImage, IMAGE_SIZES } = require("./utils/responsiveImage");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -435,6 +436,23 @@ app.use("/assets", express.static(path.join(ROOT_DIR, "assets"), { maxAge: "1d" 
 // (products.json, posts.json) are read server-side (DB seed in db.js, contentRegistry)
 // and exposed to clients only via /api/products/public and /api/posts/public.
 app.use("/uploads", express.static(UPLOADS_DIR, { maxAge: "30d" }));
+
+// Responsive-image markup helper, exposed to every view.
+//
+// Its roots must be exactly the two mounts above: it turns a public URL back
+// into the file that serves it so it can check which WebP/AVIF derivatives
+// exist before naming them in a srcset. Wired here rather than next to the
+// other app.locals at the top of the file because UPLOADS_DIR is only settled
+// at this point.
+const { picture, preload } = createResponsiveImage({
+  roots: [
+    { prefix: "/assets/", dir: path.join(ROOT_DIR, "assets") },
+    { prefix: "/uploads/", dir: UPLOADS_DIR },
+  ],
+});
+app.locals.picture = picture;
+app.locals.imagePreload = preload;
+app.locals.imageSizes = IMAGE_SIZES;
 // Self-hosted TinyMCE for the admin blog editor (admin/admin.html loads
 // /vendor/tinymce/tinymce.min.js; admin/admin.js pins base_url to this prefix,
 // so the skin, theme, model, icon and plugin files resolve here too).

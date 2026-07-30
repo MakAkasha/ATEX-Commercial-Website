@@ -73,7 +73,19 @@
 <link rel="stylesheet" href="/assets/css/styles.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'" />
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" /></noscript>
-<% if (meta?.preloadImage) { %><link rel="preload" as="image" href="<%= meta.preloadImage %>" fetchpriority="high" /><% } %>
+<%# The preload must point at the same candidate the <picture> will choose.
+    A plain href to the original in front of a <picture> that then picks an
+    AVIF candidate downloads the image twice. imagePreload() returns the best
+    format's srcset when derivatives exist, and falls back to the bare href
+    when they do not. %>
+<% if (meta?.preloadImage) { %>
+  <% const __pre = typeof imagePreload === 'function' ? imagePreload(meta.preloadImage, meta.preloadSizes) : null; %>
+  <% if (__pre && __pre.imagesrcset) { %>
+<link rel="preload" as="image" type="<%= __pre.type %>" imagesrcset="<%= __pre.imagesrcset %>"<% if (__pre.imagesizes) { %> imagesizes="<%= __pre.imagesizes %>"<% } %> fetchpriority="high" />
+  <% } else { %>
+<link rel="preload" as="image" href="<%= meta.preloadImage %>" fetchpriority="high" />
+  <% } %>
+<% } %>
 
 <% const __analytics = (typeof analytics !== 'undefined') ? analytics : null; %>
 
