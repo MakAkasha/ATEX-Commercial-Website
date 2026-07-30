@@ -60,62 +60,9 @@
   }
 
   // --- Login page ---
-  const loginForm = $("#loginForm");
-  if (loginForm) {
-    const errorBox = $("#errorBox");
-    const passwordInput = $("#password");
-    const togglePassword = $("#togglePassword");
-    const submitBtn = $('button[type="submit"]', loginForm);
-
-    if (togglePassword && passwordInput) {
-      togglePassword.addEventListener("change", () => {
-        passwordInput.type = togglePassword.checked ? "text" : "password";
-      });
-    }
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorBox.hidden = true;
-
-      const fd = new FormData(loginForm);
-      const payload = {
-        username: String(fd.get("username") || "").trim(),
-        password: String(fd.get("password") || ""),
-      };
-
-      // UX guardrail: prevent typing both values in the username field
-      if (!payload.password && /\s/.test(payload.username)) {
-        errorBox.textContent = "الرجاء كتابة اسم المستخدم في حقل \"اسم المستخدم\" وكلمة المرور في حقل \"كلمة المرور\".";
-        errorBox.hidden = false;
-        return;
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "جارٍ التحقق...";
-      }
-
-      try {
-        await api("/api/auth/login", { method: "POST", body: JSON.stringify(payload) });
-        window.location.href = "/admin";
-      } catch (err) {
-        if (err?.status === 401) {
-          errorBox.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة.";
-        } else if (err?.status === 400) {
-          errorBox.textContent = "الرجاء إدخال اسم المستخدم وكلمة المرور بشكل صحيح.";
-        } else {
-          errorBox.textContent = "تعذر تسجيل الدخول حالياً. حاول مرة أخرى بعد قليل.";
-        }
-        errorBox.hidden = false;
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "دخول";
-        }
-      }
-    });
-    return;
-  }
+  // The login form handler now lives in admin/admin-login.js, which is the only
+  // script under /admin served without a session. Keeping it here would force
+  // this whole bundle to stay ungated. See server/app.js ADMIN_LOGIN_ASSETS.
 
   // --- Admin shell routing (new sidebar UX) ---
   const pages = $$('[data-page]');
