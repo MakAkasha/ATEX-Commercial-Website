@@ -119,9 +119,19 @@
             <div class="orb orb--b"></div>
             <div class="orb orb--c"></div>
 
-            <img class="hero__asset hero__asset--ac" src="/assets/hero/ac.webp" alt="" loading="lazy" width="200" height="200" />
-            <img class="hero__asset hero__asset--cctv" src="/assets/hero/cctv.webp" alt="" loading="lazy" width="200" height="200" />
-            <img class="hero__asset hero__asset--rooms" src="/assets/hero/rooms.webp" alt="" loading="lazy" width="200" height="200" />
+            <%# These three were declared 200x200 and none of them is square:
+                ac is 375x687, cctv 375x614, rooms 375x293. .hero__asset sets
+                `width: clamp(...); height: auto`, so the wrong ratio only sized
+                the pre-load placeholder — the elements are absolutely positioned,
+                so it never shifted the page — but it was still a false claim and
+                is corrected here.
+                They stay lazy: this section sits below the full-height video hero.
+                rooms.webp is 6 KB and was skipped by the derivative generator as
+                too small to be worth a variant, so picture() renders it as a plain
+                <img>; the other two get a 320px AVIF/WebP step. %>
+            <%- picture('/assets/hero/ac.webp', { alt: '', className: 'hero__asset hero__asset--ac', sizes: imageSizes.heroAsset, width: 375, height: 687 }) %>
+            <%- picture('/assets/hero/cctv.webp', { alt: '', className: 'hero__asset hero__asset--cctv', sizes: imageSizes.heroAsset, width: 375, height: 614 }) %>
+            <%- picture('/assets/hero/rooms.webp', { alt: '', className: 'hero__asset hero__asset--rooms', sizes: imageSizes.heroAsset, width: 375, height: 293 }) %>
 
             <div class="glass">
               <div class="glass__row">
@@ -390,8 +400,11 @@
                   <article class="item homeBlogCard" data-tilt>
                     <a class="item__link" href="/blog/<%= p.slug %>" aria-label="اقرأ المقال: <%= p.title %>">
                       <div class="item__media homeBlogCard__media">
+                        <%# 800x500 matches the 16/10 box .homeBlogCard__media pins,
+                            so it stays as the declared ratio; the image itself is
+                            `width/height: 100%; object-fit: cover` inside it. %>
                         <% if (p.cover_image) { %>
-                          <img src="<%= p.cover_image %>" alt="<%= p.title %>" loading="lazy" width="800" height="500" />
+                          <%- picture(p.cover_image, { alt: p.title, sizes: imageSizes.homeBlogCover, width: 800, height: 500 }) %>
                         <% } else { %>
                           <div class="item__mediaFallback" aria-hidden="true">ATEX</div>
                         <% } %>
@@ -442,8 +455,12 @@
 
                 <figcaption class="quoteCard__person">
                   <% if (t.photo) { %>
+                    <%# A 41px circle. Worth a srcset only because t.photo is an
+                        arbitrary upload — sizes="41px" makes an oversized one
+                        resolve to the 320px derivative instead of the original.
+                        88x88 keeps the declared 1:1 the CSS box already enforces. %>
                     <span class="quoteCard__avatar">
-                      <img src="<%= t.photo %>" alt="<%= t.name || 'صورة العميل' %>" loading="lazy" width="88" height="88" />
+                      <%- picture(t.photo, { alt: t.name || 'صورة العميل', sizes: imageSizes.testimonialAvatar, width: 88, height: 88 }) %>
                     </span>
                   <% } else if (t.initial) { %>
                     <span class="quoteCard__avatar quoteCard__avatar--monogram" aria-hidden="true"><%= t.initial %></span>

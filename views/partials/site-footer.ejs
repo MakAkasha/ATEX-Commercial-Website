@@ -6,7 +6,10 @@
     <div class="footer__top">
       <div class="footer__brand">
         <a class="footer__brandLogo" href="/" aria-label="ATEX">
-          <img src="/assets/ATEX-footer-logo.svg" alt="ATEX" />
+          <%# SVG: nothing to negotiate and nothing to downscale, so no <picture>.
+              1000x188.6 is the file's own viewBox, rounded to the integer pair the
+              attributes require — the only thing missing here was the reserved box. %>
+          <img src="/assets/ATEX-footer-logo.svg" alt="ATEX" width="1000" height="189" loading="lazy" decoding="async" />
         </a>
         <p class="footer__tagline">ذكاء متكامل ... تحكم بلا حدود</p>
         <p class="footer__desc">شركة سعودية متخصصة في حلول إنترنت الأشياء للشركات — من التصميم إلى التشغيل.</p>

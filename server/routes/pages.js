@@ -13,6 +13,7 @@ const { getTestimonials } = require("../data/testimonials");
 const { getBlogRedirectTarget } = require("../data/blogRedirects");
 const { safeJsonParse } = require("../utils/safe");
 const { memoize } = require("../utils/ttlCache");
+const { IMAGE_SIZES } = require("../utils/responsiveImage");
 
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -419,6 +420,9 @@ router.get("/blog/:slug", (req, res) => {
       ogType: "article",
       ogImage: coverImage,
       preloadImage: coverImageSrc || null,
+      // Must match the sizes on the cover <picture> in blog-post.ejs, or the
+      // preload hint and the markup can resolve to different candidates.
+      preloadSizes: IMAGE_SIZES.blogPostCover,
       articlePublishedTime: post.isoPublished,
       articleModifiedTime: post.isoModified,
       articleAuthor: "أتكس",

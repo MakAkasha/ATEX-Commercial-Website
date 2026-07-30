@@ -32,9 +32,12 @@
             </ul>
           </div>
 
+          <%# Every industry.image in server/data/industries.js is a 1620x1080
+              webp under the solutions asset directory. This is the first
+              section of the page, so the figure is its LCP element. %>
           <div class="solutionsPage__heroMedia" aria-hidden="true">
             <figure class="solutionsPage__heroPrimary">
-              <img src="<%= industry.image %>" alt="<%= industry.title %>" loading="lazy" />
+              <%- picture(industry.image, { alt: industry.title, sizes: imageSizes.solutionsHeroPrimary, loading: 'eager', fetchpriority: 'high', width: 1620, height: 1080 }) %>
             </figure>
           </div>
         </div>

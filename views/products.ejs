@@ -60,8 +60,19 @@
               <div class="products-page__flip" role="button" tabindex="0" aria-pressed="false" aria-label="<%= p.title %> — اضغط لعرض التفاصيل">
                 <div class="products-page__flipInner">
                   <div class="products-page__flipFace products-page__flipFace--front">
+                    <%# Catalog images are square: the referenced /assets/products/items/*.webp
+                        are 640x640 and their .png siblings — which the derivative
+                        generator used as the higher-resolution source — are 1080x1080,
+                        so the 768px step exists and covers 2x displays. p.image can
+                        also be an admin upload, which may have no derivatives at all;
+                        picture() then emits a plain <img>. The declared 640x640 is
+                        exact for every catalog item and inert for an upload that is
+                        not square: the UA rule is `aspect-ratio: auto attr(width) /
+                        attr(height)`, so the natural ratio takes over once the file
+                        loads. .products-page__cardMedia pins the box with
+                        `aspect-ratio: 1/1` regardless, so nothing can shift. %>
                     <div class="products-page__cardMedia">
-                      <img src="<%= p.image %>" alt="<%= altText %>" loading="lazy" />
+                      <%- picture(p.image, { alt: altText, sizes: imageSizes.productCard, width: 640, height: 640 }) %>
                     </div>
                   </div>
                   <div class="products-page__flipFace products-page__flipFace--back">
