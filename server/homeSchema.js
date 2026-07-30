@@ -1,5 +1,21 @@
 const HOME_SCHEMA_VERSION = 2;
 
+// NOTE ON `iconClass` (solutions.cards / why.cards)
+//
+// These are Font Awesome class strings, and no template renders them. The
+// solutions grid draws photo cards from the solutions registry
+// (views/partials/solutions-grid.ejs), and the "why" section maps each card to
+// title + desc only (views/home.ejs). The field is still read, normalised and
+// stored, and the admin panel still exposes a text input for it, so the
+// database holds real values — they just have no render path.
+//
+// They are left as-is rather than migrated to sprite names precisely because
+// nothing renders them: changing stored data to match a format no code reads
+// would be churn. If a card icon is ever brought back, note that the icon()
+// helper takes a bare sprite name ("circle"), not a class string, and returns
+// the empty string for anything the sprite does not define — so these values
+// would need mapping, and would degrade to no icon until they were.
+
 function clone(x) {
   return JSON.parse(JSON.stringify(x));
 }

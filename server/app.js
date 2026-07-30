@@ -22,6 +22,7 @@ const pagesRoutes = require("./routes/pages");
 const { getSolutions, getIndustries } = require("./data/contentRegistry");
 const { memoize } = require("./utils/ttlCache");
 const { createResponsiveImage, IMAGE_SIZES } = require("./utils/responsiveImage");
+const { createIconHelper } = require("./utils/icon");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -46,6 +47,10 @@ app.locals.assetVer = (() => {
       path.join(ROOT_DIR, "assets", "css", "styles.css"),
       path.join(ROOT_DIR, "assets", "js", "main.js"),
       path.join(ROOT_DIR, "assets", "js", "consent.js"),
+      // The icon sprite is served from /assets with maxAge 1d, and every icon
+      // on every page resolves through it, so a stale copy after a deploy that
+      // adds a glyph would leave holes in the page until the day expired.
+      path.join(ROOT_DIR, "assets", "icons", "sprite.svg"),
     ];
     const newest = Math.max(...files.map((f) => fs.statSync(f).mtimeMs));
     return String(Math.floor(newest));
@@ -57,6 +62,15 @@ app.locals.assetVer = (() => {
 // Sector links for the site footer — available to every rendered view,
 // so the footer list can never drift from server/data/industries.js.
 app.locals.footerIndustries = getIndustries();
+
+// Icon markup helper, exposed to every view. Reads assets/icons/sprite.svg at
+// boot so the set of renderable names is the sprite itself rather than a list
+// that could drift from it. The ?v= is the same cache-buster the stylesheet
+// uses, and sprite.svg is one of the files assetVer is derived from above.
+app.locals.icon = createIconHelper({
+  spritePath: path.join(ROOT_DIR, "assets", "icons", "sprite.svg"),
+  spriteUrl: `/assets/icons/sprite.svg?v=${app.locals.assetVer}`,
+});
 
 // Migrate DB on boot
 migrate();

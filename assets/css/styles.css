@@ -231,6 +231,52 @@
   box-sizing: border-box;
 }
 
+/* ============================================================
+   Icons (assets/icons/sprite.svg)
+   ============================================================
+
+   These three declarations reproduce what the Font Awesome stylesheet used to
+   apply to every <i class="fa-*">, and the site's layout depended on all three:
+
+     display: inline-block  FA set this on .fa. Several rules (.platformSection
+                            __points .icon, .contactPage__infoList li .icon) set
+                            an explicit width, which does nothing on a plain
+                            inline element — those columns only worked because
+                            FA had made the icon inline-block.
+     height: 1em            Matches the glyph's em box, so every existing
+                            font-size rule keeps sizing the icon exactly as
+                            before. Width is left to the viewBox aspect ratio.
+
+   `width: auto` is load-bearing and so is the viewBox the icon() helper puts on
+   every rendered <svg>. An <svg> is not an <img>: `width: auto` does NOT fall
+   back to an intrinsic ratio, it falls back to the SVG default of 100%. Without
+   the viewBox on the element itself, `height: 1em; width: auto` renders one em
+   tall and as wide as the container — a 300px-wide "icon". This was measured,
+   not assumed.
+     vertical-align: -0.125em
+                            FA's own baseline offset for icons-in-text. Without
+                            it the icons sit a visible ~2px high next to Arabic
+                            body copy.
+
+   Where a rule pins an explicit width, the SVG's default preserveAspectRatio
+   ("xMidYMid meet") centres the glyph in that column, which is what
+   `text-align: center` did for the font glyph. */
+.icon {
+  display: inline-block;
+  height: 1em;
+  width: auto;
+  vertical-align: -0.125em;
+  fill: currentColor;
+  /* Several icons sit in flex rows (.platformSection__points li,
+     .contactPage__infoList li, .pill). A font glyph cannot shrink below its own
+     advance width, so as a flex item it held its size; an SVG's min-content
+     width is 0, so on a tight line it collapsed instead — measured at 9.77px
+     where the glyph should have been 14px. Two of those rows already declared
+     flex-shrink: 0 / flex: 0 0 auto on the icon, so this is the stylesheet's
+     existing intent applied consistently rather than a new rule. */
+  flex-shrink: 0;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 100%;
@@ -1367,7 +1413,7 @@ body.nav-open .nav__toggleLines::after {
   background: rgba(255, 255, 255, 0.7);
 }
 
-.pill i {
+.pill .icon {
   color: var(--accent-text-deep);
   font-size: calc(14px * var(--font-scale));
   flex: 0 0 auto;
@@ -1844,7 +1890,7 @@ body.nav-open .nav__toggleLines::after {
   color: #163141;
 }
 
-.platformSection__points i {
+.platformSection__points .icon {
   color: #d97800;
   width: calc(18px * var(--font-scale));
   text-align: center;
@@ -5077,7 +5123,7 @@ body.consent-open .waBtn {
   font-weight: 600;
 }
 
-.contactPage__infoList li i {
+.contactPage__infoList li .icon {
   color: var(--primary);
   font-size: var(--s-4);
   width: calc(18px * var(--font-scale));
@@ -5257,7 +5303,7 @@ body.consent-open .waBtn {
   font-weight: 800;
   font-size: calc(12.5px * var(--font-scale));
 }
-.contactPage__badge i {
+.contactPage__badge .icon {
   color: var(--primary);
 }
 
@@ -5434,7 +5480,7 @@ body.consent-open .waBtn {
   font-weight: 700;
   font-size: calc(13.5px * var(--font-scale));
 }
-.contactHero__points i {
+.contactHero__points .icon {
   color: var(--primary);
 }
 
@@ -6353,7 +6399,7 @@ body.consent-open .waBtn {
   background: rgba(255, 153, 51, 0.06);
   color: #c06500;
 }
-.nf__quicknav-link i {
+.nf__quicknav-link .icon {
   font-size: calc(13px * var(--font-scale));
   opacity: 0.7;
 }

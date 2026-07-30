@@ -31,18 +31,21 @@ const EXPECTED_CSP_DIRECTIVES = {
   // "https://fonts.googleapis.com" when Cairo and Tajawal moved from the Google
   // Fonts CDN to /assets/fonts. No template served by this app references either
   // origin any more (fonts.selfhosted.test.js is the guard that keeps it that
-  // way). cdnjs stays for Font Awesome and jsdelivr for Tabler — both are still
-  // CSS + webfonts. This is a tightening, never a widening.
-  fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-  styleSrc: [
-    "'self'",
-    "'unsafe-inline'",
-    "https://cdnjs.cloudflare.com",
-    "https://cdn.jsdelivr.net",
-  ],
+  // way).
+  //
+  // Both then dropped "https://cdnjs.cloudflare.com" when the Font Awesome
+  // stylesheet in views/partials/head.ejs — cdnjs's last consumer anywhere in
+  // the app, and the reason its webfonts were fetched — was replaced by
+  // assets/icons/sprite.svg. cdnjs now appears in no directive at all.
+  //
+  // jsdelivr stays in both: admin/admin.html and admin/admin-login.html still
+  // load Tabler's CSS and its icon webfont from it. icons.sprite.test.js is the
+  // guard that keeps cdnjs and Font Awesome out of the served public HTML.
+  // This is a tightening, never a widening.
+  fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
+  styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
   // scriptSrc dropped "https://cdnjs.cloudflare.com" when the admin TinyMCE
-  // script moved from the CDN to the self-hosted /vendor/tinymce mount. cdnjs
-  // remains in fontSrc/styleSrc for Font Awesome, which is CSS + webfonts only.
+  // script moved from the CDN to the self-hosted /vendor/tinymce mount.
   // This is a tightening, never a widening.
   scriptSrc: [
     "'self'",

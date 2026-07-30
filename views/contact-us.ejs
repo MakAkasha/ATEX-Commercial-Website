@@ -15,9 +15,9 @@
           <h1 id="contactTitle" class="contactHero__title">تواصل مع فريق اتكس</h1>
           <p class="contactHero__lead">يسعدنا الإجابة عن استفساراتكم وتقديم الاستشارة المناسبة لمشروعكم، مع تصور مبدئي واضح لمسار التنفيذ والمدة المتوقعة.</p>
           <ul class="contactHero__points">
-            <li><i class="fa-solid fa-bolt" aria-hidden="true"></i> رد خلال يوم عمل واحد</li>
-            <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> تنفيذ داخل المملكة</li>
-            <li><i class="fa-solid fa-headset" aria-hidden="true"></i> دعم مستمر على مدار الساعة</li>
+            <li><%- icon('bolt') %> رد خلال يوم عمل واحد</li>
+            <li><%- icon('location-dot') %> تنفيذ داخل المملكة</li>
+            <li><%- icon('headset') %> دعم مستمر على مدار الساعة</li>
           </ul>
         </div>
       </section>
@@ -29,16 +29,16 @@
           <aside class="contactPage__info" aria-label="معلومات التواصل">
             <ul class="contactPage__infoList">
               <li>
-                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                <%- icon('whatsapp') %>
                 <a dir="ltr" href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
                    target="_blank" rel="noopener noreferrer"><%= content?.contact?.phone || '+966580102121' %></a>
               </li>
               <li>
-                <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+                <%- icon('envelope') %>
                 <a href="mailto:<%= content?.contact?.email || 'contact@atex.sa' %>"><%= content?.contact?.email || 'contact@atex.sa' %></a>
               </li>
               <li>
-                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                <%- icon('location-dot') %>
                 <span><%= content?.contact?.address || 'جدة، المملكة العربية السعودية' %></span>
               </li>
             </ul>
@@ -125,17 +125,17 @@
                 <button class="btn btn--ghost" type="button" data-step-prev hidden>السابق</button>
                 <button class="btn btn--primary" type="button" data-step-next>
                   التالي
-                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                  <%- icon('arrow-left') %>
                 </button>
                 <button class="btn btn--primary contactPage__submitBtn" type="submit" data-contact-submit hidden>
                   إرسال الطلب
-                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                  <%- icon('arrow-left') %>
                 </button>
               </div>
             </form>
 
             <div class="formSuccess" data-contact-success tabindex="-1" hidden>
-              <span class="formSuccess__mark" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+              <span class="formSuccess__mark" aria-hidden="true"><%- icon('check') %></span>
               <h3 class="formSuccess__title">تم استلام طلبك</h3>
               <p class="formSuccess__text">شكراً لتواصلك مع أتكس. سيتواصل معك فريقنا خلال يوم عمل واحد.</p>
               <button class="btn btn--ghost" type="button" data-contact-again>إرسال طلب آخر</button>
