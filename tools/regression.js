@@ -39,8 +39,19 @@ async function readText(res) {
   return { text, json };
 }
 
+// The /api CSRF guard (server/middleware/csrf.js) rejects any state-changing
+// request that presents no Origin. A browser always sends one; fetch() from Node
+// does not, so this runner must set it explicitly to the base it is targeting.
+const originOf = (base) => {
+  try {
+    return new URL(base).origin;
+  } catch {
+    return base;
+  }
+};
+
 async function api(base, url, { method = "GET", cookie, headers = {}, body } = {}) {
-  const h = { ...headers };
+  const h = { origin: originOf(base), ...headers };
   if (cookie) h.cookie = cookie;
   const res = await fetch(base + url, { method, headers: h, body });
   const { text, json } = await readText(res);
@@ -60,7 +71,7 @@ async function main() {
   // Login
   const loginRes = await fetch(base + "/api/auth/login", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", origin: originOf(base) },
     body: JSON.stringify({ username: user, password: pass }),
   });
   const loginBody = await readText(loginRes);
@@ -139,7 +150,11 @@ async function main() {
   const png = Buffer.from(pngBase64, "base64");
   const fd = new FormData();
   fd.append("image", new Blob([png], { type: "image/png" }), "tiny.png");
-  const upRes = await fetch(base + "/api/uploads/images", { method: "POST", headers: { cookie }, body: fd });
+  const upRes = await fetch(base + "/api/uploads/images", {
+    method: "POST",
+    headers: { cookie, origin: originOf(base) },
+    body: fd,
+  });
   const upBody = await readText(upRes);
   assert(upRes.status === 200, "Upload failed: " + upRes.status + " " + upBody.text);
   assert(upBody.json?.url, "Upload response missing url");

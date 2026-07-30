@@ -24,6 +24,16 @@ const skipSendFile = REPO_ROOT_HAS_DOT_SEGMENT ? SENDFILE_SKIP_REASON : false;
 const ADMIN_USERNAME = "test-admin";
 const ADMIN_PASSWORD = "test-admin-password-9f2c";
 
+/**
+ * Every POST here must present a same-origin `Origin`, which is what a real
+ * browser sends for the admin panel's fetch() calls. The /api CSRF guard
+ * (server/middleware/csrf.js) rejects a state-changing request that presents no
+ * origin at all, so omitting it would 403 before auth runs and this file would
+ * test the guard instead of authentication. The guard itself is covered in
+ * test/api.csrf.test.js.
+ */
+const sameOrigin = (srv, extra = {}) => ({ ...extra, headers: { origin: srv.origin } });
+
 // Every admin API endpoint must refuse an anonymous caller with 401.
 const ADMIN_API_ENDPOINTS = [
   "/api/posts",
@@ -71,13 +81,17 @@ describe("admin auth", () => {
   });
 
   it("POST /api/auth/login with wrong credentials returns 401 INVALID_CREDENTIALS", async () => {
-    const res = await srv.post("/api/auth/login", { username: ADMIN_USERNAME, password: "wrong-password" });
+    const res = await srv.post(
+      "/api/auth/login",
+      { username: ADMIN_USERNAME, password: "wrong-password" },
+      sameOrigin(srv)
+    );
     assert.equal(res.status, 401);
     assert.deepEqual(await res.json(), { error: "INVALID_CREDENTIALS" });
   });
 
   it("POST /api/auth/login with missing fields returns 400 MISSING_FIELDS", async () => {
-    const res = await srv.post("/api/auth/login", { username: ADMIN_USERNAME });
+    const res = await srv.post("/api/auth/login", { username: ADMIN_USERNAME }, sameOrigin(srv));
     assert.equal(res.status, 400);
     assert.deepEqual(await res.json(), { error: "MISSING_FIELDS" });
   });
@@ -94,7 +108,7 @@ describe("admin auth", () => {
     const res = await srv.post(
       "/api/auth/login",
       { username: ADMIN_USERNAME, password: ADMIN_PASSWORD },
-      { jar: true }
+      sameOrigin(srv, { jar: true })
     );
     assert.equal(res.status, 200);
 
@@ -117,7 +131,7 @@ describe("admin auth", () => {
   });
 
   it("after POST /api/auth/logout, GET /admin redirects again", async () => {
-    const logout = await srv.post("/api/auth/logout", {}, { jar: true });
+    const logout = await srv.post("/api/auth/logout", {}, sameOrigin(srv, { jar: true }));
     assert.equal(logout.status, 200);
     assert.deepEqual(await logout.json(), { ok: true });
 
