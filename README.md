@@ -81,17 +81,6 @@ Manual admin creation is also available:
 npm run create-admin -- <username> <password>
 ```
 
-## Social Proof Logos Convention
-
-Home page social logos now support auto-discovery from:
-
-`assets/social-logos/partner-1.svg`, `partner-2.svg`, ...
-
-Rules:
-- Files matching `partner-<number>.svg` are loaded automatically.
-- Display order is numeric ascending.
-- If no partner files are found, legacy fallback logos are used.
-
 ## Operations
 
 ### Database backup

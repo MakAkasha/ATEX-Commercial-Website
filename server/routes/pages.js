@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 const express = require("express");
 
 const { requireAdminPage, isAdminSession } = require("../auth");
@@ -18,28 +17,6 @@ const { memoize } = require("../utils/ttlCache");
 const router = express.Router();
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
 const HOME_CONTENT_TTL_MS = 60_000;
-
-function loadPartnerLogos() {
-  const dir = path.join(ROOT_DIR, "assets", "social-logos");
-  try {
-    const files = fs
-      .readdirSync(dir, { withFileTypes: true })
-      .filter((entry) => entry.isFile())
-      .map((entry) => entry.name)
-      .filter((name) => /^partner-(\d+)\.svg$/i.test(name))
-      .sort((a, b) => {
-        const ai = Number((a.match(/^partner-(\d+)\.svg$/i) || [])[1] || 0);
-        const bi = Number((b.match(/^partner-(\d+)\.svg$/i) || [])[1] || 0);
-        return ai - bi;
-      })
-      .map((name) => `/assets/social-logos/${name}`);
-    if (files.length) return files;
-  } catch {
-    // ignore and fallback
-  }
-
-  return [];
-}
 
 function loadHomeContentRaw() {
   const db = getDb();
@@ -170,7 +147,6 @@ router.get("/", (req, res) => {
   const industries = getIndustries();
   const content = loadHomeContent();
   const db = getDb();
-  const socialLogos = []; // partner logos hidden pending verification of client relationships
   // Empty until at least MIN_VISIBLE entries are free of bracketed placeholders.
   const testimonials = getTestimonials();
   const pageSolutions = solutions;
@@ -242,7 +218,6 @@ router.get("/", (req, res) => {
     content,
     pageSolutions,
     pageIndustries,
-    socialLogos,
     testimonials,
     latestPosts,
     ...baseRenderData(req),
