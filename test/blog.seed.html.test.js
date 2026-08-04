@@ -92,7 +92,13 @@ describe("HTML blog seeds survive import and sanitizing", () => {
 
       it("is passed through the importer untouched", () => {
         assert.equal(looksLikeHtmlBody(body), true, "guard rejected a final-HTML seed body");
-        assert.equal(imported, body.trim(), "importer rewrote a body that was already HTML");
+        // The importer strips the blank line the frontmatter block leaves in
+        // front of the body, and the file's terminating newline. Nothing else —
+        // a trailing blank line beyond that terminator is content and is kept.
+        // See trimSeedBodyEdges in the importer, and blog.seed.production.test.js
+        // for the three seeds that depend on it.
+        const expected = body.replace(/^\s+/, "").replace(/\r?\n$/, "");
+        assert.equal(imported, expected, "importer rewrote a body that was already HTML");
       });
 
       it("gains no stray <p> wrappers from markdownToHtml", () => {

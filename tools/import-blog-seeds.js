@@ -279,8 +279,26 @@ function looksLikeHtmlBody(text) {
   return Boolean(firstLine) && HTML_BODY_START.test(firstLine.trim());
 }
 
+/**
+ * A seed file is a text file, so its last line ends with a newline and that
+ * newline is the terminator, not content. Everything before it is.
+ *
+ * This used to be a plain `.trim()`, which also ate a trailing newline the
+ * article genuinely carries. That is fine for a seed written by hand, but three
+ * of these files are byte-faithful backups of posts an admin wrote in the
+ * editor, and two of those really do end with a blank line in the database.
+ * Trimming it made the importer report a pending update against production
+ * forever, and applying it would have silently rewritten the live row.
+ */
+function trimSeedBodyEdges(body) {
+  return String(body || "")
+    .replace(/^\s+/, "")
+    .replace(/\r?\n$/, "");
+}
+
 function bodyToHtml(body) {
-  return looksLikeHtmlBody(body) ? String(body).trim() : markdownToHtml(body);
+  const trimmed = trimSeedBodyEdges(body);
+  return looksLikeHtmlBody(trimmed) ? trimmed : markdownToHtml(trimmed);
 }
 
 function trimToPublishableMarkdown(markdown) {
@@ -298,7 +316,10 @@ function trimToPublishableMarkdown(markdown) {
     kept.push(line);
   }
 
-  return kept.join("\n").trim();
+  // Not trimmed: bodyToHtml owns the body's edges, and it deliberately keeps a
+  // trailing newline that is part of the article. Splitting and rejoining still
+  // normalizes a CRLF checkout to LF, which is what the stored HTML uses.
+  return kept.join("\n");
 }
 
 function assertNoUnresolvedPlaceholders(markdown, slug) {
@@ -380,6 +401,15 @@ function buildPosts() {
     "blog_post_no3.md",
     "blog_post_no4.md",
     "blog_post_no5.md",
+    // no6-no8 are backfills: these three posts were written in the admin panel
+    // and existed only in the production database. Their bodies are the stored
+    // content_html verbatim, so importing them is a no-op against production.
+    // The same is NOT true of no1-no3 (posts 11/12/13), whose seeds have drifted
+    // from what is live. This tool has no per-file switch, so an --apply run
+    // against production still rewrites those three: read the preview first.
+    "blog_post_no6.md",
+    "blog_post_no7.md",
+    "blog_post_no8.md",
   ].map((f) => path.join(SEED_DIR, f));
   const posts = [];
   let skipped = 0;
