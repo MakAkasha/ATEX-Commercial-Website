@@ -516,4 +516,3 @@ source_notes:
     <a class="btn btn--ghost" href="/solutions/smart-home">تصفّح حلول البيت الذكي</a>
   </div>
 </div>
-

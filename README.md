@@ -116,6 +116,34 @@ node tools/import-blog-seeds.js                 # preview
 node tools/import-blog-seeds.js --apply         # write
 ```
 
+**Drift is refused by default.** A stored post whose columns no longer match its
+seed file has been edited on one side or the other since it was seeded, and the
+importer will not silently pick a winner. It prints `REFUSED` with the drifted
+fields and leaves the row byte-identical. Inserting a brand-new slug is
+unaffected, so the ordinary "add an article" run needs no extra flag.
+
+This matters because it already nearly cost real copy: three live posts were
+re-edited in the admin panel after seeding (one is 18x the size of its seed
+file), and an unguarded `--apply` would have reverted all three — roughly 300 KB
+of edited content — while adding an unrelated new article.
+
+To deliberately replace a stored post with its seed file, say so:
+
+```bash
+node tools/import-blog-seeds.js --apply --allow-overwrite                  # every drifted post
+node tools/import-blog-seeds.js --apply --allow-overwrite --only some-slug # exactly one
+```
+
+**`--only <slug>` restricts the run to the named slugs** (repeatable). Every
+other seed file is left completely alone — not compared against the database,
+not written. Useful for scoping a run, and required to scope an
+`--allow-overwrite` to a single post. A slug no seed file defines is a hard
+failure, not an empty run.
+
+```bash
+node tools/import-blog-seeds.js --only some-slug --only other-slug
+```
+
 **Deploy ordering — restart the app before running these tools.** They open the
 database raw and never migrate it; only `server/db.js migrate()` does, and only
 at app boot. Run the importer against a database the new app version has not yet
