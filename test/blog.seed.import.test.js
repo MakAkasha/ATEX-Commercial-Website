@@ -157,3 +157,85 @@ describe("import-blog-seeds migration guard", () => {
     assert.match(res.stdout, /restart the app BEFORE running this tool/i);
   });
 });
+
+/**
+ * --only exists because production's stored copies of the three original seed
+ * slugs have been edited since they were seeded (one of them is 18x the size of
+ * its seed file). An unfiltered import would silently revert all three while
+ * adding the two new articles. --only is what makes the deploy a strict
+ * addition.
+ */
+describe("import-blog-seeds --only", () => {
+  const dbPath = makeTempDbPath("only");
+
+  before(() => {
+    const db = new Database(dbPath);
+    db.exec(
+      "CREATE TABLE posts (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL UNIQUE, " +
+        "title TEXT NOT NULL, excerpt TEXT NOT NULL DEFAULT '', cover_image TEXT NOT NULL DEFAULT '', " +
+        "content_html TEXT NOT NULL DEFAULT '', tags_json TEXT NOT NULL DEFAULT '[]', " +
+        "published INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), " +
+        "updated_at TEXT NOT NULL DEFAULT (datetime('now')), meta_description TEXT NOT NULL DEFAULT '', " +
+        "og_title TEXT NOT NULL DEFAULT '', og_description TEXT NOT NULL DEFAULT '', " +
+        "cover_image_alt TEXT NOT NULL DEFAULT '')"
+    );
+    // Stands in for a production row that has drifted from its seed file.
+    db.prepare("INSERT INTO posts (slug, title, content_html, published) VALUES (?, ?, ?, 1)").run(
+      "smart-home-system-saudi-arabia-guide",
+      "Hand-edited title",
+      "<p>Hand-edited body that must survive.</p>"
+    );
+    db.close();
+  });
+
+  after(() => removeTempDb(dbPath));
+
+  it("imports only the named slugs and reports what it left alone", () => {
+    const res = runTool([
+      "--db",
+      dbPath,
+      "--only",
+      "smart-home-wired-vs-wireless-saudi-arabia",
+      "--only",
+      "smart-home-system-types-guide-saudi-arabia",
+    ]);
+    assert.equal(res.status, 0);
+    assert.match(res.stdout, /importing 2, leaving 3 untouched/);
+    assert.match(res.stdout, /WOULD CREATE smart-home-wired-vs-wireless-saudi-arabia/);
+    assert.match(res.stdout, /WOULD CREATE smart-home-system-types-guide-saudi-arabia/);
+    assert.doesNotMatch(res.stdout, /smart-home-system-saudi-arabia-guide/);
+  });
+
+  it("--apply leaves an unnamed slug's stored row byte-identical", () => {
+    const before = new Database(dbPath)
+      .prepare("SELECT title, content_html FROM posts WHERE slug = ?")
+      .get("smart-home-system-saudi-arabia-guide");
+
+    const res = runTool(["--db", dbPath, "--apply", "--only", "smart-home-wired-vs-wireless-saudi-arabia"]);
+    assert.equal(res.status, 0);
+
+    const db = new Database(dbPath);
+    const after_ = db.prepare("SELECT title, content_html FROM posts WHERE slug = ?").get("smart-home-system-saudi-arabia-guide");
+    const added = db.prepare("SELECT published FROM posts WHERE slug = ?").get("smart-home-wired-vs-wireless-saudi-arabia");
+    const total = db.prepare("SELECT COUNT(*) AS n FROM posts").get().n;
+    db.close();
+
+    assert.deepEqual(after_, before, "an unnamed slug's row was rewritten");
+    assert.ok(added, "the named slug was not inserted");
+    assert.equal(added.published, 1, "a newly inserted post should be published");
+    assert.equal(total, 2, "exactly one row should have been added");
+  });
+
+  it("fails on a slug no seed file defines rather than importing nothing", () => {
+    const res = runTool(["--db", dbPath, "--only", "not-a-real-slug"]);
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /no seed file defines: not-a-real-slug/);
+    assert.match(res.stderr, /Known slugs:/);
+  });
+
+  it("fails when --only is given no value", () => {
+    const res = runTool(["--db", dbPath, "--only"]);
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /--only requires a slug argument/);
+  });
+});

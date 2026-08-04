@@ -125,6 +125,15 @@ node tools/import-blog-seeds.js                 # preview
 node tools/import-blog-seeds.js --apply         # write
 ```
 
+**`--only <slug>` restricts the run to the named slugs** (repeatable). Every
+other seed file is left completely alone. Reach for it whenever a stored post
+has been edited since it was seeded: without it, an import reverts that post to
+its seed file. A slug no seed file defines is a hard failure, not an empty run.
+
+```bash
+node tools/import-blog-seeds.js --only some-slug --only other-slug
+```
+
 **Deploy ordering — restart the app before running these tools.** They open the
 database raw and never migrate it; only `server/db.js migrate()` does, and only
 at app boot. Run the importer against a database the new app version has not yet

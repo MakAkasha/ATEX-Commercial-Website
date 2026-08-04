@@ -13,6 +13,7 @@
  *   node tools/import-blog-seeds.js
  *   node tools/import-blog-seeds.js --apply
  *   node tools/import-blog-seeds.js --apply --db /path/to/data.sqlite
+ *   node tools/import-blog-seeds.js --apply --only some-slug --only other-slug
  *   node tools/import-blog-seeds.js --help
  */
 
@@ -44,6 +45,10 @@ Options:
   --apply        Write the imported posts. Without it this tool only previews.
   --dry-run      Accepted for backwards compatibility; same as the default preview.
   --db <path>    Database file to use.
+  --only <slug>  Restrict the run to this slug. Repeatable. Every other seed
+                 file is left completely alone - not read against the database,
+                 not written. Use this when the stored copy of a post has been
+                 edited since it was seeded and must not be reverted.
   -h, --help     Show this help and exit.
 ${cli.COMMON_HELP_FOOTER}`;
 
@@ -456,6 +461,40 @@ function describeValue(value, max = 60) {
   return JSON.stringify(s);
 }
 
+/** Collects every `--only <slug>` pair. Repeatable; a value starting with `--` is a missing argument. */
+function parseOnly(argv) {
+  const args = argv || [];
+  const slugs = [];
+  args.forEach((arg, i) => {
+    if (arg !== "--only") return;
+    const value = args[i + 1];
+    if (!value || value.startsWith("--")) cli.fail("--only requires a slug argument.");
+    slugs.push(value.trim());
+  });
+  return slugs;
+}
+
+/**
+ * Narrows the parsed seed posts to the requested slugs.
+ *
+ * An unknown slug is a hard failure rather than an empty run: the operator
+ * typed a slug they expect to be imported, and silently importing nothing (or,
+ * worse, importing everything) is not what they asked for.
+ */
+function selectPosts(posts, only) {
+  if (!only.length) return posts;
+  const known = new Set(posts.map((p) => p.slug));
+  const unknown = only.filter((s) => !known.has(s));
+  if (unknown.length) {
+    cli.fail(
+      `--only names a slug that no seed file defines: ${unknown.join(", ")}.\n` +
+        `Known slugs: ${[...known].join(", ")}`
+    );
+  }
+  const wanted = new Set(only);
+  return posts.filter((p) => wanted.has(p.slug));
+}
+
 /** Columns added by server/db.js migrate() that every statement below needs. */
 const REQUIRED_POST_COLUMNS = ["meta_description", "og_title", "og_description", "cover_image_alt"];
 
@@ -479,12 +518,17 @@ function assertMigrated(db) {
 }
 
 function run() {
-  const { apply, preview, dbPath } = cli.start("import-blog-seeds", HELP);
+  const { apply, preview, dbPath, opts } = cli.start("import-blog-seeds", HELP);
   const db = cli.openDb(dbPath);
   assertMigrated(db);
 
-  const { posts, skipped } = buildPosts();
-  console.log(`Seed posts parsed: ${posts.length}`);
+  const only = parseOnly(opts.args);
+  const { posts: allPosts, skipped } = buildPosts();
+  const posts = selectPosts(allPosts, only);
+  console.log(`Seed posts parsed: ${allPosts.length}`);
+  if (only.length) {
+    console.log(`--only ${only.join(", ")} — importing ${posts.length}, leaving ${allPosts.length - posts.length} untouched.`);
+  }
 
   let created = 0;
   let updated = 0;
@@ -534,6 +578,8 @@ module.exports = {
   bodyToHtml,
   buildPosts,
   classifyPost,
+  parseOnly,
+  selectPosts,
   looksLikeHtmlBody,
   markdownToHtml,
   parseFrontmatter,
