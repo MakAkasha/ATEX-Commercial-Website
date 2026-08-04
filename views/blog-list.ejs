@@ -41,7 +41,10 @@
               <a href="/blog/<%= p.slug %>" aria-label="<%= p.title %>">
                 <div class="blogCard__media">
                   <% if (p.cover_image) { %>
-                    <img src="<%= p.cover_image %>" alt="" loading="lazy" />
+                    <%# The <a> carries aria-label, which replaces the whole
+                        subtree for assistive tech — so this alt is for image
+                        search, and stays empty when the author wrote none. %>
+                    <img src="<%= p.cover_image %>" alt="<%= p.cover_image_alt || '' %>" loading="lazy" />
                   <% } else { %>
                     <div class="blogCard__mediaFallback">ATEX</div>
                   <% } %>

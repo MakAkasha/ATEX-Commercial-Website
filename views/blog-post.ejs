@@ -40,7 +40,7 @@
             <p class="subpage__desc"><%= post.excerpt || 'قراءة عملية من فريق أتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.' %></p>
           </header>
           <% if (post.cover_image) { %>
-            <div class="subpage__cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" /></div>
+            <div class="subpage__cover"><img src="<%= post.cover_image %>" alt="<%= post.cover_image_alt || post.title %>" /></div>
           <% } %>
           <%
             let articleHtml = post.content_html || '';
