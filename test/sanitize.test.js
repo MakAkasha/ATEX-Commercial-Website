@@ -50,6 +50,34 @@ describe("sanitizePostHtml", () => {
     const out = sanitizePostHtml('<a href="https://atex.sa">أتكس</a>');
     assert.ok(out.includes('href="https://atex.sa"'), `https href was dropped: ${out}`);
   });
+
+  it("keeps an ordinary in-body id so section anchors survive", () => {
+    const out = sanitizePostHtml('<h2 id="wired-when">متى نختار السلكي؟</h2>');
+    assert.ok(out.includes('id="wired-when"'), `article anchor id was dropped: ${out}`);
+  });
+
+  // views/blog-post.ejs renders the article body BEFORE the share buttons, and
+  // getElementById returns the first match in tree order — so a body carrying
+  // one of the template's own ids silently takes the button over.
+  it("drops an id that would shadow a template element", () => {
+    for (const reserved of ["blogCopyUrl", "blogShareNative", "main-content", "scrollProgress"]) {
+      const out = sanitizePostHtml(`<h2 id="${reserved}">عنوان</h2>`);
+      assert.ok(!out.includes(`id="${reserved}"`), `reserved id ${reserved} survived: ${out}`);
+      assert.ok(out.includes("عنوان"), `the element itself was dropped instead of just its id: ${out}`);
+    }
+  });
+
+  it("drops an id that would shadow a script global", () => {
+    const out = sanitizePostHtml('<div id="dataLayer"><p>نص</p></div>');
+    assert.ok(!out.includes('id="dataLayer"'), `reserved id survived: ${out}`);
+    assert.ok(out.includes("<p>نص</p>"), `content was dropped with the id: ${out}`);
+  });
+
+  it("leaves the rest of a reserved-id element's attributes alone", () => {
+    const out = sanitizePostHtml('<h2 id="blogCopyUrl" class="artH2">عنوان</h2>');
+    assert.ok(!out.includes("blogCopyUrl"), `reserved id survived: ${out}`);
+    assert.ok(out.includes('class="artH2"'), `class was dropped along with the id: ${out}`);
+  });
 });
 
 describe("sanitizeCssCode", () => {

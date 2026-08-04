@@ -2,11 +2,21 @@
 /**
  * Structured Data (JSON-LD) for SEO
  * Provides rich snippets for search engines
+ *
+ * The JSON is written raw into a <script> block, so any `<` reaching the output
+ * would let page content (a post body containing `</script>`) close the block
+ * early: everything after it becomes live markup, and the structured data stops
+ * parsing. `\uXXXX` escapes are valid JSON and parse back to the same string, so
+ * escaping costs nothing.
+ *   `<` — mandatory: blocks `</script>` and `<!--`.
+ *   `>` — cheap insurance for `]]>` if a page is ever served as XHTML.
+ *   `&` — same reason: under XHTML parsing the block is character data, where a
+ *         stray `&` is an entity. (Rails' json_escape escapes the same three.)
  */
 %>
 
 <% if (typeof structuredData !== 'undefined' && structuredData) { %>
 <script type="application/ld+json">
-<%- JSON.stringify(structuredData, null, 2) %>
+<%- JSON.stringify(structuredData, null, 2).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026") %>
 </script>
 <% } %>

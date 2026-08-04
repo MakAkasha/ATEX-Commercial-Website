@@ -11,15 +11,46 @@ function generatePostSlug() {
   return `P${digits}`;
 }
 
+// Ids the page template and the site scripts already own. The article body is
+// rendered before the share buttons in views/blog-post.ejs, and getElementById
+// returns the first match in tree order — so a body carrying id="blogCopyUrl"
+// would silently take over the copy-link button. An id on an element also
+// becomes a named property of `window`, which is why the library globals are
+// listed too. The attribute is dropped rather than renamed, so an author whose
+// anchor stops working notices instead of getting a silently mangled link.
+const RESERVED_IDS = new Set([
+  "main-content",
+  "blogShareNative",
+  "blogCopyUrl",
+  "blogRelatedTitle",
+  "scrollProgress",
+  "gsap",
+  "ScrollTrigger",
+  "intlTelInput",
+  "dataLayer",
+  "gtag",
+]);
+
 function sanitizePostHtml(html) {
   return sanitizeHtml(html || "", {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "h3", "h4", "span"]),
     allowedAttributes: {
       a: ["href", "name", "target", "rel"],
       img: ["src", "alt", "title", "width", "height", "loading"],
-      "*": ["class"],
+      // `id` is allowed so long-form articles can carry section anchors and a
+      // table of contents (/blog/<slug>#section). Post bodies are admin-authored
+      // only, and `style`/`script`/`on*` stay blocked, so this adds no XSS surface.
+      "*": ["class", "id"],
     },
     allowedSchemes: ["http", "https"],
+    transformTags: {
+      "*": (tagName, attribs) => {
+        if (!RESERVED_IDS.has(attribs.id)) return { tagName, attribs };
+        const kept = { ...attribs };
+        delete kept.id;
+        return { tagName, attribs: kept };
+      },
+    },
   });
 }
 

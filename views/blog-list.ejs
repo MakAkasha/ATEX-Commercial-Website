@@ -49,7 +49,10 @@
                       `width/height: 100%; object-fit: cover`, so the box cannot
                       shift no matter what loads into it. %>
                   <% if (p.cover_image) { %>
-                    <%- picture(p.cover_image, { alt: '', sizes: imageSizes.blogCardCover }) %>
+                    <%# The <a> carries aria-label, which replaces the whole
+                        subtree for assistive tech — so this alt is for image
+                        search, and stays empty when the author wrote none. %>
+                    <%- picture(p.cover_image, { alt: p.cover_image_alt || '', sizes: imageSizes.blogCardCover }) %>
                   <% } else { %>
                     <div class="blogCard__mediaFallback">ATEX</div>
                   <% } %>

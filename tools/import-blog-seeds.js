@@ -21,9 +21,10 @@ const SEED_DIR = path.join(ROOT, "content-src", "blog-seed");
 const HELP = `
 Usage: node tools/import-blog-seeds.js [options]
 
-Imports the three markdown seed files in content-src/blog-seed/ into the posts
-table: INSERT when the slug is new, UPDATE when it already exists. Internal
-content-brief sections are trimmed off and image placeholders resolved first.
+Imports the seed files in content-src/blog-seed/ into the posts table: INSERT
+when the slug is new, UPDATE when it already exists. Internal content-brief
+sections are trimmed off and image placeholders resolved first. A body that is
+already final HTML is stored as-is; only a markdown body is converted.
 
 Options:
   --apply        Write the imported posts. Without it this tool only previews.
@@ -91,6 +92,19 @@ function parseFrontmatter(content) {
     if (arrayItem && currentArrayKey) {
       if (!Array.isArray(meta[currentArrayKey])) meta[currentArrayKey] = [];
       meta[currentArrayKey].push(stripQuotes(arrayItem[1]));
+      return;
+    }
+
+    // A nested block whose children are `key: value` pairs rather than list
+    // items (`open_graph:` is the only one in the seed files). The pair regex
+    // below is anchored at column 0, so without this the indented children match
+    // nothing at all and the whole block is silently dropped.
+    const nestedPair = line.match(/^\s+([a-zA-Z0-9_]+):\s*(.+)$/);
+    if (nestedPair && currentArrayKey && Array.isArray(meta[currentArrayKey]) && !meta[currentArrayKey].length) {
+      meta[currentArrayKey] = {};
+    }
+    if (nestedPair && currentArrayKey && meta[currentArrayKey] && !Array.isArray(meta[currentArrayKey])) {
+      meta[currentArrayKey][nestedPair[1]] = stripQuotes(nestedPair[2]);
       return;
     }
 
@@ -228,6 +242,33 @@ function markdownToHtml(markdown) {
   return out.join("\n");
 }
 
+/**
+ * Newer seed files ship a body that is already final HTML, not markdown. Running
+ * the line-based converter over that HTML wraps every line in a stray <p> (so
+ * `<div …>` becomes `<p><div …></p>`) and destroys the article. Detect a body
+ * whose first non-empty line opens an HTML tag or comment and pass it through
+ * untouched.
+ *
+ * The test is any tag, not a fixed list of block-level ones: an article opening
+ * with `<span>`, `<strong>` or `<!-- … -->` is just as much final HTML, and
+ * missing it silently destroys the article. A markdown seed never starts with a
+ * raw tag — the three markdown seeds in content-src/blog-seed/ all open with a
+ * `#` heading — so widening the test costs nothing. test/blog.seed.html.test.js
+ * pins both behaviours.
+ */
+const HTML_BODY_START = /^<(?:!--|[a-z][a-z0-9]*\b)/i;
+
+function looksLikeHtmlBody(text) {
+  const firstLine = String(text || "")
+    .split(/\r?\n/)
+    .find((line) => line.trim().length);
+  return Boolean(firstLine) && HTML_BODY_START.test(firstLine.trim());
+}
+
+function bodyToHtml(body) {
+  return looksLikeHtmlBody(body) ? String(body).trim() : markdownToHtml(body);
+}
+
 function trimToPublishableMarkdown(markdown) {
   const lines = String(markdown || "").split(/\r?\n/);
   const kept = [];
@@ -266,21 +307,62 @@ function upsertPost(db, post) {
   const existing = db.prepare("SELECT id FROM posts WHERE slug = ?").get(post.slug);
   if (existing) {
     db.prepare(
-      "UPDATE posts SET title = ?, excerpt = ?, cover_image = ?, content_html = ?, tags_json = ?, published = 1 WHERE slug = ?"
-    ).run(post.title, post.excerpt, post.cover_image, post.content_html, JSON.stringify(post.tags), post.slug);
+      "UPDATE posts SET title = ?, excerpt = ?, cover_image = ?, content_html = ?, tags_json = ?, " +
+        "meta_description = ?, og_title = ?, og_description = ?, cover_image_alt = ?, published = 1 WHERE slug = ?"
+    ).run(
+      post.title,
+      post.excerpt,
+      post.cover_image,
+      post.content_html,
+      JSON.stringify(post.tags),
+      post.meta_description,
+      post.og_title,
+      post.og_description,
+      post.cover_image_alt,
+      post.slug
+    );
     return { action: "updated", slug: post.slug };
   }
 
   db.prepare(
-    "INSERT INTO posts (slug, title, excerpt, cover_image, content_html, tags_json, published) VALUES (?, ?, ?, ?, ?, ?, 1)"
-  ).run(post.slug, post.title, post.excerpt, post.cover_image, post.content_html, JSON.stringify(post.tags));
+    "INSERT INTO posts (slug, title, excerpt, cover_image, content_html, tags_json, " +
+      "meta_description, og_title, og_description, cover_image_alt, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)"
+  ).run(
+    post.slug,
+    post.title,
+    post.excerpt,
+    post.cover_image,
+    post.content_html,
+    JSON.stringify(post.tags),
+    post.meta_description,
+    post.og_title,
+    post.og_description,
+    post.cover_image_alt
+  );
   return { action: "created", slug: post.slug };
 }
 
-const COMPARED_FIELDS = ["title", "excerpt", "cover_image", "content_html", "tags_json", "published"];
+const COMPARED_FIELDS = [
+  "title",
+  "excerpt",
+  "cover_image",
+  "content_html",
+  "tags_json",
+  "meta_description",
+  "og_title",
+  "og_description",
+  "cover_image_alt",
+  "published",
+];
 
 function buildPosts() {
-  const files = ["blog_post_no1.md", "blog_post_no2.md", "blog_post_no3.md"].map((f) => path.join(SEED_DIR, f));
+  const files = [
+    "blog_post_no1.md",
+    "blog_post_no2.md",
+    "blog_post_no3.md",
+    "blog_post_no4.md",
+    "blog_post_no5.md",
+  ].map((f) => path.join(SEED_DIR, f));
   const posts = [];
   let skipped = 0;
 
@@ -297,14 +379,22 @@ function buildPosts() {
     const cleanedBody = trimToPublishableMarkdown(body);
     const bodyWithImages = replaceImagePlaceholders(cleanedBody, slug);
     assertNoUnresolvedPlaceholders(bodyWithImages, slug);
+    // The hand-written SEO copy. `open_graph` is a nested block, so it arrives as
+    // an object; guard against the array the parser produces for an empty one.
+    const openGraph = meta.open_graph && !Array.isArray(meta.open_graph) ? meta.open_graph : {};
     posts.push({
       slug,
       title: String(meta.title || "").trim(),
       excerpt: String(meta.excerpt || "").trim(),
       cover_image:
-        (IMAGE_MAP[normalizeSlugKey(slug)] && IMAGE_MAP[normalizeSlugKey(slug)].REPLACE_WITH_FEATURED_IMAGE_URL) || "",
-      content_html: markdownToHtml(bodyWithImages),
+        (IMAGE_MAP[normalizeSlugKey(slug)] && IMAGE_MAP[normalizeSlugKey(slug)].REPLACE_WITH_FEATURED_IMAGE_URL) ||
+        String(meta.cover_image || "").trim(),
+      content_html: bodyToHtml(bodyWithImages),
       tags: Array.isArray(meta.tags) ? meta.tags : [],
+      meta_description: String(meta.meta_description || "").trim(),
+      og_title: String(openGraph.og_title || "").trim(),
+      og_description: String(openGraph.og_description || "").trim(),
+      cover_image_alt: String(meta.featured_image_alt || "").trim(),
     });
   });
 
@@ -314,7 +404,10 @@ function buildPosts() {
 /** Read-only: decides whether the seed file would create, change, or match the stored row. */
 function classifyPost(db, post) {
   const existing = db
-    .prepare("SELECT id, title, excerpt, cover_image, content_html, tags_json, published FROM posts WHERE slug = ?")
+    .prepare(
+      "SELECT id, title, excerpt, cover_image, content_html, tags_json, " +
+        "meta_description, og_title, og_description, cover_image_alt, published FROM posts WHERE slug = ?"
+    )
     .get(post.slug);
 
   const next = {
@@ -323,6 +416,10 @@ function classifyPost(db, post) {
     cover_image: post.cover_image,
     content_html: post.content_html,
     tags_json: JSON.stringify(post.tags),
+    meta_description: post.meta_description,
+    og_title: post.og_title,
+    og_description: post.og_description,
+    cover_image_alt: post.cover_image_alt,
     published: 1,
   };
 
@@ -385,4 +482,6 @@ function run() {
   if (preview && created + updated) console.log("Nothing was written. Re-run with --apply to write these posts.");
 }
 
-run();
+if (require.main === module) run();
+
+module.exports = { bodyToHtml, buildPosts, looksLikeHtmlBody, markdownToHtml, parseFrontmatter, trimToPublishableMarkdown };

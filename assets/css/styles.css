@@ -280,6 +280,22 @@
 html {
   scroll-behavior: smooth;
   font-size: 100%;
+  /* WCAG 2.2 SC 2.4.11 Focus Not Obscured. .header is position:sticky with
+     top:0, so anything the browser scrolls to the very top — including a link
+     the keyboard just moved focus to — lands underneath it. scroll-padding on
+     the scroll container reserves that strip for EVERY scroll-into-view, not
+     just for the elements that happen to carry an id. The viewport is the
+     scroll container here (body sets overflow-x only, which propagates to the
+     viewport), and scroll-padding on the root element is what the viewport
+     reads.
+
+     Measured stuck header height: 98px at 1280x800 (.header__inner 97px + 1px
+     border; it does not shrink on scroll, so the old 84/62 figures quoted
+     further down this file were stale). 130 * 0.85 = 110.5px clears it with
+     ~12px to spare — enough that the focused link's own ring (a 2px outline at
+     a 2px offset) still lands clear of the header edge rather than flush
+     against it. */
+  scroll-padding-block-start: calc(130px * var(--font-scale));
 }
 
 body {
@@ -3368,7 +3384,9 @@ body.nav-open .nav__toggleLines::after {
   grid-template-columns: 1fr;
   gap: var(--s-4);
   align-items: start;
-  scroll-margin-top: calc(120px * var(--font-scale));
+  /* The sticky-header clearance now comes from `html { scroll-padding-block-start }`.
+     Container padding and target margin ADD, so keeping the 102px scroll-margin
+     that used to sit here would have landed this card 212px down instead. */
   transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
 }
 
@@ -3735,6 +3753,20 @@ body.nav-open .nav__toggleLines::after {
   .nav__toggle {
     display: inline-grid;
     place-items: center;
+  }
+
+  /* SITE-WIDE HORIZONTAL OVERFLOW FIX.
+     `.nav__menu::after` is a decorative hover glow inset -22px past the menu
+     box on the inline axis. On desktop the menu is a centred flow element, so
+     that bleed lands harmlessly inside the header. From here down the menu
+     becomes `position: fixed` with a 10px inline inset, so the glow reaches
+     (22 - 10) * --font-scale ≈ 10px past the viewport edge and adds ~9px of
+     horizontal document overflow to EVERY page — the pseudo-element still
+     contributes scrollable overflow while the closed menu is visibility:hidden.
+     The glow is a `.header:hover` affordance with no touch equivalent, so it is
+     dropped here rather than re-inset. */
+  .nav__menu::after {
+    content: none;
   }
 
   .nav__menu {
@@ -5840,9 +5872,19 @@ body.consent-open .waBtn {
   line-height: 1.75;
 }
 
-.blogPostContent p:first-of-type {
-  font-size: clamp(calc(18px * var(--font-scale)), 1.55vw, calc(21px * var(--font-scale)));
-  font-weight: 800;
+/* Lead paragraph: a size + colour step above body copy. Weight stays at 600 so
+   it reads as emphasis rather than a second headline — 800 turned a whole
+   opening paragraph into a navy block on narrow screens.
+   The child combinator is load-bearing: a bare `p:first-of-type` matches the
+   first <p> of EVERY element, so any <p> opening a wrapper <div> in the article
+   body (the sales-anchor wrappers in blog_post_no4, for one) picked up the lede
+   treatment and read as a second lede. Scoping to direct children of the body
+   wrapper (`.richText.blogPostContent`, views/blog-post.ejs) leaves exactly one
+   match per article. Specificity is unchanged (0,2,1) — combinators do not add
+   weight — so the component rules below still out-specify this as before. */
+.blogPostContent > p:first-of-type {
+  font-size: clamp(calc(19px * var(--font-scale)), 1.7vw, calc(22px * var(--font-scale)));
+  font-weight: 600;
   color: #103447;
 }
 
@@ -6055,27 +6097,52 @@ body.consent-open .waBtn {
     font-size: calc(18px * var(--font-scale));
   }
 
-  .blogPostContent {
-    font-size: var(--s-4);
-    line-height: 1.7;
-  }
-
+  /* MOBILE BODY COPY — was a flat `var(--s-4)` (16 * 0.85 = 13.6px), i.e.
+     SMALLER on a phone than the desktop rule's own clamp floor of 14.45px.
+     Measured line lengths at that size: 44 Arabic characters at 320px rising to
+     51 at 414px, past the ~35-45 comfortable band at the widths that matter
+     most. Because the column is simply the viewport here, holding line length
+     means letting the type grow with it: this clamp measures 36 / 40 / 41 / 41 /
+     44 cpl at 320 / 360 / 375 / 390 / 414. Leading goes 1.7 -> 1.85; Arabic at
+     this size needs the room. All four blog posts share the defect and the fix.
+     h2/h3 move with it — at the top of the clamp the body reaches 17.85px and
+     the old flat 18.7px h2 would have been the same size as its own text. */
+  .blogPostContent,
   .blogPostContent p {
-    font-size: var(--s-4);
-    line-height: 1.7;
+    font-size: clamp(calc(19px * var(--font-scale)), 4.6vw, calc(21px * var(--font-scale)));
+    line-height: 1.85;
   }
 
-  .blogPostContent p:first-of-type {
-    font-size: calc(17px * var(--font-scale));
+  /* The lead paragraph has to stay clearly ABOVE the new body size. The old
+     21/5.1vw/23 clamp only bought 1.11x over body copy at 360px (18.36 vs
+     16.56) — the weakest step of any breakpoint, on the widest-read screen.
+     22/5.4vw/24 restores the desktop step: 1.158x at 320, 1.174x at 360-375,
+     1.143x from 378 up (where body hits its own 17.85px ceiling and caps the
+     ratio). The 24px ceiling is deliberate — 20.4px sits just under the 21.25px
+     mobile h2, so the lede stays emphasis and never reads as a heading. */
+  .blogPostContent > p:first-of-type {
+    font-size: clamp(calc(22px * var(--font-scale)), 5.4vw, calc(24px * var(--font-scale)));
+  }
+
+  /* list items were left at the desktop clamp (14.45px) and would now render
+     noticeably smaller than the paragraphs around them; the row gap is opened
+     up so list items carrying inline links get real vertical tap separation. */
+  .blogPostContent li {
+    font-size: clamp(calc(19px * var(--font-scale)), 4.6vw, calc(21px * var(--font-scale)));
+    line-height: 1.8;
+  }
+
+  .blogPostContent :is(ul, ol) {
+    gap: calc(11px * var(--font-scale));
   }
 
   .blogPostContent h2 {
-    font-size: calc(22px * var(--font-scale));
+    font-size: calc(25px * var(--font-scale));
     padding: calc(7px * var(--font-scale)) calc(10px * var(--font-scale));
   }
 
   .blogPostContent h3 {
-    font-size: calc(20px * var(--font-scale));
+    font-size: calc(22px * var(--font-scale));
   }
 
   .blogPostFooter {
@@ -7146,3 +7213,1169 @@ body.consent-open .waBtn {
 @media (max-width: 560px) {
   .footer--v2 .footer__brandMeta { display: flex; }
 }
+
+/* ============================================================================
+   BLOG ARTICLE COMPONENTS  ("art*" namespace)                    [BEGIN BLOCK]
+   ----------------------------------------------------------------------------
+   Scope     : every selector is prefixed with `.blogPostContent` so nothing
+               here can leak into the rest of the site.
+   Why       : the blog sanitizer (server/routes/posts.js) strips `style`,
+               `<style>`, `<script>` and inline `<svg>` from post bodies.
+               Long-form articles therefore need a class-only component set
+               living here, plus icons referenced as <img src="/assets/blog/
+               icons/*.svg">.
+   Theme     : LIGHT ONLY. Deliberately no dark-mode variant.
+   RTL       : logical properties throughout (inline-start/end, margin-inline,
+               border-block-start). No left/right anywhere.
+   Type      : every size is `calc(Npx * var(--font-scale))` with N >= 15 so
+               that at the global --font-scale: 0.85 no Arabic glyph renders
+               below 12px. No letter-spacing / text-transform on Arabic runs.
+   Motion    : all transitions are disabled under prefers-reduced-motion.
+   Print     : components stay legible and nothing depends on hover.
+   Phone     : the five --art-fs-* tokens are re-scaled once at <=768px (see the
+               Responsive section) so the whole set tracks the larger body copy
+               the blog rules switch to there, and the comparison tables turn
+               into label/value cards at <=640px instead of scrolling sideways.
+   ==========================================================================*/
+
+/* ---- 1. Local design tokens ------------------------------------------------
+   The three "system" accents are the light-mode derivations of the source
+   deck's dark palette (#F5821F / #35C3D8 / #A78BFA), pushed down in lightness
+   until each clears WCAG AA (4.5:1) as text on the site's white surfaces:
+     wired    #9c4f00  5.95:1 on #fff   (== existing --accent-text-deep token)
+     wireless #0b6d7d  6.00:1 on #fff
+     hybrid   #6d28d9  7.11:1 on #fff
+   Measured in-page, the accent also has to clear 4.5:1 against its OWN 7-9%
+   tint, not just white — that is why wired is the deep #9c4f00 and not the
+   lighter #b35a00 (--accent-text): #b35a00 measures 4.80 on white but only
+   4.26 on the wired tint, i.e. a fail. On tint the three now read
+     wired 5.28   wireless 5.35   hybrid 6.34
+   The decorative fills below them are the same hue at low alpha, so the
+   article reads as brand-orange first with two supporting hues.
+   Verdict pills reuse the same discipline:
+     good     #166534  7.14:1   caution #92400e  7.30:1   neutral #334155 10.4:1
+--------------------------------------------------------------------------- */
+.blogPostContent {
+  /* aliases, not copies — see --accent-text-deep / --navy-12 in :root */
+  --art-wired: var(--accent-text-deep);
+  --art-wired-tint: rgba(156, 79, 0, 0.09);
+  --art-wired-line: rgba(156, 79, 0, 0.32);
+
+  --art-wireless: #0b6d7d;
+  --art-wireless-tint: rgba(11, 109, 125, 0.08);
+  --art-wireless-line: rgba(11, 109, 125, 0.28);
+
+  --art-hybrid: #6d28d9;
+  --art-hybrid-tint: rgba(109, 40, 217, 0.07);
+  --art-hybrid-line: rgba(109, 40, 217, 0.26);
+
+  --art-good: #166534;
+  --art-good-tint: rgba(22, 101, 52, 0.1);
+  --art-warn: #92400e;
+  --art-warn-tint: rgba(146, 64, 14, 0.1);
+  --art-neutral: #334155;
+  --art-neutral-tint: rgba(51, 65, 85, 0.09);
+
+  /* neutral component chrome */
+  --art-card-bg: #fff;
+  --art-card-line: var(--navy-12);
+  --art-card-radius: calc(18px * var(--font-scale));
+  --art-shadow: 0 calc(10px * var(--font-scale)) calc(26px * var(--font-scale)) rgba(0, 43, 68, 0.07);
+  --art-shadow-lift: 0 calc(16px * var(--font-scale)) calc(34px * var(--font-scale)) rgba(0, 43, 68, 0.12);
+
+  /* type scale — floor is 15px so 15 * 0.85 = 12.75px > 12px Arabic floor */
+  --art-fs-xs: calc(15px * var(--font-scale));
+  --art-fs-sm: calc(16px * var(--font-scale));
+  --art-fs-md: calc(17px * var(--font-scale));
+  --art-fs-lg: calc(19px * var(--font-scale));
+  --art-fs-xl: calc(22px * var(--font-scale));
+
+  /* full-bleed helper: components that break out of the 820px text column */
+  --art-wide: min(calc(960px * var(--font-scale)), 92vw);
+}
+
+/* SPECIFICITY NOTE — read before adding a <p>-based part below.
+   The site's lead-paragraph rule is `.blogPostContent > p:first-of-type`
+   (specificity 0,2,1). The child combinator now confines it to the article's
+   own opening paragraph, so nested parts (`.artSystem__def`, `.artFit__case`,
+   `.artTldr__q`, `.artCta__text`) are out of its reach. It DOES still reach any
+   <p> placed as a direct child of `.blogPostContent` — `.artNote` is the live
+   example — so a part that can sit at the top level still has to out-specify
+   it. The convention here is to qualify the part with its own block
+   (`.blogPostContent .artTldr .artTldr__q` -> 0,3,0 beats 0,2,1). Do not
+   "solve" this with a `p:first-of-type { … : inherit }` reset: that reset also
+   out-specifies the component rules and silently flattens them. */
+
+/* Shared list reset for the component lists (site adds grid + inline padding) */
+.blogPostContent :is(.artToc__list, .artSystem__pros, .artSystem__cons, .artTldr__lines,
+  .artFit__rows, .artStats, .artSystems) {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+/* ---- 10. Anchor offset -----------------------------------------------------
+   Now `html { scroll-padding-block-start }`, which reserves the sticky-header
+   strip for every scroll-into-view rather than only for elements carrying an id
+   (WCAG 2.2 SC 2.4.11 — a keyboard-focused link is scrolled into view too).
+   Container scroll-padding and target scroll-margin ADD, so the local
+   `.blogPostContent [id] { scroll-margin-block-start: 102px }` that used to
+   live here would have stacked on top of it. One offset, applied once.
+--------------------------------------------------------------------------- */
+
+/* ---- 1. .artTldr — decision box (built to be screenshotted) --------------- */
+.blogPostContent .artTldr {
+  margin-block: calc(28px * var(--font-scale)) calc(36px * var(--font-scale));
+  padding: calc(24px * var(--font-scale)) calc(26px * var(--font-scale));
+  background:
+    radial-gradient(calc(420px * var(--font-scale)) calc(200px * var(--font-scale)) at 92% 0%, rgba(255, 153, 51, 0.16), transparent 68%),
+    linear-gradient(180deg, #fffaf4, #fff);
+  border: calc(1px * var(--font-scale)) solid rgba(255, 153, 51, 0.34);
+  border-inline-start: calc(6px * var(--font-scale)) solid var(--primary);
+  border-radius: var(--art-card-radius);
+  box-shadow: var(--art-shadow);
+}
+
+.blogPostContent .artTldr .artTldr__eyebrow {
+  display: inline-block;
+  margin: 0 0 calc(6px * var(--font-scale));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-xs);
+  color: var(--art-wired);
+}
+
+.blogPostContent .artTldr__title,
+.blogPostContent h2.artTldr__title {
+  margin: 0 0 calc(14px * var(--font-scale));
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(var(--art-fs-lg), 2vw, var(--art-fs-xl));
+  line-height: 1.4;
+  color: var(--navy);
+}
+
+.blogPostContent .artTldr__lines {
+  display: grid;
+  gap: calc(11px * var(--font-scale));
+}
+
+.blogPostContent .artTldr__line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(6px * var(--font-scale)) calc(14px * var(--font-scale));
+  align-items: baseline;
+  padding: calc(14px * var(--font-scale)) calc(16px * var(--font-scale));
+  background: #fff;
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-inline-start: calc(4px * var(--font-scale)) solid var(--art-neutral);
+  border-radius: calc(13px * var(--font-scale));
+}
+
+.blogPostContent .artTldr__line--wired {
+  border-inline-start-color: var(--art-wired);
+  background: var(--art-wired-tint);
+}
+.blogPostContent .artTldr__line--wireless {
+  border-inline-start-color: var(--art-wireless);
+  background: var(--art-wireless-tint);
+}
+.blogPostContent .artTldr__line--hybrid {
+  border-inline-start-color: var(--art-hybrid);
+  background: var(--art-hybrid-tint);
+}
+
+.blogPostContent .artTldr .artTldr__q {
+  /* NOT `flex: none` — that sets flex-shrink: 0, which locks the question at its
+     max-content width (~280px) inside a 220px flex line at 320px viewport and
+     pushes ~18px of horizontal overflow onto the whole page. `min-width: 0`
+     is required alongside it: a flex item's automatic minimum size is
+     min-content, which for a long Arabic run is still wider than the line. */
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-md);
+  line-height: 1.5;
+  color: var(--navy);
+}
+.blogPostContent .artTldr__line--wired .artTldr__q { color: var(--art-wired); }
+.blogPostContent .artTldr__line--wireless .artTldr__q { color: var(--art-wireless); }
+.blogPostContent .artTldr__line--hybrid .artTldr__q { color: var(--art-hybrid); }
+
+.blogPostContent .artTldr .artTldr__a {
+  flex: 1 1 calc(240px * var(--font-scale));
+  margin: 0;
+  font-size: var(--art-fs-md);
+  line-height: 1.7;
+  color: rgba(11, 31, 42, 0.86);
+}
+
+.blogPostContent .artTldr .artTldr__foot {
+  margin: calc(16px * var(--font-scale)) 0 0;
+  padding-top: calc(14px * var(--font-scale));
+  border-top: calc(1px * var(--font-scale)) dashed rgba(255, 153, 51, 0.45);
+  font-size: var(--art-fs-sm);
+  line-height: 1.7;
+  color: rgba(11, 31, 42, 0.82);
+}
+
+/* ---- 2. .artToc — table of contents --------------------------------------- */
+.blogPostContent .artToc {
+  margin-block: calc(30px * var(--font-scale));
+  padding: calc(20px * var(--font-scale)) calc(22px * var(--font-scale));
+  background: linear-gradient(180deg, #f7fafc, #fff);
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-radius: var(--art-card-radius);
+}
+
+.blogPostContent .artToc__title,
+.blogPostContent h2.artToc__title {
+  margin: 0 0 calc(12px * var(--font-scale));
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-lg);
+  color: var(--navy);
+}
+
+.blogPostContent .artToc__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(230px * var(--font-scale)), 1fr));
+  gap: calc(4px * var(--font-scale)) calc(16px * var(--font-scale));
+  counter-reset: artToc;
+}
+
+.blogPostContent .artToc__list li {
+  counter-increment: artToc;
+  font-size: var(--art-fs-sm);
+  line-height: 1.6;
+}
+
+.blogPostContent .artToc__list li::before {
+  content: counter(artToc) ".";
+  margin-inline-end: calc(8px * var(--font-scale));
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--art-wired);
+}
+
+.blogPostContent .artToc__list a {
+  display: inline-block;
+  padding: calc(6px * var(--font-scale)) calc(4px * var(--font-scale));
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: calc(2px * var(--font-scale)) solid transparent;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.blogPostContent .artToc__list a:hover {
+  color: var(--art-wired);
+  border-bottom-color: var(--primary);
+}
+
+/* ---- 3. .artSystems / .artSystem — the three-system card grid -------------- */
+.blogPostContent .artSystems {
+  width: var(--art-wide);
+  margin-inline: calc((100% - var(--art-wide)) / 2);
+  margin-block: calc(34px * var(--font-scale));
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(18px * var(--font-scale));
+  align-items: stretch;
+}
+
+.blogPostContent .artSystem {
+  --art-c: var(--art-neutral);
+  --art-c-tint: var(--art-neutral-tint);
+  --art-c-line: var(--art-card-line);
+  display: flex;
+  flex-direction: column;
+  padding: calc(22px * var(--font-scale));
+  background: var(--art-card-bg);
+  border: calc(1px * var(--font-scale)) solid var(--art-c-line);
+  border-block-start: calc(4px * var(--font-scale)) solid var(--art-c);
+  border-radius: var(--art-card-radius);
+  box-shadow: var(--art-shadow);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.blogPostContent .artSystem:hover {
+  transform: translateY(calc(-4px * var(--font-scale)));
+  box-shadow: var(--art-shadow-lift);
+}
+
+.blogPostContent .artSystem--wired {
+  --art-c: var(--art-wired);
+  --art-c-tint: var(--art-wired-tint);
+  --art-c-line: var(--art-wired-line);
+}
+.blogPostContent .artSystem--wireless {
+  --art-c: var(--art-wireless);
+  --art-c-tint: var(--art-wireless-tint);
+  --art-c-line: var(--art-wireless-line);
+}
+.blogPostContent .artSystem--hybrid {
+  --art-c: var(--art-hybrid);
+  --art-c-tint: var(--art-hybrid-tint);
+  --art-c-line: var(--art-hybrid-line);
+}
+
+.blogPostContent .artSystem__icon {
+  display: grid;
+  place-items: center;
+  inline-size: calc(50px * var(--font-scale));
+  block-size: calc(50px * var(--font-scale));
+  margin: 0 0 calc(14px * var(--font-scale));
+  border-radius: calc(14px * var(--font-scale));
+  background: var(--art-c-tint);
+  border: calc(1px * var(--font-scale)) solid var(--art-c-line);
+}
+
+.blogPostContent .artSystem__icon img {
+  inline-size: calc(24px * var(--font-scale));
+  block-size: calc(24px * var(--font-scale));
+  object-fit: contain;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.blogPostContent .artSystem__title,
+.blogPostContent h3.artSystem__title {
+  margin: 0 0 calc(7px * var(--font-scale));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-lg);
+  line-height: 1.4;
+  color: var(--art-c);
+}
+
+.blogPostContent .artSystem .artSystem__def {
+  margin: 0 0 calc(16px * var(--font-scale));
+  font-size: var(--art-fs-sm);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(11, 31, 42, 0.78);
+}
+
+.blogPostContent .artSystem__pros,
+.blogPostContent .artSystem__cons {
+  display: grid;
+  gap: calc(8px * var(--font-scale));
+  margin: 0 0 calc(14px * var(--font-scale));
+}
+
+.blogPostContent .artSystem__pros li,
+.blogPostContent .artSystem__cons li {
+  position: relative;
+  padding-inline-start: calc(22px * var(--font-scale));
+  font-size: var(--art-fs-sm);
+  line-height: 1.65;
+}
+
+.blogPostContent .artSystem__pros li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc(9px * var(--font-scale));
+  inline-size: calc(8px * var(--font-scale));
+  block-size: calc(8px * var(--font-scale));
+  border-radius: 50%;
+  background: var(--art-c);
+}
+
+.blogPostContent .artSystem__cons li::before {
+  content: "—";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  font-weight: 800;
+  color: var(--art-warn);
+}
+
+.blogPostContent .artSystem__cons li {
+  color: rgba(11, 31, 42, 0.75);
+}
+
+.blogPostContent .artSystem .artSystem__best {
+  margin: auto 0 0;
+  padding: calc(13px * var(--font-scale)) calc(15px * var(--font-scale));
+  background: var(--art-c-tint);
+  border-radius: calc(12px * var(--font-scale));
+  font-size: var(--art-fs-sm);
+  line-height: 1.7;
+  color: rgba(11, 31, 42, 0.86);
+}
+
+.blogPostContent .artSystem .artSystem__best strong,
+.blogPostContent .artSystem .artSystem__best b {
+  color: var(--art-c);
+}
+
+/* ---- 4. .artTableWrap — RTL-correct horizontal scroll for the comparison ---
+   The site's `.blogPostContent table` rule already breaks the table out of the
+   text column with a negative margin-inline. That trick cannot survive inside
+   an overflow container, so the wrapper takes over the breakout and the table
+   is reset to fill it. All the existing table skin (borders, stripes, orange
+   thead) is inherited untouched.
+--------------------------------------------------------------------------- */
+.blogPostContent .artTableWrap {
+  width: var(--art-wide);
+  margin-inline: calc((100% - var(--art-wide)) / 2);
+  margin-block: calc(34px * var(--font-scale));
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border-radius: calc(14px * var(--font-scale));
+  -webkit-overflow-scrolling: touch;
+}
+
+.blogPostContent .artTableWrap > table {
+  width: 100%;
+  min-width: calc(640px * var(--font-scale));
+  max-width: none;
+  margin-inline: 0;
+  margin-block: 0;
+  table-layout: auto;
+  /* The site's base table rule is calc(14px * var(--font-scale)) = 11.9px,
+     under the 12px Arabic legibility floor. Lifted to 12.75px for article
+     tables only; the base rule is left alone. */
+  font-size: var(--art-fs-xs);
+}
+
+/* three-system comparison: tint the header cells so the columns are readable
+   without relying on colour alone (the row label still names the system). */
+.blogPostContent .artTableWrap--systems thead th:nth-child(2) { color: var(--art-wired); }
+.blogPostContent .artTableWrap--systems thead th:nth-child(3) { color: var(--art-wireless); }
+.blogPostContent .artTableWrap--systems thead th:nth-child(4) { color: var(--art-hybrid); }
+
+/* verdict pills used inside table cells */
+.blogPostContent .artPill {
+  display: inline-block;
+  padding: calc(4px * var(--font-scale)) calc(11px * var(--font-scale));
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+  background: var(--art-neutral-tint);
+  color: var(--art-neutral);
+}
+.blogPostContent .artPill--good { background: var(--art-good-tint); color: var(--art-good); }
+.blogPostContent .artPill--warn { background: var(--art-warn-tint); color: var(--art-warn); }
+
+/* Per-cell column label. Every <td> after the first in an .artTableWrap table
+   carries `<span class="artTh">` repeating its <th>. It is dead weight in the
+   real table and is hidden here; the phone breakpoint below turns the table
+   into label/value cards and reveals it, which is the only way the column
+   header can stay attached to its value once the <thead> is off screen. It is
+   real DOM text rather than CSS `content` so it is selectable, copyable and
+   read out, and so the non-comparison tables (whose headers are not a fixed
+   set) work by the same mechanism. */
+.blogPostContent .artTh {
+  display: none;
+}
+
+/* ---- 5. .artFit — static replacement for the JS "which one fits you" picker */
+.blogPostContent .artFit {
+  width: var(--art-wide);
+  margin-inline: calc((100% - var(--art-wide)) / 2);
+  margin-block: calc(34px * var(--font-scale));
+  padding: calc(22px * var(--font-scale));
+  background: linear-gradient(180deg, #f8fbfc, #fff);
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-radius: var(--art-card-radius);
+  box-shadow: var(--art-shadow);
+}
+
+.blogPostContent .artFit__title,
+.blogPostContent h2.artFit__title,
+.blogPostContent h3.artFit__title {
+  margin: 0 0 calc(4px * var(--font-scale));
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-lg);
+  color: var(--navy);
+}
+
+.blogPostContent .artFit .artFit__sub {
+  margin: 0 0 calc(18px * var(--font-scale));
+  font-size: var(--art-fs-sm);
+  font-weight: 400;
+  color: rgba(11, 31, 42, 0.72);
+}
+
+.blogPostContent .artFit__rows {
+  display: grid;
+  gap: calc(10px * var(--font-scale));
+}
+
+.blogPostContent .artFit__row {
+  display: grid;
+  grid-template-columns: minmax(calc(150px * var(--font-scale)), 0.9fr) auto minmax(calc(200px * var(--font-scale)), 1.4fr);
+  gap: calc(8px * var(--font-scale)) calc(16px * var(--font-scale));
+  align-items: center;
+  padding: calc(14px * var(--font-scale)) calc(16px * var(--font-scale));
+  background: #fff;
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-inline-start: calc(4px * var(--font-scale)) solid var(--art-neutral);
+  border-radius: calc(13px * var(--font-scale));
+  transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.blogPostContent .artFit__row:hover {
+  transform: translateY(calc(-2px * var(--font-scale)));
+  box-shadow: var(--art-shadow);
+}
+
+.blogPostContent .artFit__row--wired { border-inline-start-color: var(--art-wired); }
+.blogPostContent .artFit__row--wireless { border-inline-start-color: var(--art-wireless); }
+.blogPostContent .artFit__row--hybrid { border-inline-start-color: var(--art-hybrid); }
+
+.blogPostContent .artFit .artFit__case {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-md);
+  line-height: 1.6;
+  color: var(--navy);
+}
+
+.blogPostContent .artFit__pick {
+  justify-self: start;
+  display: inline-block;
+  padding: calc(6px * var(--font-scale)) calc(14px * var(--font-scale));
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+  background: var(--art-neutral-tint);
+  color: var(--art-neutral);
+  border: calc(1px * var(--font-scale)) solid transparent;
+}
+
+.blogPostContent .artFit__pick--wired {
+  background: var(--art-wired-tint);
+  color: var(--art-wired);
+  border-color: var(--art-wired-line);
+}
+.blogPostContent .artFit__pick--wireless {
+  background: var(--art-wireless-tint);
+  color: var(--art-wireless);
+  border-color: var(--art-wireless-line);
+}
+.blogPostContent .artFit__pick--hybrid {
+  background: var(--art-hybrid-tint);
+  color: var(--art-hybrid);
+  border-color: var(--art-hybrid-line);
+}
+
+.blogPostContent .artFit .artFit__why {
+  margin: 0;
+  font-size: var(--art-fs-sm);
+  line-height: 1.65;
+  color: rgba(11, 31, 42, 0.8);
+}
+
+.blogPostContent .artFit .artFit__why a {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---- 6. .artFaq — FAQ block (structure is a contract; JSON-LD reads it) ---- */
+.blogPostContent .artFaq {
+  margin-block: calc(38px * var(--font-scale));
+}
+
+.blogPostContent .artFaq__item {
+  margin-block: calc(10px * var(--font-scale));
+  padding: calc(18px * var(--font-scale)) calc(20px * var(--font-scale));
+  background: var(--art-card-bg);
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-radius: calc(15px * var(--font-scale));
+  box-shadow: var(--art-shadow);
+  break-inside: avoid;
+}
+
+.blogPostContent .artFaq__q,
+.blogPostContent h3.artFaq__q {
+  position: relative;
+  margin: 0 0 calc(8px * var(--font-scale));
+  padding-inline-start: calc(26px * var(--font-scale));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--art-fs-md);
+  line-height: 1.6;
+  color: var(--navy);
+}
+
+.blogPostContent .artFaq__q::before {
+  content: "؟";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  display: grid;
+  place-items: center;
+  inline-size: calc(19px * var(--font-scale));
+  block-size: calc(19px * var(--font-scale));
+  border-radius: 50%;
+  background: var(--primary-18);
+  color: var(--art-wired);
+  font-size: var(--art-fs-xs);
+  line-height: 1;
+}
+
+.blogPostContent .artFaq__a {
+  padding-inline-start: calc(26px * var(--font-scale));
+}
+
+.blogPostContent .artFaq .artFaq__a p {
+  margin: 0 0 calc(10px * var(--font-scale));
+  font-size: var(--art-fs-md);
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(11, 31, 42, 0.84);
+}
+
+.blogPostContent .artFaq .artFaq__a p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- 7. .artStat — CSS-only stat tiles ------------------------------------ */
+.blogPostContent .artStats {
+  width: var(--art-wide);
+  margin-inline: calc((100% - var(--art-wide)) / 2);
+  margin-block: calc(30px * var(--font-scale));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(200px * var(--font-scale)), 1fr));
+  gap: calc(14px * var(--font-scale));
+}
+
+.blogPostContent .artStat {
+  padding: calc(18px * var(--font-scale)) calc(20px * var(--font-scale));
+  background: var(--art-card-bg);
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-block-start: calc(3px * var(--font-scale)) solid var(--primary);
+  border-radius: calc(15px * var(--font-scale));
+  box-shadow: var(--art-shadow);
+}
+
+.blogPostContent .artStat--good { border-block-start-color: var(--art-good); }
+
+.blogPostContent .artStat__icon {
+  display: grid;
+  place-items: center;
+  inline-size: calc(38px * var(--font-scale));
+  block-size: calc(38px * var(--font-scale));
+  margin: 0 0 calc(12px * var(--font-scale));
+  border-radius: calc(11px * var(--font-scale));
+  background: var(--art-good-tint);
+}
+
+.blogPostContent .artStat__icon img {
+  inline-size: calc(19px * var(--font-scale));
+  block-size: calc(19px * var(--font-scale));
+  object-fit: contain;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.blogPostContent .artStat__value {
+  display: block;
+  margin: 0 0 calc(4px * var(--font-scale));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(var(--art-fs-xl), 3vw, calc(30px * var(--font-scale)));
+  line-height: 1.3;
+  color: var(--navy);
+}
+
+.blogPostContent .artStat__label {
+  display: block;
+  margin: 0;
+  font-size: var(--art-fs-sm);
+  line-height: 1.65;
+  color: rgba(11, 31, 42, 0.74);
+}
+
+/* ---- 8. .artCta — closing contact block ----------------------------------- */
+.blogPostContent .artCta {
+  width: var(--art-wide);
+  margin-inline: calc((100% - var(--art-wide)) / 2);
+  margin-block: calc(44px * var(--font-scale)) calc(28px * var(--font-scale));
+  padding: calc(30px * var(--font-scale)) calc(28px * var(--font-scale));
+  background:
+    radial-gradient(calc(520px * var(--font-scale)) calc(240px * var(--font-scale)) at 88% 0%, rgba(255, 153, 51, 0.2), transparent 70%),
+    linear-gradient(180deg, #fffaf3, #fff);
+  border: calc(1px * var(--font-scale)) solid rgba(255, 153, 51, 0.32);
+  border-radius: calc(22px * var(--font-scale));
+  box-shadow: var(--art-shadow);
+  text-align: center;
+}
+
+.blogPostContent .artCta__title,
+.blogPostContent h2.artCta__title,
+.blogPostContent h3.artCta__title {
+  margin: 0 0 calc(8px * var(--font-scale));
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(var(--art-fs-lg), 2.2vw, calc(26px * var(--font-scale)));
+  line-height: 1.4;
+  color: var(--navy);
+}
+
+.blogPostContent .artCta .artCta__text {
+  margin: 0 auto calc(20px * var(--font-scale));
+  max-width: 60ch;
+  font-size: var(--art-fs-md);
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(11, 31, 42, 0.84);
+}
+
+.blogPostContent .artCta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(12px * var(--font-scale));
+  justify-content: center;
+}
+
+/* the site's .btn skin loses to `.blogPostContent a` on specificity — restore */
+.blogPostContent .artCta__actions .btn {
+  text-decoration: none;
+  font-size: var(--art-fs-sm);
+}
+.blogPostContent .artCta__actions .btn--primary { color: var(--ink-900); }
+.blogPostContent .artCta__actions .btn--ghost { color: var(--navy); }
+
+/* ---- 8b. .artCta--mid — in-flow interruption, NOT a second ending ----------
+   The closing .artCta is a terminal block by construction: it breaks out of the
+   text column to --art-wide, centres its own content, carries the orange radial
+   wash plus the full card shadow, and is the last thing on the page. Rendered
+   identically halfway through the article (end of #sec-security in
+   blog_post_no5) it reads as the article having finished, and the reader stops.
+
+   This variant keeps the brand vocabulary — orange, --font-display title, the
+   two .btn skins — and removes every device that gives the closing block its
+   weight: it stays inside the prose column, drops the gradient wash and the
+   shadow, trades centred layout for the start alignment of the prose it
+   interrupts, and steps the title and body down one rung of the type scale.
+   What still marks it as a CTA is the inline-start accent rule — the same
+   affordance .artTldr and .artNote already use for an aside — and the buttons.
+
+   Contrast on the flat #fff8f0 tint (measured, not assumed):
+     title      --navy #002b44            13.9:1
+     body       rgba(11,31,42,.84) comp.  10.0:1
+     .btn--ghost label --navy             13.9:1
+   all clear of WCAG AA 4.5:1; .btn--primary keeps its own --ink-900 on orange.
+
+   Compound `.artCta.artCta--mid` (0,3,0), not the bare modifier (0,2,0): the
+   modifier only TIES with the base .artCta rules above, and loses outright on
+   source order to the <=560px `.blogPostContent .artCta { padding-inline }`
+   override further down the file. Same reasoning as the SPECIFICITY NOTE.
+--------------------------------------------------------------------------- */
+.blogPostContent .artCta.artCta--mid {
+  width: auto;
+  margin-inline: 0;
+  margin-block: calc(30px * var(--font-scale)) calc(34px * var(--font-scale));
+  padding: calc(20px * var(--font-scale)) calc(22px * var(--font-scale));
+  background: #fff8f0;
+  border: 0;
+  border-inline-start: calc(4px * var(--font-scale)) solid var(--primary);
+  border-radius: calc(12px * var(--font-scale));
+  box-shadow: none;
+  text-align: start;
+}
+
+.blogPostContent .artCta.artCta--mid .artCta__title {
+  margin-block-end: calc(6px * var(--font-scale));
+  font-size: clamp(var(--art-fs-md), 1.6vw, var(--art-fs-xl));
+}
+
+.blogPostContent .artCta.artCta--mid .artCta__text {
+  margin: 0 0 calc(15px * var(--font-scale));
+  max-width: none;
+  font-size: var(--art-fs-sm);
+}
+
+.blogPostContent .artCta.artCta--mid .artCta__actions {
+  gap: calc(10px * var(--font-scale));
+  justify-content: flex-start;
+}
+
+/* ---- 9. .artNote — third-party estimate / not-a-quote disclaimer -----------
+   The class is doubled rather than qualified as `p.artNote`: that selector is
+   0,2,1 and only TIES with `.blogPostContent > p:first-of-type` (0,2,1), so it
+   wins on source order alone and one reshuffle of this stylesheet turns every
+   disclaimer into a 21px/800 lead paragraph. Doubling gives 0,3,0 — the same
+   fix the specificity note above prescribes, for a part with no parent block.
+   `--warn` is doubled for the same reason: against the old `p.artNote` it was
+   already losing outright, so its tint never rendered. */
+.blogPostContent .artNote.artNote {
+  display: block;
+  margin-block: calc(16px * var(--font-scale)) calc(30px * var(--font-scale));
+  padding: calc(13px * var(--font-scale)) calc(16px * var(--font-scale));
+  background: var(--surface-muted);
+  border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  border-inline-start: calc(4px * var(--font-scale)) solid var(--art-neutral);
+  border-radius: calc(12px * var(--font-scale));
+  font-size: var(--art-fs-xs);
+  line-height: 1.75;
+  color: rgba(11, 31, 42, 0.78);
+}
+
+.blogPostContent .artNote strong,
+.blogPostContent .artNote b {
+  color: var(--navy);
+}
+
+.blogPostContent .artNote--warn.artNote--warn {
+  background: var(--art-warn-tint);
+  border-inline-start-color: var(--art-warn);
+}
+
+/* ---- Focus rings ----------------------------------------------------------
+   WCAG 2.2 SC 2.4.7. This used to list the six article components, which left
+   plain prose links and .artNote links on the browser default ring. Every link
+   in the article body gets the designed navy ring instead — same treatment, one
+   selector. */
+.blogPostContent a:focus-visible {
+  outline: calc(3px * var(--font-scale)) solid var(--navy);
+  outline-offset: calc(3px * var(--font-scale));
+  border-radius: calc(8px * var(--font-scale));
+}
+
+/* ---- Responsive ----------------------------------------------------------- */
+
+/* PHONE TYPE SCALE.
+   Every size in this block is `var(--art-fs-*)`, so the whole component set is
+   re-scaled by redefining the five tokens rather than by touching ~30 rules.
+   It has to move because the prose around it does: the ≤768px blog rules lift
+   body copy from 13.6px to 16.2-17.9px, and at the old tokens the .artTldr —
+   the block the sales team screenshots — rendered its answers at 14.45px, i.e.
+   visibly smaller than the paragraph above it. Same breakpoint as that rule so
+   the two never disagree. The xs floor is unchanged: 15 * 0.85 = 12.75px is the
+   Arabic legibility floor the block is built around. */
+@media (max-width: 768px) {
+  .blogPostContent {
+    --art-fs-xs: calc(15px * var(--font-scale));
+    --art-fs-sm: calc(18px * var(--font-scale));
+    --art-fs-md: calc(20px * var(--font-scale));
+    --art-fs-lg: calc(22px * var(--font-scale));
+    --art-fs-xl: calc(25px * var(--font-scale));
+  }
+}
+
+@media (max-width: 900px) {
+  .blogPostContent .artSystems {
+    grid-template-columns: 1fr;
+  }
+
+  /* The three-column row collapses, but NOT to three stacked blocks: dropping
+     the verdict pill onto a line of its own separated the question ("who is
+     this for") from its answer ("which system") by a full line and cost ~40px
+     per row over six rows. Case and pick share the first line, pick pinned to
+     the inline end, and the reason spans underneath. */
+  .blogPostContent .artFit__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .blogPostContent .artFit__pick {
+    justify-self: end;
+  }
+
+  .blogPostContent .artFit .artFit__why {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Phone: comparison tables become label/value cards ---------------------
+   Measured at 360px inside the 331px scroller: the 4-column tables were 757px
+   and 544px wide, i.e. 39-54% of the table visible, and the first column (the
+   criterion the row is about) scrolled out of view along with the <thead>. A
+   sticky first column keeps the ROW header attached but nothing can keep the
+   COLUMN headers attached — `position: sticky` on <thead> resolves against the
+   wrapper's own scrollport, which never moves in the block axis, so past the
+   first few rows the reader has three unlabelled values.
+   Stacking is therefore the only layout that satisfies "the header row stays
+   associated with its data" at this width, and it removes horizontal scrolling
+   from the article entirely. Each <tr> becomes a card: first cell = card
+   heading, every other cell = its `.artTh` column label plus the value.
+   Trade-off, stated plainly: overriding `display` on table boxes drops the
+   table role, so at phone widths a screen reader gets labelled linear text
+   rather than a navigable grid. Restoring the role needs `role="table"` etc. in
+   the body, and the post sanitizer allows only `class` and `id`. The table
+   keeps its full semantics at every width above this breakpoint.
+   640px, not 560px: at 640 the widest table (757px) still overflows a 92vw
+   wrapper, so the band that would otherwise scroll without an affordance is
+   covered too.
+   `screen and` is deliberate: this is the one rule set that overrides `display`
+   on table boxes, and the print block below wants the real table back. Without
+   it a narrow paper size would print the cards instead.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 640px) {
+  /* the `--art-wide` breakout stays: the cards want the same width as
+     .artSystems / .artFit / .artCta, which is 92vw rather than the text column */
+  .blogPostContent .artTableWrap {
+    margin-block: calc(26px * var(--font-scale));
+    overflow-x: visible;
+    border-radius: 0;
+  }
+
+  .blogPostContent .artTableWrap > table {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    font-size: var(--art-fs-sm);
+  }
+
+  /* the header row now lives inside the cells as .artTh */
+  .blogPostContent .artTableWrap > table > thead {
+    display: none;
+  }
+
+  .blogPostContent .artTableWrap > table > tbody {
+    display: grid;
+    gap: calc(12px * var(--font-scale));
+  }
+
+  .blogPostContent .artTableWrap > table > tbody > tr,
+  .blogPostContent .artTableWrap > table > tbody > tr:nth-child(even) {
+    display: grid;
+    /* Grid items default to `min-width: auto`, i.e. min-content. Inside the
+       `overflow-x: auto` scroller that never escaped; now that the scroller is
+       gone, one cell's min-content (measured 330px, from an unbreakable Latin
+       parenthetical) propagates up through .blogPostLayout's grid track and
+       widens the whole document. `min-inline-size: 0` here and
+       `overflow-wrap: anywhere` on the cells stop it at the cell. */
+    min-inline-size: 0;
+    gap: calc(9px * var(--font-scale));
+    padding: calc(15px * var(--font-scale)) calc(16px * var(--font-scale));
+    background: var(--art-card-bg);
+    border: calc(1px * var(--font-scale)) solid var(--art-card-line);
+    border-inline-start: calc(4px * var(--font-scale)) solid var(--art-neutral);
+    border-radius: calc(13px * var(--font-scale));
+    box-shadow: var(--art-shadow);
+  }
+
+  .blogPostContent .artTableWrap > table td {
+    display: block;
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    text-align: start;
+    vertical-align: baseline;
+    overflow-wrap: anywhere;
+  }
+
+  /* row label -> card heading */
+  .blogPostContent .artTableWrap > table td:first-child {
+    padding-block-end: calc(9px * var(--font-scale));
+    border-block-end: calc(1px * var(--font-scale)) solid var(--art-card-line);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--art-fs-md);
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  /* label + value. Flex-wrap rather than a fixed label column so a short header
+     ("سلكي") sits beside its value while a long one ("المرجع المعياري") takes
+     the line and lets the value wrap underneath. */
+  .blogPostContent .artTableWrap > table td:not(:first-child) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: calc(3px * var(--font-scale)) calc(9px * var(--font-scale));
+    line-height: 1.65;
+  }
+
+  .blogPostContent .artTableWrap .artTh {
+    display: block;
+    flex: 0 0 auto;
+    max-inline-size: 100%;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--art-fs-xs);
+    line-height: 1.65;
+    color: var(--art-neutral);
+  }
+
+  .blogPostContent .artTableWrap .artTh::after {
+    content: ":";
+  }
+
+  /* `.artPill` is `white-space: nowrap`, which is right for "أعلى"/"لا يوجد" but
+     one verdict cell is a full sentence and measured 330px. Inside the old
+     scroller it merely widened the table; unscrolled it pushes the page. */
+  .blogPostContent .artTableWrap .artPill {
+    white-space: normal;
+  }
+
+  /* same column -> colour mapping the <thead> uses at wider widths */
+  .blogPostContent .artTableWrap--systems td:nth-child(2) .artTh { color: var(--art-wired); }
+  .blogPostContent .artTableWrap--systems td:nth-child(3) .artTh { color: var(--art-wireless); }
+  .blogPostContent .artTableWrap--systems td:nth-child(4) .artTh { color: var(--art-hybrid); }
+}
+
+@media (max-width: 560px) {
+  .blogPostContent .artTldr,
+  .blogPostContent .artFit,
+  .blogPostContent .artCta {
+    padding-inline: calc(18px * var(--font-scale));
+  }
+
+  /* 22px of inline padding on a 331px card left less text width inside the
+     card (292px) than the plain prose column outside it (300px). */
+  .blogPostContent .artSystem {
+    padding-inline: calc(16px * var(--font-scale));
+  }
+
+  .blogPostContent .artToc {
+    padding: calc(16px * var(--font-scale)) calc(14px * var(--font-scale));
+  }
+
+  .blogPostContent .artToc__list {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* A 14-item contents list is a wall of same-weight text with 33px rows that
+     are also under-sized as tap targets. Each entry becomes a full-width 44px
+     row with a hairline under it, so it scans as a list and is reliably
+     tappable; the card padding above claws back most of the added height. */
+  .blogPostContent .artToc__list li {
+    display: flex;
+    align-items: center;
+    gap: calc(8px * var(--font-scale));
+    border-block-end: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  }
+
+  .blogPostContent .artToc__list li:last-child {
+    border-block-end: 0;
+  }
+
+  .blogPostContent .artToc__list li::before {
+    margin-inline-end: 0;
+  }
+
+  .blogPostContent .artToc__list a {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-block-size: 44px;
+    padding-block: calc(6px * var(--font-scale));
+    padding-inline: 0;
+    border-bottom: 0;
+  }
+
+  /* Nine Q&A pairs read as one undifferentiated column when the cards are 8px
+     apart and the question is the same size as the answer. The gap doubles, a
+     rule separates question from answer, and the answer drops the 22px hanging
+     indent it was paying for the "؟" bullet — 7% of a 300px column. */
+  .blogPostContent .artFaq__item {
+    margin-block: calc(15px * var(--font-scale));
+    padding-inline: calc(16px * var(--font-scale));
+  }
+
+  .blogPostContent .artFaq__q,
+  .blogPostContent h3.artFaq__q {
+    margin-block-end: calc(11px * var(--font-scale));
+    font-size: var(--art-fs-lg);
+  }
+
+  .blogPostContent .artFaq__a {
+    padding-inline-start: 0;
+    padding-block-start: calc(11px * var(--font-scale));
+    border-block-start: calc(1px * var(--font-scale)) solid var(--art-card-line);
+  }
+
+  /* answers are prose and have to match the body size the article now reads at;
+     the question stays above them on weight, face, colour, the ؟ badge, the
+     rule between the two and one step of the type scale */
+  .blogPostContent .artFaq .artFaq__a p {
+    font-size: var(--art-fs-md);
+  }
+
+  .blogPostContent .artCta__actions .btn {
+    inline-size: 100%;
+    min-block-size: 50px;
+    font-size: var(--art-fs-md);
+  }
+}
+
+/* ---- Reduced motion ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .blogPostContent :is(.artSystem, .artFit__row, .artToc__list a) {
+    transition: none;
+  }
+
+  .blogPostContent .artSystem:hover,
+  .blogPostContent .artFit__row:hover {
+    transform: none;
+  }
+}
+
+/* ---- Print ---------------------------------------------------------------
+   Nothing in this set is hover-dependent, so the printed article keeps the
+   full picker replacement and every FAQ answer.
+--------------------------------------------------------------------------- */
+@media print {
+  .blogPostContent :is(.artTldr, .artToc, .artSystem, .artFit, .artFit__row,
+    .artFaq__item, .artStat, .artCta, .artNote) {
+    background: #fff;
+    border-color: #c9c9c9;
+    box-shadow: none;
+  }
+
+  .blogPostContent .artSystems,
+  .blogPostContent .artStats,
+  .blogPostContent .artFit,
+  .blogPostContent .artCta,
+  .blogPostContent .artTableWrap {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  /* Dropping the scroller is only safe if the table can also stop being 640px
+     wide — otherwise the columns past the paper edge are simply cut off. */
+  .blogPostContent .artTableWrap {
+    overflow-x: visible;
+  }
+
+  .blogPostContent .artTableWrap > table {
+    min-width: 0;
+  }
+
+  .blogPostContent :is(.artSystem, .artFaq__item, .artFit__row, .artStat) {
+    break-inside: avoid;
+  }
+}
+
+/* ==========================================================================
+   BLOG ARTICLE COMPONENTS                                          [END BLOCK]
+   ==========================================================================*/
