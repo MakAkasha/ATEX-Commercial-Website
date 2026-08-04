@@ -156,6 +156,23 @@ function migrate() {
     db.exec("ALTER TABLE products ADD COLUMN is_catalog INTEGER NOT NULL DEFAULT 0");
   }
 
+  // Additive columns: hand-written SEO copy carried by the blog seed files, which
+  // the importer used to parse and drop. Each one is a string the article author
+  // wrote for a specific slot and that has no equivalent in the existing columns:
+  //   meta_description — SERP copy, distinct from `excerpt` (on-page intro text).
+  //   og_title / og_description — social-card copy, distinct from title/excerpt.
+  //   cover_image_alt — the cover's alt text, previously hardcoded to the title.
+  // '' means "not supplied": every consumer falls back to the value it used
+  // before, so rows that pre-date this migration render byte-identically.
+  // ALTER TABLE ... ADD COLUMN with a constant DEFAULT is safe on a populated
+  // table — SQLite backfills existing rows with the default.
+  const postCols = db.prepare("PRAGMA table_info(posts)").all();
+  ["meta_description", "og_title", "og_description", "cover_image_alt"].forEach((col) => {
+    if (!postCols.some((c) => c.name === col)) {
+      db.exec(`ALTER TABLE posts ADD COLUMN ${col} TEXT NOT NULL DEFAULT ''`);
+    }
+  });
+
   // Ensure a default home content exists (id=1)
   const row = db.prepare("SELECT content_json FROM home_content WHERE id = 1").get();
   if (!row) {

@@ -47,7 +47,7 @@
                 `height: min(52vw, 357px)` at `width: 100%` with
                 `object-fit: cover`, which reserves the box before the file
                 arrives whatever its ratio turns out to be. %>
-            <div class="subpage__cover"><%- picture(post.cover_image, { alt: post.title, sizes: imageSizes.blogPostCover, loading: 'eager', fetchpriority: 'high' }) %></div>
+            <div class="subpage__cover"><%- picture(post.cover_image, { alt: post.cover_image_alt || post.title, sizes: imageSizes.blogPostCover, loading: 'eager', fetchpriority: 'high' }) %></div>
           <% } %>
           <%
             let articleHtml = post.content_html || '';

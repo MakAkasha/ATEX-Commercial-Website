@@ -12,6 +12,7 @@ const { CATEGORIES, getCatalog } = require("../data/productsPage");
 const { getTestimonials } = require("../data/testimonials");
 const { getBlogRedirectTarget } = require("../data/blogRedirects");
 const { safeJsonParse } = require("../utils/safe");
+const { extractFaqFromHtml } = require("../utils/articleFaq");
 const { memoize } = require("../utils/ttlCache");
 const { IMAGE_SIZES } = require("../utils/responsiveImage");
 
@@ -276,7 +277,7 @@ router.get("/blog", (req, res) => {
   const content = loadHomeContent();
   const rawPosts = db
     .prepare(
-      "SELECT id, slug, title, excerpt, cover_image, tags_json, created_at, updated_at, content_html FROM posts WHERE published = 1 ORDER BY created_at DESC"
+      "SELECT id, slug, title, excerpt, cover_image, cover_image_alt, tags_json, created_at, updated_at, content_html FROM posts WHERE published = 1 ORDER BY created_at DESC"
     )
     .all();
   const posts = rawPosts.map(processPost);
@@ -366,8 +367,24 @@ router.get("/blog/:slug", (req, res) => {
   const postSection = (post.tags && post.tags.length) ? post.tags[0] : "حلول إنترنت الأشياء";
   const postKeywords = (post.tags && post.tags.length) ? post.tags.join("، ") : "";
 
+  // Hand-written SEO copy (blog seed front matter, stored by
+  // tools/import-blog-seeds.js). Empty means "not supplied" — an admin-authored
+  // post, or any row written before those columns existed, keeps the previous
+  // behaviour exactly. EJS escapes all of these at output; the JSON-LD block is
+  // escaped in views/partials/structured-data.ejs.
+  const postDescription = post.meta_description || post.excerpt || "";
+  const postOgTitle = post.og_title || post.title;
+  const postCoverAlt = post.cover_image_alt || post.title;
+
   // Approximate word count from stripped HTML for Article schema
   const wordCount = (post.content_html || "").replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
+
+  // Articles that carry an .artFaq block also get a FAQPage node. Not for Google
+  // rich results — those were restricted to government/health sites in Aug 2023,
+  // so atex.sa gets none. The node is for Bing, which still renders FAQ results,
+  // and for LLM/AEO extraction, where an explicit Q/A graph is what answer
+  // engines quote. Under two pairs there is nothing worth publishing.
+  const articleFaqs = extractFaqFromHtml(post.content_html);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -381,16 +398,17 @@ router.get("/blog/:slug", (req, res) => {
         ],
       },
       {
-        "@type": "Article",
+        "@type": "BlogPosting",
         "@id": `${postUrl}#article`,
         "mainEntityOfPage": { "@type": "WebPage", "@id": postUrl },
         "headline": post.title,
-        "description": post.excerpt || "",
+        // Empty strings are invalid for schema.org Text/Date — omit instead.
+        ...(postDescription ? { "description": postDescription } : {}),
         "image": coverImage,
         "url": postUrl,
         "inLanguage": "ar-SA",
-        "datePublished": post.isoPublished,
-        "dateModified": post.isoModified,
+        ...(post.isoPublished ? { "datePublished": post.isoPublished } : {}),
+        ...(post.isoModified ? { "dateModified": post.isoModified } : {}),
         "author": { "@type": "Organization", "name": "أتكس", "url": siteUrl },
         "publisher": {
           "@type": "Organization",
@@ -401,6 +419,20 @@ router.get("/blog/:slug", (req, res) => {
         ...(post.tags.length ? { "keywords": post.tags.join(", ") } : {}),
         ...(wordCount > 0 ? { "wordCount": wordCount } : {}),
       },
+      ...(articleFaqs.length >= 2 ? [{
+        "@type": "FAQPage",
+        "@id": `${postUrl}#faq`,
+        // Without this the node floats free of the article it came from.
+        "isPartOf": { "@id": `${postUrl}#article` },
+        "mainEntity": articleFaqs.map((faq) => ({
+          "@type": "Question",
+          "name": faq.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.answer,
+          },
+        })),
+      }] : []),
     ],
   };
 
@@ -412,9 +444,10 @@ router.get("/blog/:slug", (req, res) => {
     ...baseRenderData(req),
     meta: withMeta(req, {
       title: `${post.title} | أتكس`,
-      ogTitle: post.title,
-      ogImageAlt: post.title,
-      description: post.excerpt || "",
+      ogTitle: postOgTitle,
+      ogDescription: post.og_description || "",
+      ogImageAlt: postCoverAlt,
+      description: postDescription,
       keywords: postKeywords,
       author: "أتكس",
       ogType: "article",
