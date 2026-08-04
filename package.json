@@ -9,7 +9,8 @@
     "start": "node server/app.js",
     "backup:db": "node server/scripts/backup-db.js",
     "create-admin": "node server/scripts/create-admin.js",
-    "regression": "node tools/regression.js"
+    "regression": "node tools/regression.js",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": [],
   "author": "ATEX",

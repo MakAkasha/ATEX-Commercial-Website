@@ -62,14 +62,12 @@ const ejsEscape = (s) =>
     .replace(/"/g, "&#34;")
     .replace(/'/g, "&#39;");
 
-/** What server/utils/responsiveImage.js's escapeAttr produces (differs on `"`). */
-const attrEscape = (s) =>
-  String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+/**
+ * The cover <img> is written by EJS interpolation (`<%= %>`) in
+ * views/blog-post.ejs and views/blog-list.ejs, so its attribute values carry
+ * EJS's escaping, not a helper's.
+ */
+const attrEscape = ejsEscape;
 
 /** Read a single meta tag's raw (still-escaped) content attribute. */
 function metaContent(html, selector) {
