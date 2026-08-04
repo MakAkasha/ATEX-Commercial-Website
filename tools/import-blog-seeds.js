@@ -13,6 +13,8 @@
  *   node tools/import-blog-seeds.js
  *   node tools/import-blog-seeds.js --apply
  *   node tools/import-blog-seeds.js --apply --db /path/to/data.sqlite
+ *   node tools/import-blog-seeds.js --apply --only some-slug --only other-slug
+ *   node tools/import-blog-seeds.js --apply --allow-overwrite
  *   node tools/import-blog-seeds.js --help
  */
 
@@ -36,15 +38,26 @@ A new post is inserted published. An existing post keeps whatever published
 value it already has, so re-importing never republishes a post an admin
 deliberately unpublished.
 
+DRIFT IS REFUSED BY DEFAULT. A stored post whose columns no longer match its
+seed file is reported and left alone, never rewritten. Rewriting it needs an
+explicit --allow-overwrite. An INSERT of a brand-new slug is unaffected, so the
+usual "add an article" run needs no extra flag.
+
 DEPLOY ORDER: restart the app BEFORE running this tool. This tool opens the
 database raw and never migrates it - only the app does, at boot. Run it against
 an unmigrated database and it stops with DATABASE_NOT_MIGRATED.
 
 Options:
-  --apply        Write the imported posts. Without it this tool only previews.
-  --dry-run      Accepted for backwards compatibility; same as the default preview.
-  --db <path>    Database file to use.
-  -h, --help     Show this help and exit.
+  --apply             Write the imported posts. Without it this tool only previews.
+  --dry-run           Accepted for backwards compatibility; same as the default preview.
+  --db <path>         Database file to use.
+  --only <slug>       Restrict the run to this slug. Repeatable. Every other seed
+                      file is left completely alone - not read against the database,
+                      not written. Use this to scope a run to the posts you mean.
+  --allow-overwrite   Rewrite stored posts that have drifted from their seed file.
+                      Without it those posts are REFUSED and left byte-identical.
+                      Combine with --only to overwrite exactly one post.
+  -h, --help          Show this help and exit.
 ${cli.COMMON_HELP_FOOTER}`;
 
 const IMAGE_MAP = {
@@ -403,10 +416,11 @@ function buildPosts() {
     "blog_post_no5.md",
     // no6-no8 are backfills: these three posts were written in the admin panel
     // and existed only in the production database. Their bodies are the stored
-    // content_html verbatim, so importing them is a no-op against production.
+    // content_html verbatim, so importing them is a no-op against production —
+    // they classify as UNCHANGED, not as drift.
     // The same is NOT true of no1-no3 (posts 11/12/13), whose seeds have drifted
-    // from what is live. This tool has no per-file switch, so an --apply run
-    // against production still rewrites those three: read the preview first.
+    // from what is live. run() refuses to rewrite a drifted post unless
+    // --allow-overwrite says so, so an --apply run no longer reverts them.
     "blog_post_no6.md",
     "blog_post_no7.md",
     "blog_post_no8.md",
@@ -486,6 +500,58 @@ function describeValue(value, max = 60) {
   return JSON.stringify(s);
 }
 
+/** Collects every `--only <slug>` pair. Repeatable; a value starting with `--` is a missing argument. */
+function parseOnly(argv) {
+  const args = argv || [];
+  const slugs = [];
+  args.forEach((arg, i) => {
+    if (arg !== "--only") return;
+    const value = args[i + 1];
+    if (!value || value.startsWith("--")) cli.fail("--only requires a slug argument.");
+    slugs.push(value.trim());
+  });
+  return slugs;
+}
+
+/**
+ * Narrows the parsed seed posts to the requested slugs.
+ *
+ * An unknown slug is a hard failure rather than an empty run: the operator
+ * typed a slug they expect to be imported, and silently importing nothing (or,
+ * worse, importing everything) is not what they asked for.
+ */
+function selectPosts(posts, only) {
+  if (!only.length) return posts;
+  const known = new Set(posts.map((p) => p.slug));
+  const unknown = only.filter((s) => !known.has(s));
+  if (unknown.length) {
+    cli.fail(
+      `--only names a slug that no seed file defines: ${unknown.join(", ")}.\n` +
+        `Known slugs: ${[...known].join(", ")}`
+    );
+  }
+  const wanted = new Set(only);
+  return posts.filter((p) => wanted.has(p.slug));
+}
+
+/**
+ * Whether this run may rewrite a stored post that no longer matches its seed.
+ *
+ * Default: no. The tool upserts by slug over every seed file, and three of the
+ * live posts have been edited in the admin panel since they were seeded (one is
+ * 18x the size of its seed). An unguarded --apply reverted all three while
+ * adding a new article, destroying ~300 KB of copy, and the only signal was a
+ * WOULD UPDATE line in a preview nobody is required to read.
+ *
+ * The tool records no baseline, so it cannot tell "the stored row was edited"
+ * from "the seed file was edited". Both surface as drift and both need this
+ * flag. That is the honest reading: either way a human changed one side and
+ * should say out loud which side wins.
+ */
+function parseAllowOverwrite(argv) {
+  return (argv || []).includes("--allow-overwrite");
+}
+
 /** Columns added by server/db.js migrate() that every statement below needs. */
 const REQUIRED_POST_COLUMNS = ["meta_description", "og_title", "og_description", "cover_image_alt"];
 
@@ -509,19 +575,36 @@ function assertMigrated(db) {
 }
 
 function run() {
-  const { apply, preview, dbPath } = cli.start("import-blog-seeds", HELP);
+  const { apply, preview, dbPath, opts } = cli.start("import-blog-seeds", HELP);
   const db = cli.openDb(dbPath);
   assertMigrated(db);
 
-  const { posts, skipped } = buildPosts();
-  console.log(`Seed posts parsed: ${posts.length}`);
+  const only = parseOnly(opts.args);
+  const allowOverwrite = parseAllowOverwrite(opts.args);
+  const { posts: allPosts, skipped } = buildPosts();
+  const posts = selectPosts(allPosts, only);
+  console.log(`Seed posts parsed: ${allPosts.length}`);
+  if (only.length) {
+    console.log(`--only ${only.join(", ")} — importing ${posts.length}, leaving ${allPosts.length - posts.length} untouched.`);
+  }
+  console.log(
+    allowOverwrite
+      ? "Drift: --allow-overwrite — a stored post that has drifted from its seed file WILL be rewritten."
+      : "Drift: a stored post that has drifted from its seed file is refused and left as it is."
+  );
 
   let created = 0;
   let updated = 0;
   let unchanged = 0;
+  let refused = 0;
+  const refusedSlugs = [];
 
   posts.forEach((post) => {
     const verdict = classifyPost(db, post);
+    // A drifted row is only written when the operator asked for it in so many
+    // words. Everything else (INSERT of a new slug, a row that already matches)
+    // is safe and runs unconditionally.
+    const write = apply && (verdict.action !== "update" || allowOverwrite);
 
     if (verdict.action === "create") {
       created += 1;
@@ -529,6 +612,16 @@ function run() {
         `${preview ? "WOULD CREATE" : "CREATED     "} ${post.slug}: ${describeValue(post.title)}, ` +
           `${post.content_html.length} chars html, tags ${JSON.stringify(post.tags)}`
       );
+    } else if (verdict.action === "update" && !allowOverwrite) {
+      refused += 1;
+      refusedSlugs.push(post.slug);
+      console.log(
+        `${preview ? "WOULD REFUSE" : "REFUSED     "} ${post.slug} (post id ${verdict.existing.id}) — stored content has drifted ` +
+          `from the seed file; NOT rewritten. Drifted fields: ${verdict.differing.join(", ")}`
+      );
+      verdict.differing.forEach((field) => {
+        console.log(`        ${field}: stored ${describeValue(verdict.existing[field])} vs seed ${describeValue(verdict.next[field])}`);
+      });
     } else if (verdict.action === "update") {
       updated += 1;
       console.log(
@@ -546,14 +639,21 @@ function run() {
       );
     }
 
-    if (apply) upsertPost(db, post);
+    if (write) upsertPost(db, post);
   });
 
   db.close();
   console.log(
-    `Summary: ${created} created, ${updated} updated, ${unchanged} unchanged, ${skipped} seed file(s) skipped` +
-      ` (${preview ? "preview only, nothing written" : "written"}).`
+    `Summary: ${created} created, ${updated} updated, ${unchanged} unchanged, ${refused} refused, ` +
+      `${skipped} seed file(s) skipped (${preview ? "preview only, nothing written" : "written"}).`
   );
+  if (refused) {
+    console.log(
+      `Refused ${refused} drifted post(s): ${refusedSlugs.join(", ")}. Their stored rows were left exactly as they are.\n` +
+        "Re-run with --allow-overwrite to replace the stored content with the seed file, or with\n" +
+        "--only <slug> to scope an overwrite to one post. Check which side is the newer copy first."
+    );
+  }
   if (preview && created + updated) console.log("Nothing was written. Re-run with --apply to write these posts.");
 }
 
@@ -564,6 +664,9 @@ module.exports = {
   bodyToHtml,
   buildPosts,
   classifyPost,
+  parseAllowOverwrite,
+  parseOnly,
+  selectPosts,
   looksLikeHtmlBody,
   markdownToHtml,
   parseFrontmatter,
