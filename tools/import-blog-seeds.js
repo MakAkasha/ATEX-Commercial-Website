@@ -3,6 +3,12 @@
  *
  * Preview by default: without --apply nothing is written.
  *
+ * DEPLOY ORDER — restart the app BEFORE running this tool. tools/lib/cli.js
+ * openDb() opens the database raw and never migrates it; only server/db.js
+ * migrate() does, and only at app boot. Against an unmigrated database this
+ * tool has no `meta_description` column to write to, and stops with
+ * DATABASE_NOT_MIGRATED.
+ *
  * Usage:
  *   node tools/import-blog-seeds.js
  *   node tools/import-blog-seeds.js --apply
@@ -25,6 +31,14 @@ Imports the seed files in content-src/blog-seed/ into the posts table: INSERT
 when the slug is new, UPDATE when it already exists. Internal content-brief
 sections are trimmed off and image placeholders resolved first. A body that is
 already final HTML is stored as-is; only a markdown body is converted.
+
+A new post is inserted published. An existing post keeps whatever published
+value it already has, so re-importing never republishes a post an admin
+deliberately unpublished.
+
+DEPLOY ORDER: restart the app BEFORE running this tool. This tool opens the
+database raw and never migrates it - only the app does, at boot. Run it against
+an unmigrated database and it stops with DATABASE_NOT_MIGRATED.
 
 Options:
   --apply        Write the imported posts. Without it this tool only previews.
@@ -306,9 +320,13 @@ function replaceImagePlaceholders(markdown, slug) {
 function upsertPost(db, post) {
   const existing = db.prepare("SELECT id FROM posts WHERE slug = ?").get(post.slug);
   if (existing) {
+    // `published` is deliberately absent from the SET list. It used to be forced
+    // to 1 here, so every re-run silently republished any seed-managed post an
+    // admin had unpublished. Publication state is an admin decision; the seed
+    // file owns the content, not the visibility.
     db.prepare(
       "UPDATE posts SET title = ?, excerpt = ?, cover_image = ?, content_html = ?, tags_json = ?, " +
-        "meta_description = ?, og_title = ?, og_description = ?, cover_image_alt = ?, published = 1 WHERE slug = ?"
+        "meta_description = ?, og_title = ?, og_description = ?, cover_image_alt = ? WHERE slug = ?"
     ).run(
       post.title,
       post.excerpt,
@@ -420,7 +438,10 @@ function classifyPost(db, post) {
     og_title: post.og_title,
     og_description: post.og_description,
     cover_image_alt: post.cover_image_alt,
-    published: 1,
+    // Mirrors upsertPost: INSERT publishes, UPDATE leaves the stored value
+    // alone. Reporting a flat 1 here would tell the operator the preview is
+    // about to publish a row that --apply will in fact leave unpublished.
+    published: existing ? existing.published : 1,
   };
 
   if (!existing) return { action: "create", existing: null, next, differing: [] };
@@ -435,9 +456,32 @@ function describeValue(value, max = 60) {
   return JSON.stringify(s);
 }
 
+/** Columns added by server/db.js migrate() that every statement below needs. */
+const REQUIRED_POST_COLUMNS = ["meta_description", "og_title", "og_description", "cover_image_alt"];
+
+/**
+ * cli.openDb() opens the database raw and never migrates it, so an import run
+ * before the app has been restarted hits a missing column and dies on a raw
+ * SQLite exception. Say what actually went wrong instead.
+ */
+function assertMigrated(db) {
+  const columns = db
+    .prepare("PRAGMA table_info(posts)")
+    .all()
+    .map((c) => c.name);
+  const missing = REQUIRED_POST_COLUMNS.filter((c) => !columns.includes(c));
+  if (!missing.length) return;
+  cli.fail(
+    `DATABASE_NOT_MIGRATED: posts is missing ${missing.join(", ")}.\n` +
+      "This tool never migrates a schema; only the app does, at boot.\n" +
+      "Restart the app against this database first, then re-run this tool."
+  );
+}
+
 function run() {
   const { apply, preview, dbPath } = cli.start("import-blog-seeds", HELP);
   const db = cli.openDb(dbPath);
+  assertMigrated(db);
 
   const { posts, skipped } = buildPosts();
   console.log(`Seed posts parsed: ${posts.length}`);
@@ -458,7 +502,8 @@ function run() {
     } else if (verdict.action === "update") {
       updated += 1;
       console.log(
-        `${preview ? "WOULD UPDATE" : "UPDATED     "} ${post.slug} (post id ${verdict.existing.id}) — changed fields: ${verdict.differing.join(", ")}`
+        `${preview ? "WOULD UPDATE" : "UPDATED     "} ${post.slug} (post id ${verdict.existing.id}) — changed fields: ${verdict.differing.join(", ")}` +
+          (Number(verdict.existing.published) ? "" : " (stays unpublished — publication state is left as the admin set it)")
       );
       verdict.differing.forEach((field) => {
         console.log(`        ${field}: ${describeValue(verdict.existing[field])} -> ${describeValue(verdict.next[field])}`);
@@ -484,4 +529,14 @@ function run() {
 
 if (require.main === module) run();
 
-module.exports = { bodyToHtml, buildPosts, looksLikeHtmlBody, markdownToHtml, parseFrontmatter, trimToPublishableMarkdown };
+module.exports = {
+  assertMigrated,
+  bodyToHtml,
+  buildPosts,
+  classifyPost,
+  looksLikeHtmlBody,
+  markdownToHtml,
+  parseFrontmatter,
+  trimToPublishableMarkdown,
+  upsertPost,
+};

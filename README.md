@@ -89,7 +89,11 @@ npm run create-admin -- <username> <password>
 npm run backup:db
 ```
 
-Creates timestamped snapshots under `server/backups/` (main DB + WAL/SHM when present).
+Creates one timestamped snapshot per run under `server/backups/`, written with
+SQLite's `VACUUM INTO`. The output is a single self-contained database file
+(WAL contents already folded in, no `-wal`/`-shm` sidecars to keep with it) and
+is verified with `PRAGMA integrity_check` before the run reports success. Safe
+to take against a running server.
 
 ### Regression (smoke flow)
 
@@ -111,6 +115,20 @@ All three are **preview by default**: an argument-less run reports the exact row
 node tools/import-blog-seeds.js                 # preview
 node tools/import-blog-seeds.js --apply         # write
 ```
+
+**Deploy ordering — restart the app before running these tools.** They open the
+database raw and never migrate it; only `server/db.js migrate()` does, and only
+at app boot. Run the importer against a database the new app version has not yet
+booted against and it stops with `DATABASE_NOT_MIGRATED` (the seed files carry
+SEO columns that the migration adds). Order per deploy:
+
+1. Deploy the code and **restart the app** — this migrates the database.
+2. `npm run backup:db`
+3. `node tools/import-blog-seeds.js` (preview), then `--apply`.
+
+`import-blog-seeds.js` publishes a post it inserts, and leaves the `published`
+value of a post it updates exactly as it found it — re-importing never
+republishes something an admin unpublished.
 
 Database resolution order is the same for all three, and matches the server (`server/db.js`):
 
@@ -260,7 +278,7 @@ comment at the top of the sprite file itself.
 
 - `npm run dev` — run with nodemon
 - `npm start` — run production server
-- `npm run backup:db` — backup SQLite files
+- `npm run backup:db` — write one verified SQLite snapshot to `server/backups/`
 - `npm run create-admin -- <u> <p>` — create admin account
 - `npm run regression -- ...` — run regression script
 - `npm run fix:product-images` — preview product image path repairs (add `-- --apply --i-have-a-backup` to write)
