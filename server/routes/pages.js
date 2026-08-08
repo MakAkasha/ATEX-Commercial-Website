@@ -7,7 +7,7 @@ const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml, sanitizeCssCode } = require("./customPages");
 const { sanitizePostHtml } = require("./posts");
 const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
-const { getSolutions, getIndustries } = require("../data/contentRegistry");
+const { getSolutions, getIndustries, getRecLandings } = require("../data/contentRegistry");
 const { CATEGORIES, getCatalog } = require("../data/productsPage");
 const { getTestimonials } = require("../data/testimonials");
 const { getBlogRedirectTarget } = require("../data/blogRedirects");
@@ -808,6 +808,127 @@ router.get("/contact-us", (req, res) => {
       description: "تواصل مع فريق أتكس للحصول على استشارة وحلول تقنية تناسب مشروعك.",
     })),
   });
+});
+
+/**
+ * Campaign landing pages, registered ABOVE the custom-pages handler below.
+ *
+ * /rec/smart-home and /rec/smart-villa are printed on brochures and QR codes
+ * that are already in circulation, so the URLs are a fixed contract — they sit
+ * under the CMS's /rec/ prefix only because that is where the pre-rebuild site
+ * happened to publish them.
+ *
+ * Registered as two literal paths rather than one /rec/:slug + next(): with a
+ * fixed pair of slugs there is nothing to look up, and a literal path cannot
+ * accidentally shadow a custom page the way a param route could. The custom
+ * pages handler is untouched and still owns every other slug, including its
+ * own 404. server/routes/customPages.js separately refuses to create a row at
+ * either of these slugs, since such a row would render this page instead and
+ * never report an error.
+ */
+const RENDER_LANDING = (page) => (req, res) => {
+  const content = loadHomeContent();
+  const siteUrl = absoluteUrl(req, "/");
+  // Built from the record's own slug, never req.originalUrl: QR traffic arrives
+  // with ?utm_source=..., and withMeta() would otherwise mint a distinct
+  // canonical (and og:url, and twitter:url) for every scan.
+  const pageUrl = absoluteUrl(req, `/rec/${page.slug}`);
+  const ogImage = absoluteUrl(req, page.ogImage);
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "الرئيسية", item: siteUrl },
+          { "@type": "ListItem", position: 2, name: page.title, item: pageUrl },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${pageUrl}#page`,
+        name: page.metaTitle,
+        description: page.metaDescription,
+        url: pageUrl,
+        image: ogImage,
+        inLanguage: "ar-SA",
+        isPartOf: { "@id": `${siteUrl}#website` },
+      },
+      {
+        "@type": "Service",
+        "@id": `${pageUrl}#service`,
+        name: page.title,
+        description: page.metaDescription,
+        serviceType: page.englishTitle,
+        areaServed: "SA",
+        audience: { "@type": "Audience", audienceType: page.audienceLabel },
+        provider: {
+          "@type": "Organization",
+          name: "ATEX",
+          url: siteUrl,
+          telephone: `+${page.wa.number}`,
+        },
+        // No Product/Offer markup on the cards: these are custom-quote items
+        // with no price rendered on the page, and Offer without a visible price
+        // is a structured-data policy violation, not just an ineligible result.
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: page.productsSection.title,
+          itemListElement: page.products.map((product, idx) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            name: product.title,
+            description: product.desc,
+          })),
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: page.faq.items.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: { "@type": "Answer", text: item.a },
+        })),
+      },
+    ],
+  };
+
+  return res.render("rec-landing", {
+    content,
+    page,
+    structuredData,
+    quoteFormId: "recQuoteForm",
+    // Everything assets/js/rec-landing.js needs, as a JSON island. Field
+    // descriptors travel too, so the message composer knows which inputs have
+    // no column on /api/contact and must be folded into the message text.
+    clientConfig: {
+      slug: page.slug,
+      formId: "recQuoteForm",
+      pageTitle: page.title,
+      waNumber: page.wa.number,
+      waText: page.primaryCta.waText,
+      fields: page.quote.fields.map((field) => ({
+        name: field.name,
+        apiField: field.apiField || null,
+        messageLabel: field.messageLabel || null,
+        required: !!field.required,
+      })),
+    },
+    ...baseRenderData(req),
+    meta: withMeta(req, {
+      title: page.metaTitle,
+      description: page.metaDescription,
+      ogTitle: page.title,
+      ogDescription: page.metaDescription,
+      ogImage,
+      canonical: pageUrl,
+    }),
+  });
+};
+
+getRecLandings().forEach((page) => {
+  router.get(`/rec/${page.slug}`, RENDER_LANDING(page));
 });
 
 // Custom pages (public)

@@ -1,0 +1,62 @@
+<section class="section section--dense recProof" aria-labelledby="recProofTitle">
+  <div class="container">
+    <div class="section__head">
+      <p class="solutionsPage__sectionKicker"><%= page.proof.kicker %></p>
+      <h2 id="recProofTitle"><%= page.proof.title %></h2>
+      <%# Load-bearing on the villa page: the testimonials there are from
+          property-development clients, and this line is what frames them as
+          project references rather than homeowner quotes. Do not drop it. %>
+      <% if (page.proof.lede) { %>
+        <p class="recProof__lede"><%= page.proof.lede %></p>
+      <% } %>
+    </div>
+
+    <% if (Array.isArray(page.proof.testimonials) && page.proof.testimonials.length) { %>
+      <ul class="recProof__quotes">
+        <% page.proof.testimonials.forEach(function (item) { %>
+          <li class="recProof__quote">
+            <blockquote>
+              <p><%= item.quote %></p>
+            </blockquote>
+            <p class="recProof__person"><%= item.person %></p>
+            <p class="recProof__role"><%= item.role %></p>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+    <%# The logo river sits after the quotes: the words make the case and the
+        marks close it. It also puts the one moving element on the section's
+        bottom edge rather than between the heading and the copy it introduces.
+
+        The data-marquee-* attributes are the contract initMarquee() reads
+        (assets/js/main.js:216) — the class names alone only carry CSS, and a
+        missing attribute makes the whole thing silently no-op. It clones the
+        content itself for the seamless loop and stops under
+        prefers-reduced-motion. %>
+    <div class="marquee recProof__logos" data-marquee aria-label="شركاؤنا من المطورين">
+      <div class="marquee__viewport" data-marquee-viewport>
+        <div class="marquee__runner" data-marquee-runner>
+          <ul class="marquee__content recProof__logoRow" data-marquee-content>
+            <% page.proof.logos.forEach(function (logo) { %>
+              <li class="recProof__logo">
+                <%# width/height are load-bearing, not decorative: initMarquee() measures
+                    this row to compute its loop distance, and these images are lazy
+                    and below the fold, so without an intrinsic size they measure as
+                    zero-width and the strip loops over nothing. Every card is 300x300. %>
+                <img
+                  src="<%= logo.image %>"
+                  alt="<%= logo.name %>"
+                  width="300"
+                  height="300"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

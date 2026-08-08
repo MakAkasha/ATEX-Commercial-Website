@@ -19,7 +19,7 @@ const contactRoutes = require("./routes/contact");
 const { router: customPagesRoutes } = require("./routes/customPages");
 const { router: settingsRoutes } = require("./routes/settings");
 const pagesRoutes = require("./routes/pages");
-const { getSolutions, getIndustries } = require("./data/contentRegistry");
+const { getSolutions, getIndustries, getRecLandings } = require("./data/contentRegistry");
 const { memoize } = require("./utils/ttlCache");
 const { createResponsiveImage, IMAGE_SIZES } = require("./utils/responsiveImage");
 const { createIconHelper } = require("./utils/icon");
@@ -48,6 +48,10 @@ app.locals.assetVer = (() => {
       path.join(ROOT_DIR, "assets", "css", "styles.css"),
       path.join(ROOT_DIR, "assets", "js", "main.js"),
       path.join(ROOT_DIR, "assets", "js", "consent.js"),
+      // The /rec landing pages load these two directly off the static mount
+      // (they are not Vite entries), so their ?v= has to move when they do.
+      path.join(ROOT_DIR, "assets", "js", "rec-landing.js"),
+      path.join(ROOT_DIR, "assets", "css", "rec-landing.css"),
       // The icon sprite is served from /assets with maxAge 1d, and every icon
       // on every page resolves through it, so a stale copy after a deploy that
       // adds a glyph would leave holes in the page until the day expired.
@@ -175,8 +179,9 @@ const loadSitemapData = memoize(() => {
   const db = getDb();
   const solutionSlugs = getSolutions().map((s) => s.slug);
   const industrySlugs = getIndustries().map((i) => i.slug);
+  const recLandingSlugs = getRecLandings().map((p) => p.slug);
   const posts = db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();
-  return { solutionSlugs, industrySlugs, posts };
+  return { solutionSlugs, industrySlugs, recLandingSlugs, posts };
 }, SITEMAP_TTL_MS);
 
 // Sitemap.xml generator
@@ -184,7 +189,7 @@ app.get("/sitemap.xml", (req, res) => {
   try {
     const proto = req.get("x-forwarded-proto") || req.protocol;
     const baseUrl = `${proto}://${req.get("host")}`;
-    const { solutionSlugs, industrySlugs, posts } = loadSitemapData();
+    const { solutionSlugs, industrySlugs, recLandingSlugs, posts } = loadSitemapData();
 
     const staticUrls = [
       { loc: baseUrl, priority: "1.0", changefreq: "daily" },
@@ -194,6 +199,15 @@ app.get("/sitemap.xml", (req, res) => {
       { loc: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
+      // Campaign landing pages. They carry no nav link by design, so the
+      // sitemap plus one contextual inbound link each (from the smart-home
+      // solution and the residential industry pages) is their whole discovery
+      // path. Driven off the data module so a third one can never desync.
+      ...recLandingSlugs.map((slug) => ({
+        loc: `${baseUrl}/rec/${slug}`,
+        priority: "0.8",
+        changefreq: "monthly",
+      })),
     ];
 
     // Solutions + industries are file-based (contentRegistry), not DB tables

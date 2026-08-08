@@ -1,0 +1,1388 @@
+/* ============================================================
+   /rec campaign landing pages — /rec/smart-home, /rec/smart-villa
+
+   Page-scoped, loaded only by views/rec-landing.ejs, served off the /assets
+   static mount (not a Vite entry) so it never reaches the other ~40 pages.
+
+   THIS FILE IS A REWRITE. The first version inherited only the neutral tokens
+   and stated in its own header that it "defines no colours of its own" — which
+   produced nine identical white sections with navy text and not a single use of
+   --primary. The brand is amber (#ff9933): it is the site's .btn--primary, its
+   .card top rule, its .faq__num, and it was the whole identity of the printed
+   pages these URLs are on. Colour here is semantic:
+
+     amber   you can act on this        CTAs, active filter, card rules, numerals
+     navy    structure and authority    headings, dark bands, spec text
+     paper   quiet, read at your pace   recessed grounds
+
+   MOBILE FIRST. Base rules are the phone; 560/760/1024 add. The audience
+   arrives by QR from printed material, so the phone is the design, not the
+   fallback.
+
+   TYPE IS NOT --font-scale'd. That dial (0.85) is a whole-layout zoom; applied
+   to Arabic it put body copy at 12.75px and collapsed H1 and H2 to the same
+   23.8px on every phone. Spacing, radii and shadows still use it.
+
+   Direction: logical properties only. The document is dir="rtl".
+   ============================================================ */
+
+.recPage {
+  /* Type — deliberately unscaled. See header. */
+  --rec-h1: clamp(30px, 7.2vw, 52px);
+  --rec-h2: clamp(24px, 5.6vw, 36px);
+  --rec-h3: clamp(19px, 4.4vw, 23px);
+  --rec-lede: clamp(17px, 4vw, 20px);
+  --rec-body: clamp(16px, 3.9vw, 17px);
+  --rec-small: clamp(14px, 3.4vw, 15px);
+  --rec-micro: 13px; /* hard floor — no Arabic below this */
+  --rec-stat: clamp(26px, 8vw, 44px);
+
+  /* Corner rounding of the supplied partner-logo cards. See .recProof__logo. */
+  --rec-logo-radius: 4.47%;
+
+  /* Elevation ladder — three levels, each meaning something. Ink-tinted, not
+     black: a neutral shadow greys a warm ground. */
+  --rec-e1: 0 1px 2px rgba(0, 27, 44, 0.05), 0 10px 24px rgba(0, 27, 44, 0.07);
+  --rec-e2: 0 6px 14px rgba(0, 27, 44, 0.1), 0 34px 64px rgba(0, 27, 44, 0.16);
+
+  /* Cairo only. Tajawal is a second, static Arabic font file fetched to draw a
+     handful of H2s; at these sizes Cairo's Naskh apertures also hold up better.
+     font-synthesis: none — synthetic bold thickens Arabic connectors. */
+  font-family: "Cairo", system-ui, sans-serif;
+  font-synthesis: none;
+
+  /* Room for the fixed action bar, derived rather than hand-tuned, and clear of
+     the iOS home indicator. */
+  padding-block-end: calc(var(--tap-min) + var(--s-5) + env(safe-area-inset-bottom, 0px));
+}
+
+.recPage__main {
+  overflow-x: clip;
+}
+
+/* ---------------------------------------------------------- bands + rhythm */
+
+/* Nine sections must not read as one wall. Ground is assigned by section
+   identity, never by position — the two audiences order sections differently
+   (see `sections` in server/data/recLandings/*.js), so :nth-child is unusable. */
+/* --primary-08 over white measured 1.03:1 and faded to fully transparent by
+   62%, so the bottom of every "warm" section was plain white — which erased the
+   journey/roi seam on the developer order and roi/proof on the villa order. */
+.recPage .recBand--warm {
+  background:
+    linear-gradient(180deg, var(--primary-16), transparent 55%),
+    #fbf7f1;
+}
+.recPage .recBand--muted {
+  background: var(--surface-muted);
+}
+/* --navy-05 over white is #f2f4f6 (1.109:1) and --surface-muted is #eef2f6
+   (1.125:1) — the same grey to the eye. Two names for one ground is not a
+   fourth band, so tint resolves to muted and the page keeps four real ones. */
+.recPage .recBand--tint {
+  background: var(--surface-muted);
+}
+/* roi neighbours journey (white) on both orders and proof (white) on the villa
+   order; muted is the only ground that separates it from both. */
+.recPage .recRoi.recBand--warm {
+  background: var(--surface-muted);
+}
+.recPage .recBand--navy {
+  background: var(--navy);
+  color: #fff;
+}
+.recPage .recBand--navy :is(h2, h3, strong) {
+  color: #fff;
+}
+.recPage .recBand--navy p {
+  color: rgba(255, 255, 255, 0.86);
+}
+/* .12 fill is 1.43:1 on navy and the .24 border 2.12:1 — under the 3:1
+   non-text floor, so the pill had no perceptible edge and the same component
+   read as two different things on the light and the dark bands. */
+.recPage .recBand--navy .solutionsPage__sectionKicker {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.38);
+  color: #fff;
+}
+
+/* Three densities, not one. Loud sections get air; quiet ones are squeezed. */
+.recPage .section {
+  padding-block: var(--s-7);
+}
+.recPage .section--dense {
+  padding-block: var(--s-6);
+}
+.recPage .section--loud {
+  padding-block: var(--s-8);
+}
+
+.recPage .section__head {
+  margin-block-end: var(--s-5);
+  text-align: start;
+}
+/* styles.css draws a 34x2.55px amber dash under every h2; with the amber
+   kicker pill above it that is eighteen decorative amber marks per page, and it
+   floats between the h2 and the lede owning neither. */
+.recPage .section__head h2::after {
+  content: none;
+}
+.recPage .section__head h2 {
+  font-size: var(--rec-h2);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+/* styles.css sets .section__head p to weight 700; at 700 a lede has the same
+   voice as the heading and the hierarchy collapses to size alone. */
+.recPage .section__head p {
+  font-weight: 400;
+  font-size: var(--rec-lede);
+  line-height: 1.8;
+  max-inline-size: 26em;
+}
+
+.recPage :is(p, li) {
+  font-size: var(--rec-body);
+  line-height: 1.9;
+}
+
+/* --------------------------------------------------------------- hero */
+
+.recPage .recHero {
+  position: relative;
+  padding-block: var(--s-6) var(--s-7);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ---- the video as the hero's ground ----
+
+   Full-bleed behind everything, with a warm veil over it. The veil is the whole
+   trick: unveiled footage under navy Arabic type is unreadable, and it changes
+   from frame to frame, so contrast cannot be reasoned about. At these opacities
+   the video reads as slow movement and depth behind the paper rather than as a
+   picture competing with the headline — which is what keeps the page light
+   rather than turning the hero into a dark cinematic band. */
+.recPage .recHero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  /* Warm paper, not --surface-muted: this is fully opaque, so it is what a
+     visitor sees if the video is blocked or fails to decode, and a cool grey
+     under a warm veil looks wrong. */
+  background: #f2ece3;
+}
+.recPage .recHero__video {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+.recPage .recHero__veil {
+  position: absolute;
+  inset: 0;
+  /* Stops are in px, not %: the hero is ~547px on a phone and ~797px at 1440,
+     but the copy starts 27px from the top either way, so a percentage cannot
+     serve both. 40px is the clear window — genuinely above the badge at every
+     width. Below it the paper holds at 0.90+, which is what makes contrast
+     answerable about a surface that changes every frame: measured against the
+     darkest frame in hero.mp4, navy needs 0.55 to clear AA and gets 0.90.
+
+     The amber glow is layer ONE, above the paper — underneath it only ~6%
+     survived — and at 12% (inline-end in this RTL document). */
+  background:
+    radial-gradient(72% 60% at 12% 4%, rgba(255, 153, 51, 0.22), transparent 72%),
+    linear-gradient(
+      180deg,
+      rgba(251, 247, 241, 0.58) 0px,
+      rgba(251, 247, 241, 0.72) 18px,
+      rgba(251, 247, 241, 0.9) 40px,
+      rgba(251, 247, 241, 0.95) 150px,
+      rgba(251, 247, 241, 0.97) 100%
+    );
+}
+
+/* prefers-reduced-motion: main.js pauses the video, so it holds on a frame —
+   but a paused frame behind text is still a busy surface. Drop to the poster
+   and lean the veil opaque. */
+@media (prefers-reduced-motion: reduce) {
+  .recPage .recHero__veil {
+    background:
+      radial-gradient(72% 60% at 12% 4%, rgba(255, 153, 51, 0.18), transparent 72%),
+      linear-gradient(180deg, rgba(251, 247, 241, 0.9) 0%, rgba(251, 247, 241, 0.97) 100%);
+  }
+}
+
+/* The gap is tight on purpose: badge, headline, lede and the primary action all
+   have to clear the fold on a 375x812 screen once the site header (~90px) and
+   the fixed action bar (~54px + safe area) are taken out. */
+.recPage .recHero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--s-4);
+}
+.recPage .recHero__copy {
+  display: grid;
+  gap: var(--s-4);
+  justify-items: start;
+  max-inline-size: 34em;
+}
+
+.recPage .breadcrumbs {
+  display: none; /* a QR arrival has no tree to climb; ~54px of the tightest fold */
+}
+
+.recPage .recHero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  align-self: start;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--primary-35);
+  border-radius: var(--radius-pill);
+  /* Opaque, so the chip's contrast stops depending on the frame behind it.
+     --accent-text (#b35a00) measures 4.08:1 on a translucent amber chip over
+     paper; #9c4f00 on this fill is 5.56:1 and frame-independent. */
+  background: #fff6ec;
+  color: var(--accent-text-deep);
+  font-size: var(--rec-small);
+  font-weight: 700;
+}
+.recPage .recHero__badge::before {
+  content: "";
+  inline-size: calc(7px * var(--font-scale));
+  block-size: calc(7px * var(--font-scale));
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.recPage .recHero__title {
+  margin: 0;
+  font-size: var(--rec-h1);
+  font-weight: 800;
+  /* 1.25 clipped the tanween above ا against the descenders of the line above. */
+  line-height: 1.35;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+/* The promise word, in the brand colour. The approved page did exactly this. */
+.recPage .recHero__mark {
+  color: var(--accent-text);
+}
+
+.recPage .recHero__lede {
+  margin: 0;
+  font-size: var(--rec-lede);
+  line-height: 1.8;
+  color: var(--muted);
+  max-inline-size: 26em;
+  /* Six lines of Arabic is the largest single consumer of the first screen.
+     The lede restates the H1; three lines is enough to earn the scroll. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+.recPage .recHero__actions {
+  display: grid;
+  gap: var(--s-4);
+  /* Defeats justify-items:start on .recHero__copy. Without it this row is
+     max-content wide and the CTA's inline-size:100% resolves to ~150px. */
+  justify-self: stretch;
+}
+
+/* One primary action above the fold, full width, thumb-sized. Two competing
+   CTAs in the first screen is a conversion tax, and the secondary is already
+   duplicated by the sticky bar. */
+.recPage .recHero__cta {
+  inline-size: 100%;
+  min-block-size: 56px;
+  font-size: var(--rec-body);
+}
+.recPage .recHero__ctaAlt {
+  /* An outline button on a warm ground reads as disabled in daylight — and
+     daylight on a site is the actual viewing condition here. Make it a link. */
+  border: 0;
+  background: none;
+  box-shadow: none;
+  min-block-size: var(--tap-min);
+  /* 16px is body text, so it needs 4.5:1. --accent-text lands at 4.03-4.43:1
+     over this part of the veil; --accent-text-deep clears at 5.14:1. */
+  color: var(--accent-text-deep);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* Hidden on the phone. The chips restate the systems the H1 just named, and
+   they sit between the primary action and the proof figures — pushing the
+   figures out of the first screen to say something already said. They come back
+   at 760 where there is room for them. */
+.recPage .recHero__chips {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recPage .recHero__chips li {
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--radius-pill);
+  background: var(--primary-08);
+  color: var(--accent-text);
+  font-size: var(--rec-small);
+  font-weight: 700;
+}
+
+/* Stats stay 3-across on the phone. Stacking three short figures into three
+   full-width rows cost ~200px of the first screen for nothing. */
+.recPage .recHero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2);
+  margin: 0;
+}
+.recPage .recHero__stat {
+  padding: var(--s-3) var(--s-1);
+  border: 1px solid var(--primary-22);
+  border-radius: var(--radius-sm);
+  background: var(--white-92);
+  box-shadow: var(--rec-e1);
+  text-align: center;
+}
+.recPage .recHero__statValue {
+  font-size: var(--rec-stat);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--accent-text);
+  /* plaintext, not the markup's dir="ltr": that is right for "+15%" and "24/7"
+     but wrong for smart-villa's "5 دقائق", where an LTR base puts the digit on
+     the wrong side of the Arabic word. plaintext takes direction from each
+     value's own first strong character, so both resolve and the leading "+"
+     still lands outside. nowrap keeps the longest value inside its tile. */
+  unicode-bidi: plaintext;
+  text-align: center;
+  text-wrap: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.recPage .recHero__statLabel {
+  margin: 0;
+  font-size: var(--rec-micro);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ----------------------------------------------------------- products */
+
+.recPage .recProducts__filters {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--s-3);
+  margin-block: var(--s-4) var(--s-3);
+  /* Full-bleed out of .container so the row can scroll edge to edge instead of
+     wrapping eight chips into four rows. */
+  margin-inline: calc(-20px * var(--font-scale));
+  padding-inline: calc(20px * var(--font-scale));
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.recPage .recProducts__filters::-webkit-scrollbar {
+  display: none;
+}
+.recPage .recProducts__filter {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  scroll-snap-align: start;
+  min-block-size: var(--tap-min);
+  padding-inline: var(--s-4);
+  /* .chip is #fff with no border; on the muted products band that is 1.125:1 —
+     seven edgeless white blobs beside one amber pill. */
+  border: 1px solid var(--navy-12);
+  font-size: var(--rec-small);
+}
+/* Active filter is amber — the one colour that means "acting". Navy on amber,
+   NOT white: #fff on #ff9933 is 2.13:1, the same failure the hover state was
+   written to avoid. .chip's own navy on amber is 6.90:1. */
+.recPage .recProducts__filter[aria-pressed="true"],
+.recPage .recProducts__filter[aria-pressed="true"]:hover {
+  background: var(--primary);
+  border-color: transparent;
+  color: var(--navy);
+}
+
+/* Empty until rec-landing.js writes the count, so the margin was phantom. */
+.recPage .recProducts__count:empty {
+  display: none;
+}
+.recPage .recProducts__count {
+  margin: 0 0 var(--s-4);
+  font-size: var(--rec-small);
+  color: var(--muted);
+}
+
+/* Phone: a swipe carousel, which is what the approved page shipped and what a
+   thumb expects. Seven stacked cards is ~3,400px — eight screens of catalogue
+   in the middle of a conversion page. */
+.recPage .recProducts__grid {
+  display: flex;
+  gap: var(--s-3);
+  margin: 0 calc(-20px * var(--font-scale));
+  padding: 0 calc(20px * var(--font-scale)) var(--s-4);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline-start: calc(20px * var(--font-scale));
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.recPage .recProducts__grid::-webkit-scrollbar {
+  display: none;
+}
+.recPage .recProducts__card {
+  flex: 0 0 84%; /* the peek of the next card is the swipe affordance */
+  scroll-snap-align: start;
+}
+/* [hidden] is a UA default and the flex/grid rule above is an author rule on
+   the same element — author wins, so a filtered-out card would stay visible.
+   assets/css/styles.css hit this same trap with .formSteps__nav .btn[hidden]. */
+.recPage .recProducts__card[hidden] {
+  display: none;
+}
+
+.recPage .recCard {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  border-radius: var(--radius);
+  background: #fff;
+  overflow: hidden;
+  box-shadow: var(--rec-e1);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+/* The photo carries the card: image, scrim, type laid over it. The first build
+   put the tag and title below the image as navy-on-white, which is the most
+   generic card layout there is. The site's own .solutionCard does it this way. */
+.recPage .recCard__media {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  background: var(--navy-05);
+}
+.recPage .recCard__media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease);
+}
+.recPage .recCard__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 27, 44, 0.05) 30%, rgba(0, 27, 44, 0.78));
+}
+.recPage .recCard__overlay {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 1;
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  color: #fff;
+}
+.recPage .recCard__tag {
+  justify-self: start;
+  margin: 0;
+  padding: calc(3px * var(--font-scale)) var(--s-2);
+  border-radius: var(--radius-pill);
+  /* Ink, not a white wash: over a bright photo region the frosted version left
+     13px #fff at 2.42:1 and read as a smudge rather than a label. */
+  background: rgba(0, 27, 44, 0.62);
+  backdrop-filter: blur(calc(6px * var(--font-scale)));
+  font-size: var(--rec-micro);
+  font-weight: 700;
+  color: #fff;
+}
+.recPage .recCard__title {
+  margin: 0;
+  font-size: var(--rec-h3);
+  line-height: 1.5;
+  color: #fff;
+}
+
+.recPage .recCard__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+}
+.recPage .recCard__desc {
+  margin: 0;
+  font-size: var(--rec-small);
+  line-height: 1.9;
+  color: var(--muted);
+  max-inline-size: 30em;
+}
+.recPage .recCard__bullets,
+.recPage .recModal__bullets,
+.recPage .recStack__layerBullets {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recPage :is(.recCard__bullets, .recStack__layerBullets) li {
+  display: flex;
+  gap: var(--s-2);
+  align-items: flex-start;
+  font-size: var(--rec-small);
+  line-height: 2;
+  color: var(--muted);
+}
+.recPage :is(.recCard__bullets, .recStack__layerBullets) svg {
+  flex: 0 0 auto;
+  inline-size: calc(18px * var(--font-scale));
+  block-size: calc(18px * var(--font-scale));
+  margin-block-start: calc(6px * var(--font-scale));
+  color: var(--primary);
+}
+.recPage .recCard__more {
+  margin-block-start: auto;
+  inline-size: 100%;
+  min-block-size: var(--tap-min);
+}
+
+/* -------------------------------------------------------------- proof */
+
+.recPage .recProof__lede {
+  /* `margin-inline: auto` centred the block while its text stayed start-aligned,
+     so its start edge did not line up with the H2 above it. The .section__head
+     grid gap already spaces it; an extra top margin put this lede 8.5px lower
+     than the identical element in products and integration. */
+  margin: 0;
+  max-inline-size: 26em;
+  color: var(--muted);
+}
+
+/* The strip now closes the section, after the quotes. */
+.recPage .recProof__logos {
+  margin-block-start: var(--s-6);
+  /* The house .marquee is a bordered, shadowed grey panel — on the white proof
+     section that is a box inside a box holding white logo cards. The strip is
+     the section's closing edge, so it gets a rule, not a container. */
+  padding: 0;
+  border: 0;
+  border-block-start: 1px solid var(--navy-08);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.recPage .recProof__logoRow {
+  display: flex;
+  align-items: center;
+  /* The house .marquee__content carries `gap` and `padding-inline`. Both are
+     zeroed: a gap applies only between children of ONE copy, and this row's
+     spacing has to survive the loop seam, so it rides on the item margin. */
+  gap: 0;
+  margin: 0;
+  padding: var(--s-5) 0;
+  list-style: none;
+}
+/* No background or radius on the li: the artwork already draws its own white
+   card, and a percentage radius resolves per-axis, so on a non-square box the
+   li's white was clipped with elliptical corners fringing the mark's own. */
+.recPage .recProof__logo {
+  display: flex;
+  align-items: center;
+  margin-inline-end: var(--s-5);
+}
+
+/* The radius is the artwork's own: every supplied file draws its card as a
+   rounded path with a 99.61-unit corner on a 2229.4-unit side — 4.47%, the same
+   across all nineteen. A percentage keeps it true at any rendered size, and it
+   is applied to the image so the corners are clipped rather than left as white
+   squares that only look right against a white section. */
+/* Source files are rendered at 300px tall so this stays crisp at 2x DPR, which
+   is what almost every phone reaching this page has. */
+.recPage .recProof__logo img {
+  block-size: calc(156px * var(--font-scale));
+  inline-size: auto;
+  /* The artwork is square, and initMarquee() measures the row's scrollWidth to
+     compute its loop distance. These images are lazy and below the fold, so
+     without an intrinsic ratio they measure as zero-width at init and the strip
+     loops over ~nothing. The width/height attributes in proof.ejs pair with
+     this. */
+  aspect-ratio: 1 / 1;
+  border-radius: var(--rec-logo-radius);
+}
+
+/* The strip never stops. The house marquee pauses on hover and on the
+   `is-paused` class main.js toggles; a rep demoing this on a phone would
+   otherwise freeze it the moment their thumb rested on it. */
+.recPage .recProof__logos:hover .marquee__runner,
+.recPage .recProof__logos.is-paused .marquee__runner {
+  animation-play-state: running;
+}
+
+.recPage .recProof__quotes {
+  display: flex;
+  gap: var(--s-3);
+  margin: var(--s-5) calc(-20px * var(--font-scale)) 0;
+  padding: 0 calc(20px * var(--font-scale)) var(--s-3);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline-start: calc(20px * var(--font-scale));
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.recPage .recProof__quotes::-webkit-scrollbar {
+  display: none;
+}
+/* 93%, not 86%: at the smaller width a sliver of the card on BOTH sides stayed
+   in view, so the visitor read a column of chopped half-words down each edge.
+   One card, one narrow peek. */
+.recPage .recProof__quote {
+  flex: 0 0 93%;
+  scroll-snap-align: start;
+  padding: var(--s-5);
+  border-inline-start: 4px solid var(--primary);
+  /* Logical corners: the amber spine is on the inline-start edge, so that edge
+     stays square and the free edge rounds. The physical `0 r r 0` shorthand did
+     the opposite under RTL — it curved the spine away at both ends. */
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--radius);
+  border-end-end-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--rec-e1);
+}
+.recPage .recProof__quote blockquote {
+  margin: 0 0 var(--s-3);
+  color: var(--ink);
+  max-inline-size: 30em;
+}
+/* Arabic guillemets, matching the convention the copy itself uses. U+00AB and
+   U+00BB are Bidi_Mirrored, so the browser orients them for the RTL run — do
+   not swap them. The previous rule opened every quote with U+201D, the English
+   *closing* curl, and never closed it. */
+.recPage .recProof__quote blockquote p::before {
+  content: "\00AB\2009";
+}
+.recPage .recProof__quote blockquote p::after {
+  content: "\2009\00BB";
+}
+.recPage .recProof__person {
+  margin: 0;
+  font-weight: 700;
+  color: var(--navy);
+  font-size: var(--rec-small);
+}
+.recPage .recProof__role {
+  margin: 0;
+  font-size: var(--rec-small);
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ journey */
+
+/* A rail with markers on it, not four grey slabs. The approved page made the
+   process legible as a process; that was the point of the section. */
+.recPage .recJourney__steps {
+  position: relative;
+  display: grid;
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  padding-inline-start: calc(46px * var(--font-scale));
+  list-style: none;
+}
+.recPage .recJourney__steps::before {
+  content: "";
+  position: absolute;
+  inset-block: calc(18px * var(--font-scale));
+  inset-inline-start: calc(17px * var(--font-scale));
+  inline-size: calc(2px * var(--font-scale));
+  background: var(--primary-35);
+}
+.recPage .recJourney__step {
+  position: relative;
+}
+.recPage .recJourney__num {
+  position: absolute;
+  inset-inline-start: calc(-46px * var(--font-scale));
+  inset-block-start: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: calc(36px * var(--font-scale));
+  block-size: calc(36px * var(--font-scale));
+  border-radius: 50%;
+  /* Navy, not amber: these number a process, they are not actions — and #fff on
+     #ff9933 is 2.13:1, so the numerals were mush. The rail stays amber, so the
+     journey is still the page's one amber thread. */
+  background: var(--navy);
+  box-shadow: 0 0 0 calc(4px * var(--font-scale)) var(--primary-15);
+  color: #fff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.recPage .recJourney__stepTitle {
+  margin: 0 0 var(--s-2);
+  font-size: var(--rec-h3);
+  line-height: 1.5;
+  color: var(--navy);
+}
+.recPage :is(.recJourney__stepBody, .recRoi__cardBody, .recSustain__itemBody) {
+  margin: 0;
+  color: var(--muted);
+  max-inline-size: 30em;
+}
+
+/* ---------------------------------------------------------------- roi */
+
+.recPage .recRoi__grid {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The amber cap is the approved page's `border-t-4 border-brand-DEFAULT`, and
+   it is also what the site's own .card does. */
+.recPage .recRoi__card {
+  padding: var(--s-5);
+  border-block-start: 4px solid var(--primary);
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: #fff;
+  box-shadow: var(--rec-e1);
+}
+.recPage .recRoi__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: calc(44px * var(--font-scale));
+  block-size: calc(44px * var(--font-scale));
+  /* The card's amber cap is this section's amber; a filled amber tile beside it
+     plus the repeated CTA made three amber fills in one viewport. */
+  border: 1px solid var(--navy-12);
+  border-radius: calc(14px * var(--font-scale));
+  background: var(--navy-05);
+}
+.recPage .recRoi__icon svg {
+  inline-size: calc(22px * var(--font-scale));
+  block-size: calc(22px * var(--font-scale));
+  color: var(--navy);
+}
+.recPage :is(.recRoi__cardTitle, .recSustain__itemTitle) {
+  margin: var(--s-3) 0 var(--s-2);
+  font-size: var(--rec-h3);
+  line-height: 1.5;
+  color: var(--navy);
+}
+.recPage .recRoi__cta {
+  margin: var(--s-6) 0 0;
+}
+.recPage .recRoi__cta .btn {
+  inline-size: 100%;
+  min-block-size: 56px;
+}
+
+/* The figures inside body copy are the claim. Amber, tabular, isolated. */
+.recPage :is(.recRoi__cardBody, .recSustain__itemBody, .recJourney__stepBody) strong {
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+.recPage .recBand--navy :is(.recSustain__itemBody) strong {
+  color: var(--primary-2);
+}
+
+/* --------------------------------------------------------- sustainability */
+
+/* The one inversion on the page. It is the visual full stop before the
+   technical content, and it is what the approved page's dark band did. */
+.recPage .recSustain__grid {
+  display: grid;
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recPage .recSustain__item {
+  padding-block-start: var(--s-4);
+  /* .18 white on navy is 1.74:1 — the dividers were not there. */
+  border-block-start: 1px solid rgba(255, 255, 255, 0.32);
+}
+
+/* ---------------------------------------------------------------- stack */
+
+.recPage .recStack__grid {
+  display: grid;
+  gap: var(--s-5);
+  margin-block-start: var(--s-5);
+}
+.recPage .recStack__layers {
+  display: grid;
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* A spine, not three more boxes. */
+.recPage .recStack__layer {
+  padding-inline-start: var(--s-4);
+  border-inline-start: 4px solid var(--primary-35);
+}
+.recPage .recStack__layerName {
+  margin: 0;
+  font-size: var(--rec-small);
+  font-weight: 700;
+  color: var(--accent-text);
+}
+.recPage .recStack__layerTitle {
+  margin: var(--s-1) 0 var(--s-2);
+  font-size: var(--rec-h3);
+  line-height: 1.5;
+  color: var(--navy);
+}
+.recPage .recStack__layerBody {
+  margin: 0 0 var(--s-3);
+  color: var(--muted);
+  max-inline-size: 30em;
+}
+.recPage .recStack__platformsTitle {
+  margin: var(--s-3) 0 var(--s-2);
+  font-size: var(--rec-small);
+  font-weight: 700;
+  color: var(--navy);
+}
+.recPage .recStack__platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Platform names are nouns, not controls — and this was a third pill radius. */
+.recPage .recStack__platforms li {
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--radius-pill);
+  background: var(--navy-05);
+  color: var(--navy);
+  font-size: var(--rec-micro);
+  font-weight: 700;
+}
+
+.recPage .recStack__side {
+  padding: var(--s-5);
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: #fff;
+  box-shadow: var(--rec-e2);
+}
+.recPage .recStack__sideKicker {
+  margin: 0;
+  font-size: var(--rec-micro);
+  font-weight: 700;
+  color: var(--primary-2);
+}
+.recPage .recStack__sideTitle {
+  margin: var(--s-2) 0;
+  font-size: var(--rec-h3);
+  line-height: 1.5;
+  color: #fff;
+}
+.recPage .recStack__sideLede {
+  margin: 0 0 var(--s-4);
+  font-size: var(--rec-small);
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.86);
+}
+.recPage .recStack__sideItems {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recPage .recStack__sideItems strong {
+  display: block;
+  margin-block-end: calc(2px * var(--font-scale));
+  color: #fff;
+  font-size: var(--rec-small);
+}
+.recPage .recStack__sideItems span {
+  font-size: var(--rec-small);
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ---------------------------------------------------------------- faq */
+
+/* The house .faq already carries the amber numeral and the underline sweep;
+   strip only the per-item card so the rows sit on the band. */
+/* The house .faq keeps an 11.9px gap between items, so a bottom rule floated
+   above the next row instead of dividing them; the last row kept a rule with
+   nothing under it; and .is-open::after painted a second amber bar just inside
+   the border, doubling the line. */
+.recPage .faq {
+  gap: 0;
+}
+.recPage .faq__item {
+  border: 0;
+  border-block-end: 1px solid var(--navy-12);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.recPage .faq__item:last-child {
+  border-block-end: 0;
+}
+.recPage .faq__item::after {
+  content: none;
+}
+.recPage .faq__item.is-open {
+  border-block-end-color: var(--primary);
+}
+/* rgba(255,153,51,.9) at 23.8px on the band is ~2.1:1 — invisible numerals. */
+.recPage .faq__num {
+  color: var(--accent-text);
+}
+@media (hover: hover) {
+  /* A borderless, shadowless row lifting 1.7px reads as a jitter. */
+  .recPage .faq__item:hover {
+    transform: none;
+    border-block-end-color: var(--navy-12);
+  }
+}
+.recPage .faq__q {
+  min-block-size: var(--tap-min);
+  font-size: var(--rec-body);
+}
+
+/* -------------------------------------------------------------- quote */
+
+/* The footer is #0a0a0a: navy against it is 1.35:1, so the page appeared to
+   have no end. Amber is 6.90:1 on navy and echoes the roi card caps. */
+.recPage .recQuote {
+  border-block-end: 4px solid var(--primary);
+}
+
+.recPage .recQuote__inner {
+  display: grid;
+  gap: var(--s-5);
+}
+.recPage .recQuote__desc,
+.recPage .recQuote__alt {
+  color: rgba(255, 255, 255, 0.86);
+}
+.recPage .recQuote__wa {
+  color: var(--primary-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The form is a white plate on the dark band — the page's closing gesture, and
+   it visually attaches the offer to the argument above it. */
+.recPage .recQuote__form {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--rec-e2);
+}
+.recPage .recQuote__field {
+  display: grid;
+  gap: calc(6px * var(--font-scale));
+}
+.recPage .recQuote__field label {
+  font-size: var(--rec-small);
+  font-weight: 700;
+  color: var(--navy);
+}
+.recPage .recQuote__field :is(input, select, textarea) {
+  inline-size: 100%;
+  min-block-size: calc(52px);
+  padding: var(--s-3);
+  border: 1px solid var(--navy-14);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  /* 16px RAW. Below it, iOS Safari zooms the viewport on focus and does not
+     zoom back out — the visitor lands on a 1.3x page hunting for submit. */
+  font-size: 16px;
+}
+.recPage .recQuote__field textarea {
+  min-block-size: calc(88px);
+}
+.recPage .recQuote__field input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+.recPage .recQuote__error:not(:empty) {
+  font-size: var(--rec-small);
+  color: #b3261e;
+}
+/* Off-screen rather than display:none — some bots skip fields that are not
+   rendered at all, and this one is meant to be filled in. */
+.recPage .recQuote__trap {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.recPage .recQuote__submit {
+  inline-size: 100%;
+  min-block-size: 56px;
+  scroll-margin-block-end: calc(
+    var(--tap-min) + 2 * var(--s-2) + var(--s-5) + env(safe-area-inset-bottom, 0px)
+  );
+}
+.recPage .recQuote__status:not(:empty) {
+  margin: 0;
+  padding: var(--s-3);
+  border-radius: var(--radius-sm);
+  background: var(--primary-08);
+  font-size: var(--rec-small);
+  color: var(--accent-text);
+}
+
+/* -------------------------------------------------------------- modal */
+
+.recPage .recModal {
+  inline-size: min(calc(760px * var(--font-scale)), calc(100% - 2 * var(--s-4)));
+  max-block-size: 88vh;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--rec-e2);
+  color: var(--ink);
+}
+.recPage .recModal::backdrop {
+  background: rgba(0, 27, 44, 0.62);
+}
+.recPage .recModal__dismiss {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: flex;
+  /* RTL: the dismiss control mirrors to the inline-end (left) edge. flex-start
+     resolved to the right, which is where a title belongs. */
+  justify-content: flex-end;
+  padding: var(--s-2);
+  background: #fff;
+}
+.recPage .recModal__close {
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border: 1px solid var(--navy-12);
+  border-radius: 50%;
+  background: #fff;
+  font-size: calc(22px * var(--font-scale));
+  line-height: 1;
+  cursor: pointer;
+}
+.recPage .recModal__body {
+  display: grid;
+  gap: var(--s-4);
+  padding: 0 var(--s-4) var(--s-4);
+}
+.recPage .recModal__media {
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--navy-05);
+}
+.recPage .recModal__media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.recPage .recModal__copy {
+  display: grid;
+  gap: var(--s-3);
+  align-content: start;
+}
+.recPage .recModal__tag {
+  justify-self: start;
+  margin: 0;
+  padding: calc(3px * var(--font-scale)) var(--s-2);
+  border-radius: var(--radius-pill);
+  background: var(--primary-16);
+  color: var(--accent-text);
+  font-size: var(--rec-micro);
+  font-weight: 700;
+}
+.recPage .recModal__title {
+  margin: 0;
+  font-size: var(--rec-h2);
+  line-height: 1.4;
+  color: var(--navy);
+}
+.recPage :is(.recModal__desc, .recModal__extra) {
+  margin: 0;
+  font-size: var(--rec-small);
+  line-height: 1.9;
+  color: var(--muted);
+  max-inline-size: 30em;
+}
+.recPage .recModal__bullets li {
+  font-size: var(--rec-small);
+  line-height: 1.9;
+  color: var(--muted);
+}
+.recPage .recModal__cta {
+  position: sticky;
+  inset-block-end: 0;
+  inline-size: 100%;
+  min-block-size: var(--tap-min);
+  margin-block-start: var(--s-2);
+  /* The copy must not appear to slide under a floating button. */
+  box-shadow: 0 calc(-10px * var(--font-scale)) calc(14px * var(--font-scale)) #fff;
+}
+
+/* ------------------------------------------------------------- sticky */
+
+.recPage .recSticky {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-3);
+  /* Without the inset the buttons sit under the iOS home indicator. */
+  padding-block-end: calc(var(--s-2) + env(safe-area-inset-bottom, 0px));
+  background: var(--white-96);
+  backdrop-filter: blur(calc(14px * var(--font-scale)));
+  border-block-start: 1px solid var(--primary-22);
+  box-shadow: 0 calc(-16px * var(--font-scale)) calc(40px * var(--font-scale)) var(--primary-15);
+}
+.recPage .recSticky__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap-min);
+  padding-inline: var(--s-4);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--rec-small);
+  text-decoration: none;
+}
+/* Neutral: the bar's job is one action, and two amber-tinted buttons made the
+   strip read as two equal offers. */
+.recPage .recSticky__btn--call {
+  border: 1px solid var(--navy-14);
+  background: var(--navy-05);
+  color: var(--navy);
+}
+/* The single most important control on a QR-scanned page. It is amber, like
+   every other "you can act here" on the site — not navy, which is the colour of
+   the headings above it. */
+.recPage .recSticky__btn--wa {
+  background: linear-gradient(135deg, var(--primary), #f5811f);
+  color: #fff;
+  box-shadow: 0 calc(6px * var(--font-scale)) calc(18px * var(--font-scale)) var(--primary-36);
+}
+.recPage .recSticky__btn svg {
+  inline-size: calc(20px * var(--font-scale));
+  block-size: calc(20px * var(--font-scale));
+}
+
+/* --------------------------------------------------- focus + motion */
+
+/* styles.css scopes :focus-visible to an explicit selector list rather than
+   applying it globally, so anything new has to opt in. No border-radius here —
+   it reshaped pill controls on focus; the outline follows the element's own. */
+.recPage
+  :is(
+    .recProducts__filter,
+    .recCard__more,
+    .recModal__close,
+    .recSticky__btn,
+    .recHero__ctaAlt,
+    .recQuote__form :is(input, select, textarea, button)
+  ):focus-visible {
+  outline: calc(3px * var(--font-scale)) solid var(--navy);
+  outline-offset: calc(3px * var(--font-scale));
+}
+.recPage .recBand--navy :is(a, button):focus-visible {
+  outline-color: var(--primary-2);
+}
+
+@media (hover: hover) {
+  .recPage .recCard:hover {
+    transform: translateY(calc(-4px * var(--font-scale)));
+    box-shadow: var(--rec-e2);
+  }
+  .recPage .recCard:hover .recCard__media img {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recPage .recCard,
+  .recPage .recCard__media img {
+    transition: none;
+  }
+  .recPage .recCard:hover,
+  .recPage .recCard:hover .recCard__media img {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------- 560px and up */
+
+/* 526px of container is where two 240px columns first fit without either
+   dropping below a readable Arabic measure. */
+@media (min-width: 560px) {
+  .recPage .recHero__stats {
+    gap: var(--s-4);
+  }
+  .recPage :is(.recRoi__grid, .recSustain__grid, .recJourney__steps) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* The rail and its negative-offset markers only work in one column: in a grid
+     the marker overhangs the column gap onto the previous cell's text, and the
+     rail runs behind column one only. Above 560 the number sits in flow. */
+  .recPage .recJourney__steps {
+    column-gap: var(--s-6);
+    padding-inline-start: 0;
+  }
+  .recPage .recJourney__steps::before {
+    content: none;
+  }
+  .recPage .recJourney__num {
+    position: static;
+    margin-block-end: var(--s-3);
+  }
+  .recPage .recHero__actions {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+  }
+  .recPage .recHero__cta {
+    inline-size: auto;
+    padding-inline: var(--s-6);
+  }
+  .recPage .recProducts__filters {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  .recPage :is(.recProducts__grid, .recProof__quotes) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--s-4);
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+  .recPage :is(.recProducts__card, .recProof__quote) {
+    flex: initial;
+  }
+}
+
+/* ---------------------------------------------------------- 760px and up */
+
+/* Two full product cards fit side by side, so comparison beats swiping; and a
+   thumb no longer competes with the content, so the fixed bar retires. */
+@media (min-width: 760px) {
+  .recPage .breadcrumbs {
+    display: flex;
+  }
+  .recPage .recHero__chips {
+    display: flex;
+  }
+  .recPage .recProof__logo img {
+    block-size: calc(196px * var(--font-scale));
+  }
+  .recPage .recProof__logo {
+    margin-inline-end: var(--s-6);
+  }
+  .recPage .recHero__lede {
+    display: block;
+    -webkit-line-clamp: none;
+    overflow: visible;
+  }
+  .recPage .recCard__more {
+    inline-size: auto;
+    align-self: start;
+  }
+  .recPage .recModal__body {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--s-5);
+    padding: 0 var(--s-5) var(--s-5);
+  }
+  .recPage .recModal__cta {
+    position: static;
+    inline-size: auto;
+    justify-self: start;
+    box-shadow: none;
+  }
+  .recPage .recSticky {
+    display: none;
+  }
+  .recPage {
+    padding-block-end: 0;
+  }
+  .recPage .section {
+    padding-block: calc(68px * var(--font-scale));
+  }
+  .recPage .section--dense {
+    padding-block: var(--s-7);
+  }
+  .recPage .section--loud {
+    padding-block: var(--s-9);
+  }
+}
+
+/* --------------------------------------------------------- 1024px and up */
+
+/* .container caps at 986px around a 1020px viewport, so this is the width at
+   which the layout has all the space it will ever get. */
+@media (min-width: 1024px) {
+  .recPage .recHero {
+    padding-block: var(--s-9) var(--s-8);
+  }
+  .recPage .recHero__copy {
+    gap: var(--s-5);
+  }
+  .recPage :is(.recRoi__grid, .recJourney__steps) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .recPage .recStack__grid {
+    grid-template-columns: 1.4fr 0.6fr;
+    align-items: start;
+  }
+  .recPage .recQuote__inner {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--s-7);
+    align-items: start;
+  }
+  .recPage .recRoi__cta .btn,
+  .recPage .recQuote__submit {
+    inline-size: auto;
+    padding-inline: var(--s-7);
+  }
+}

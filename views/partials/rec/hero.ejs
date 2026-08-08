@@ -1,0 +1,125 @@
+<section class="section recHero recBand--warm" aria-labelledby="recHeroTitle">
+  <%# The video is the hero's ground, not an object beside it: it sits behind
+      everything, full-bleed, under a warm veil that keeps the navy copy legible.
+
+      id="heroVideo" and the data-src sources are the contract
+      initHeroVideoLazyLoad() in assets/js/main.js reads — it swaps data-src onto
+      src ~300ms after DOMContentLoaded and pauses under prefers-reduced-motion.
+      `poster` is a real attribute rather than a CSS background because the
+      browser fetches it eagerly even at preload="none", so it holds the frame
+      (and is the LCP candidate) until the video exists.
+
+      The .heroVideo *class* is deliberately absent: it switches the site header
+      into transparent-overlay mode (main.js:119), which this page does not want.
+
+      aria-hidden: it is decoration now. The caption it used to carry described a
+      figure the visitor was meant to watch; as a background it says nothing a
+      screen-reader user needs, and announcing it would just add noise ahead of
+      the headline. %>
+  <div class="recHero__bg" aria-hidden="true">
+    <video
+      id="heroVideo"
+      class="recHero__video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      tabindex="-1"
+      poster="<%= page.hero.video.poster %>"
+    >
+      <% page.hero.video.sources.forEach(function (source) { %>
+        <source data-src="<%= source.src %>" type="<%= source.type %>" />
+      <% }) %>
+    </video>
+    <span class="recHero__veil"></span>
+  </div>
+
+  <%# Gate the footage before it is ever requested.
+
+      initHeroVideoLazyLoad() in assets/js/main.js swaps every `data-src` onto
+      `src` ~300ms after DOMContentLoaded, unconditionally — 2.2MB of webm or
+      2.9MB of mp4 on every visit. Under this veil that buys a 34-45% wash
+      across a ~40px strip at the very top and a 3-8% shimmer under everything
+      the visitor actually reads. On a page whose whole audience arrives by
+      phone camera over cellular, that is a straight loss, and the 84KB poster
+      already fills the frame.
+
+      So: on a phone, on a metered or slow link, or under reduced motion, drop
+      the data-src attributes and let the poster be the hero.
+
+      This has to be an inline, non-deferred script — it must run during parse,
+      before the deferred main.js gets to the element. It is the one piece of
+      script in these templates for exactly that reason. %>
+  <script>
+    (function () {
+      var video = document.getElementById("heroVideo");
+      if (!video) return;
+      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var metered = !!conn && (conn.saveData === true || /(^|-)2g$|^3g$/.test(conn.effectiveType || ""));
+      var phone = window.matchMedia("(max-width: 759px)").matches;
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!(phone || metered || still)) return;
+      var sources = video.querySelectorAll("source[data-src]");
+      for (var i = 0; i < sources.length; i += 1) sources[i].removeAttribute("data-src");
+    })();
+  </script>
+
+  <div class="container recHero__inner">
+    <div class="recHero__copy">
+      <nav class="breadcrumbs" aria-label="مسار الصفحة">
+        <a href="/">الرئيسية</a>
+        <span>/</span>
+        <strong><%= page.title %></strong>
+      </nav>
+
+      <p class="recHero__badge"><%= page.hero.badge %></p>
+
+      <%# h1Highlight names the promise word in the headline ("ربحية", "لحظة
+          معيشية"). The approved page set it in the brand colour; it is the only
+          place amber appears inside running text, and it is what gives the
+          headline a focal point instead of one flat navy block. %>
+      <h1 class="recHero__title" id="recHeroTitle">
+        <% if (page.hero.h1Highlight && page.hero.h1.includes(page.hero.h1Highlight)) { %>
+          <% const parts = page.hero.h1.split(page.hero.h1Highlight); %>
+          <%= parts[0] %><span class="recHero__mark"><%= page.hero.h1Highlight %></span><%= parts.slice(1).join(page.hero.h1Highlight) %>
+        <% } else { %>
+          <%= page.hero.h1 %>
+        <% } %>
+      </h1>
+      <p class="recHero__lede"><%= page.hero.lede %></p>
+
+      <%# The zero-friction path. A QR scan means a phone, one hand and cellular
+          data, so the primary action asks for nothing: the WhatsApp thread
+          opens with the request already typed. The form lower down is the
+          secondary path for anyone who would rather leave details. %>
+      <div class="recHero__actions">
+        <a
+          class="btn btn--primary recHero__cta"
+          data-rec-wa
+          href="https://wa.me/<%= page.wa.number %>?text=<%= encodeURIComponent(page.hero.waText || page.primaryCta.waText) %>"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <%- icon('whatsapp') %><%= page.primaryCta.label %>
+        </a>
+        <a class="btn btn--ghost recHero__ctaAlt" href="#<%= quoteFormId %>"><%= page.secondaryCta.label %></a>
+      </div>
+
+      <ul class="recHero__chips" aria-label="أبرز الأنظمة">
+        <% page.hero.chips.forEach(function (chip) { %>
+          <li><%= chip %></li>
+        <% }) %>
+      </ul>
+
+      <dl class="recHero__stats">
+        <% page.hero.stats.forEach(function (stat) { %>
+          <div class="recHero__stat">
+            <dt class="recHero__statValue" dir="ltr"><%= stat.value %></dt>
+            <dd class="recHero__statLabel"><%= stat.label %></dd>
+          </div>
+        <% }) %>
+      </dl>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,76 @@
+<section class="section recProducts recBand--muted" id="products" aria-labelledby="recProductsTitle">
+  <div class="container">
+    <div class="section__head">
+      <p class="solutionsPage__sectionKicker"><%= page.productsSection.kicker %></p>
+      <h2 id="recProductsTitle"><%= page.productsSection.title %></h2>
+      <p class="recProducts__lede"><%= page.productsSection.lede %></p>
+    </div>
+
+    <%# Toggle buttons, not a tablist: these filter one list in place, they do
+        not switch between panels, so aria-pressed is the honest role. Tab order
+        follows DOM order and needs no roving tabindex, which also sidesteps the
+        RTL arrow-key question entirely. %>
+    <div class="recProducts__filters" role="group" aria-label="تصفية الأنظمة">
+      <% page.filterTabs.forEach(function (tab, idx) { %>
+        <button
+          class="chip recProducts__filter"
+          type="button"
+          data-rec-filter="<%= tab.key %>"
+          aria-pressed="<%= idx === 0 ? 'true' : 'false' %>"
+        >
+          <%= tab.label %>
+        </button>
+      <% }) %>
+    </div>
+
+    <%# Screen readers get no signal from cards appearing and disappearing, so
+        the filter script writes the visible count here. %>
+    <p class="recProducts__count" data-rec-count aria-live="polite"></p>
+
+    <ul class="recProducts__grid">
+      <% page.products.forEach(function (product) { %>
+        <li class="recProducts__card" data-rec-category="<%= product.category %>">
+          <article class="recCard">
+            <%# Photo card: the image carries the card and the type sits on it
+                over a scrim. This is what the approved pages did and what the
+                site's own .solutionCard does; the previous version put the tag
+                and title below the photo as navy-on-white, which is the most
+                generic card layout there is. %>
+            <figure class="recCard__media">
+              <%- picture(product.image, { alt: product.imageAlt, sizes: imageSizes.recProductCard, className: 'recCard__img' }) %>
+              <div class="recCard__overlay">
+                <%# <bdi> rather than dir="ltr" on the block: dir on a block
+                    element also flips its text alignment, which left-aligned
+                    the Latin tag inside a right-aligned card. %>
+                <p class="recCard__tag"><bdi><%= product.tag %></bdi></p>
+                <h3 class="recCard__title"><%= product.title %></h3>
+              </div>
+            </figure>
+            <div class="recCard__body">
+              <p class="recCard__desc"><%= product.desc %></p>
+              <ul class="recCard__bullets">
+                <% product.bullets.forEach(function (bullet) { %>
+                  <li><%- icon('circle-check') %><span><%= bullet %></span></li>
+                <% }) %>
+              </ul>
+              <button
+                class="btn btn--ghost btn--small recCard__more"
+                type="button"
+                data-rec-open="<%= product.key %>"
+                data-rec-title="<%= product.title %>"
+                data-rec-tag="<%= product.tag %>"
+                data-rec-image="<%= product.image %>"
+                data-rec-alt="<%= product.imageAlt %>"
+                data-rec-desc="<%= product.desc %>"
+                data-rec-extra="<%= product.extra %>"
+                data-rec-bullets="<%= JSON.stringify(product.bullets) %>"
+              >
+                التفاصيل
+              </button>
+            </div>
+          </article>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
