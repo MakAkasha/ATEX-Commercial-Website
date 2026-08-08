@@ -136,6 +136,15 @@
                 </section>
               <% } %>
 
+              <% if (solution.relatedLanding) { %>
+                <%# Contextual link into a campaign landing page that carries no
+                    nav entry. Without it that page is an orphan. %>
+                <p class="solutionsPage__detailNote">
+                  <%= solution.relatedLanding.text %>
+                  <a href="<%= solution.relatedLanding.href %>"><%= solution.relatedLanding.label %></a>
+                </p>
+              <% } %>
+
               <div class="solutionsPage__detailActions">
                 <a class="btn btn--primary btn--small" href="/contact-us"><%= solution.ctaLabel || 'اطلب عرضاً لهذا الحل' %></a>
                 <a class="btn btn--ghost btn--small" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>

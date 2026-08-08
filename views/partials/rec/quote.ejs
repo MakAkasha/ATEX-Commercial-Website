@@ -1,0 +1,76 @@
+<section class="section section--loud recQuote recBand--navy" id="quote" aria-labelledby="recQuoteTitle">
+  <div class="container recQuote__inner">
+    <div class="recQuote__copy">
+      <h2 id="recQuoteTitle"><%= page.quote.title %></h2>
+      <p class="recQuote__desc"><%= page.quote.desc %></p>
+
+      <p class="recQuote__alt">
+        أو راسلنا على واتساب:
+        <a
+          class="recQuote__wa"
+          data-rec-wa
+          dir="ltr"
+          href="https://wa.me/<%= page.wa.number %>?text=<%= encodeURIComponent(page.primaryCta.waText) %>"
+          target="_blank"
+          rel="noopener noreferrer"
+          >+<%= page.wa.number %></a
+        >
+      </p>
+    </div>
+
+    <%# id must not be "contactForm": initContactForm() in assets/js/main.js
+        binds to that id on every page and would double-handle this submit. %>
+    <form class="recQuote__form" id="<%= quoteFormId %>" novalidate>
+      <% page.quote.fields.forEach(function (field) { %>
+        <div class="recQuote__field recQuote__field--<%= field.type %>">
+          <label for="rec-<%= field.name %>">
+            <%= field.label %><% if (field.required) { %><span aria-hidden="true"> *</span><% } %>
+          </label>
+
+          <% if (field.type === 'select') { %>
+            <select id="rec-<%= field.name %>" name="<%= field.name %>">
+              <% field.options.forEach(function (option) { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          <% } else if (field.type === 'textarea') { %>
+            <textarea
+              id="rec-<%= field.name %>"
+              name="<%= field.name %>"
+              rows="3"
+              placeholder="<%= field.placeholder || '' %>"
+            ></textarea>
+          <% } else { %>
+            <%# dir="ltr" on the phone input is not cosmetic: a Latin-digit
+                number typed into an RTL field has its digit groups reordered as
+                you type without it. %>
+            <input
+              id="rec-<%= field.name %>"
+              name="<%= field.name %>"
+              type="<%= field.type %>"
+              placeholder="<%= field.placeholder || '' %>"
+              <% if (field.required) { %>required aria-required="true"<% } %>
+              <% if (field.dir) { %>dir="<%= field.dir %>"<% } %>
+              <% if (field.inputmode) { %>inputmode="<%= field.inputmode %>"<% } %>
+              <% if (field.autocomplete) { %>autocomplete="<%= field.autocomplete %>"<% } %>
+              aria-describedby="rec-<%= field.name %>-error"
+            />
+          <% } %>
+
+          <span class="recQuote__error" id="rec-<%= field.name %>-error" aria-live="polite"></span>
+        </div>
+      <% }) %>
+
+      <%# Honeypot. A real visitor never sees it, so anything that fills it in is
+          a bot and the submit is dropped client-side before it costs a request. %>
+      <div class="recQuote__trap" aria-hidden="true">
+        <label for="rec-website">لا تملأ هذا الحقل</label>
+        <input id="rec-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <button class="btn btn--primary recQuote__submit" type="submit"><%= page.quote.submitLabel %></button>
+
+      <p class="recQuote__status" data-rec-status role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>

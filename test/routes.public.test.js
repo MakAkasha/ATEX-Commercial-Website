@@ -10,12 +10,13 @@ const assert = require("node:assert/strict");
 const { describe, it, before, after } = require("node:test");
 
 const { startServer } = require("./helpers/server");
-const { getSolutions, getIndustries } = require("../server/data/contentRegistry");
+const { getSolutions, getIndustries, getRecLandings } = require("../server/data/contentRegistry");
 
 const STATIC_PAGES = ["/", "/solutions", "/products", "/blog", "/contact-us", "/privacy", "/terms"];
 
 const SOLUTION_PAGES = getSolutions().map((s) => `/solutions/${s.slug}`);
 const INDUSTRY_PAGES = getIndustries().map((i) => `/industries/${i.slug}`);
+const REC_LANDING_PAGES = getRecLandings().map((p) => `/rec/${p.slug}`);
 
 describe("public routes render as Arabic RTL HTML", () => {
   let srv;
@@ -28,7 +29,7 @@ describe("public routes render as Arabic RTL HTML", () => {
     await srv.stop();
   });
 
-  const allPages = [...STATIC_PAGES, ...SOLUTION_PAGES, ...INDUSTRY_PAGES];
+  const allPages = [...STATIC_PAGES, ...SOLUTION_PAGES, ...INDUSTRY_PAGES, ...REC_LANDING_PAGES];
 
   for (const page of allPages) {
     it(`GET ${page} returns 200 HTML with lang="ar" dir="rtl"`, async () => {

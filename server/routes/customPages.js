@@ -3,6 +3,7 @@ const sanitizeHtml = require("sanitize-html");
 const { getDb } = require("../db");
 const { requireAdmin } = require("../auth");
 const { parsePositiveInt, nonEmptyString, parseBoolean, toSqliteBool } = require("../utils/safe");
+const { isReservedSlug } = require("../data/recLandings");
 
 const router = express.Router();
 
@@ -94,6 +95,11 @@ router.post("/", requireAdmin, (req, res) => {
   const title = nonEmptyString(body.title);
   const slug = slugify(body.slug || title);
   if (!title || !slug) return res.status(400).json({ error: "MISSING_FIELDS" });
+  // /rec/smart-home and /rec/smart-villa are hardcoded routes registered ahead
+  // of the public /rec/:slug handler, so a custom page saved at one of those
+  // slugs would render the landing page instead — forever, with no error and
+  // nothing in the admin panel to explain it. Refuse the save instead.
+  if (isReservedSlug(slug)) return res.status(409).json({ error: "SLUG_RESERVED" });
 
   const html = sanitizePageHtml(body.html_code || "");
   const css = sanitizeCssCode(body.css_code || "");
@@ -122,6 +128,11 @@ router.put("/:id", requireAdmin, (req, res) => {
   const title = nonEmptyString(body.title);
   const slug = slugify(body.slug || title);
   if (!title || !slug) return res.status(400).json({ error: "MISSING_FIELDS" });
+  // /rec/smart-home and /rec/smart-villa are hardcoded routes registered ahead
+  // of the public /rec/:slug handler, so a custom page saved at one of those
+  // slugs would render the landing page instead — forever, with no error and
+  // nothing in the admin panel to explain it. Refuse the save instead.
+  if (isReservedSlug(slug)) return res.status(409).json({ error: "SLUG_RESERVED" });
 
   const html = sanitizePageHtml(body.html_code || "");
   const css = sanitizeCssCode(body.css_code || "");

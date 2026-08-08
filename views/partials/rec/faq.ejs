@@ -1,0 +1,24 @@
+<section class="section section--dense recFaq recBand--tint" id="faq" aria-labelledby="recFaqTitle">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="recFaqTitle"><%= page.faq.title %></h2>
+    </div>
+
+    <%# This markup is copied from views/industry-detail.ejs, not from home.ejs.
+        initFaq() in assets/js/main.js drives it off .faq__q / .faq__a, and the
+        aria-expanded / aria-controls / id triple is what makes it usable with a
+        screen reader — home.ejs's FAQ block omits all three. %>
+    <div class="faq" role="list">
+      <% page.faq.items.forEach(function (item, idx) { %>
+        <div class="faq__item" role="listitem">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="rec-faq-answer-<%= idx %>">
+            <span class="faq__num" aria-hidden="true"><%= idx + 1 %></span>
+            <span class="faq__qText"><%= item.q %></span>
+            <span class="faq__icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq__a" id="rec-faq-answer-<%= idx %>" role="region"><%= item.a %></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
