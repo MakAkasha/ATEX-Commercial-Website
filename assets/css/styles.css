@@ -864,52 +864,106 @@ body.nav-open .nav__toggleLines::after {
    to mush. Mobile-first: a vertical rail; the horizontal timeline starts at
    1024, where five columns actually fit. */
 .processFlow {
+  --pf-marker: calc(38px * var(--font-scale));
+  --pf-half: calc(var(--pf-marker) / 2);
   position: relative;
   list-style: none;
+  counter-reset: pfStep;
   margin: 0;
   padding: 0;
-  padding-inline-start: calc(46px * var(--font-scale));
+  padding-inline-start: calc(var(--pf-marker) + var(--s-4));
   display: grid;
-  gap: var(--s-5);
+  gap: var(--s-4);
 }
 
 .processFlow::before {
   content: "";
   position: absolute;
-  inset-block: calc(18px * var(--font-scale));
-  inset-inline-start: calc(17px * var(--font-scale));
-  inline-size: calc(2px * var(--font-scale));
-  background: var(--primary-35);
+  inset-block: var(--pf-half);
+  inset-inline-start: calc(var(--pf-half) - calc(1.5px * var(--font-scale)));
+  inline-size: calc(3px * var(--font-scale));
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, var(--primary) 0%, rgba(255, 153, 51, 0.55) 82%, transparent 100%);
 }
 
+/* Cards again — but hung off the rail with the marker straddling the edge, so
+   the section reads as layered rather than as five slabs in a row. */
 .processFlow__item {
+  counter-increment: pfStep;
   position: relative;
   display: grid;
   align-content: start;
-  gap: var(--s-2);
+  gap: calc(6px * var(--font-scale));
+  padding: calc(18px * var(--font-scale));
+  border: calc(1px * var(--font-scale)) solid var(--navy-12);
+  border-inline-start: calc(3px * var(--font-scale)) solid var(--primary-35);
+  border-radius: calc(var(--radius-sm) + var(--s-1));
+  background:
+    radial-gradient(calc(260px * var(--font-scale)) calc(120px * var(--font-scale)) at 92% 6%, var(--primary-14), transparent 68%),
+    #fff;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
+}
+
+/* Oversized ghost numeral: the scale contrast the flat version was missing.
+   Drawn from a counter, so admin-edited or reordered steps stay correct. The
+   card is not clipped — the marker hangs outside it — so the numeral is sized
+   and tucked to stay inside instead. */
+.processFlow__item::after {
+  content: counter(pfStep);
+  position: absolute;
+  inset-block-end: calc(4px * var(--font-scale));
+  inset-inline-end: calc(10px * var(--font-scale));
+  color: rgba(0, 43, 68, 0.07);
+  font-size: calc(84px * var(--font-scale));
+  font-weight: 800;
+  line-height: 0.74;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.processFlow__item:hover {
+  transform: translateY(calc(-3px * var(--font-scale)));
+  border-color: var(--navy-12);
+  border-inline-start-color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .processFlow__stepNo {
   position: absolute;
-  inset-inline-start: calc(-46px * var(--font-scale));
+  inset-inline-start: calc(0px - var(--pf-marker) - var(--s-4));
   inset-block-start: 0;
-  z-index: 1;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: calc(36px * var(--font-scale));
-  block-size: calc(36px * var(--font-scale));
+  inline-size: var(--pf-marker);
+  block-size: var(--pf-marker);
   border-radius: 50%;
+  /* Navy, not amber: #fff on #ff9933 is 2.13:1 and the numeral turns to mush.
+     The amber lives in the ring and the rail. */
   background: var(--navy);
-  box-shadow: 0 0 0 calc(4px * var(--font-scale)) var(--primary-15);
+  box-shadow:
+    0 0 0 calc(4px * var(--font-scale)) var(--primary-35),
+    0 calc(6px * var(--font-scale)) calc(16px * var(--font-scale)) rgba(0, 43, 68, 0.22);
   color: #fff;
-  font-size: var(--s-3);
+  font-size: var(--s-4);
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  transition: box-shadow var(--dur) ease;
+}
+
+.processFlow__item:hover .processFlow__stepNo {
+  box-shadow:
+    0 0 0 calc(6px * var(--font-scale)) var(--primary-35),
+    0 calc(8px * var(--font-scale)) calc(20px * var(--font-scale)) rgba(0, 43, 68, 0.26);
 }
 
 .processFlow__title {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-size: clamp(var(--s-4), 1.8vw, calc(19px * var(--font-scale)));
   color: var(--navy);
@@ -917,10 +971,12 @@ body.nav-open .nav__toggleLines::after {
 }
 
 .processFlow__desc {
+  position: relative;
+  z-index: 1;
   margin: 0;
   color: var(--muted);
   font-weight: 700;
-  line-height: 1.95;
+  line-height: 1.9;
   max-inline-size: 36em;
 }
 
@@ -932,29 +988,51 @@ body.nav-open .nav__toggleLines::after {
 @media (min-width: 1024px) {
   .processFlow {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    column-gap: var(--s-5);
+    align-items: stretch;
+    column-gap: var(--s-4);
     padding-inline-start: 0;
+    /* Room for the marker to straddle each card's top edge. */
+    padding-block-start: var(--pf-half);
   }
 
   /* Rail runs from the first marker's centre to the last one's, not edge to
      edge — a line overshooting the end markers reads as an unfinished process. */
   .processFlow::before {
     inset-block: auto;
-    inset-block-start: calc(18px * var(--font-scale));
-    inset-inline: calc(18px * var(--font-scale));
+    inset-block-start: var(--pf-half);
+    inset-inline: var(--pf-half);
     inline-size: auto;
-    block-size: calc(2px * var(--font-scale));
+    block-size: calc(3px * var(--font-scale));
+    background: linear-gradient(to left, var(--primary) 0%, rgba(255, 153, 51, 0.55) 82%, transparent 100%);
+  }
+
+  .processFlow__item {
+    /* The top edge is the rail's line now, so the amber accent moves there. */
+    border-inline-start: calc(1px * var(--font-scale)) solid var(--navy-12);
+    padding-block-start: calc(var(--pf-half) + var(--s-3));
+  }
+
+  .processFlow__item:hover {
+    border-color: var(--primary-35);
   }
 
   .processFlow__stepNo {
-    position: relative;
-    inset-inline-start: auto;
-    margin-block-end: var(--s-2);
+    inset-inline-start: 50%;
+    inset-block-start: calc(0px - var(--pf-half));
+    transform: translateX(50%);
   }
 }
 
 #process.section {
   padding-block: calc(92px * var(--font-scale));
+  /* Blueprint hatch, not the dot grid #why uses — this section is literally
+     about drawings, and the two grounds should not read as the same band. */
+  background-color: #f4f7fa;
+  background-image:
+    linear-gradient(to left, rgba(0, 43, 68, 0.05) calc(1px * var(--font-scale)), transparent calc(1px * var(--font-scale))),
+    linear-gradient(to bottom, rgba(0, 43, 68, 0.05) calc(1px * var(--font-scale)), transparent calc(1px * var(--font-scale)));
+  background-size: calc(30px * var(--font-scale)) calc(30px * var(--font-scale));
+  border-block: calc(1px * var(--font-scale)) solid var(--navy-08);
 }
 
 #process .section__head {
