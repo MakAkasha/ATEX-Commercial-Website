@@ -957,11 +957,7 @@ body.nav-open .nav__toggleLines::after {
   --marquee-distance: 0px;
   --marquee-duration: 20s;
 
-  border: calc(1px * var(--font-scale)) solid var(--line);
-  border-radius: calc(var(--radius) + var(--s-1));
-  background: rgba(0, 43, 68, 0.03);
-  box-shadow: var(--shadow-soft);
-  padding: calc(14px * var(--font-scale));
+  padding-block: calc(14px * var(--font-scale));
 }
 
 .marquee__viewport {
@@ -2238,21 +2234,15 @@ body.nav-open .nav__toggleLines::after {
 .socialProof__logo {
   width: clamp(calc(124px * var(--font-scale)), 13vw, calc(176px * var(--font-scale)));
   aspect-ratio: 1 / 1;
-  border-radius: calc(14px * var(--font-scale));
-  border: calc(1px * var(--font-scale)) solid rgba(0, 43, 68, 0.11);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: var(--shadow-soft);
   display: grid;
   place-items: center;
-  padding: var(--s-3);
   flex: 0 0 auto;
-  transition: transform var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
 }
 
+/* No lift and no shadow: the tile has no edge to lift off now, and the strip is
+   always moving, so a hover state on a passing logo reads as a glitch. */
 .socialProof__logo:hover {
-  transform: translateY(calc(-2px * var(--font-scale)));
-  border-color: rgba(255, 153, 51, 0.34);
-  box-shadow: var(--shadow-sm);
+  transform: none;
 }
 
 .socialProof__logo img {
