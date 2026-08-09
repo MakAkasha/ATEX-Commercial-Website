@@ -2382,6 +2382,24 @@ body.nav-open .nav__toggleLines::after {
   display: block;
 }
 
+/* Company logo variant. The circular avatar crops a square logo card and eats
+   its edges, so this is a rounded square, larger, with the mark contained
+   rather than covered. The supplied artwork already carries its own white card,
+   hence the white ground and no padding of our own. */
+.quoteCard__avatar--logo {
+  width: calc(64px * var(--font-scale));
+  height: calc(64px * var(--font-scale));
+  border-radius: calc(14px * var(--font-scale));
+  border: 1px solid var(--navy-08);
+  background: #fff;
+}
+
+.quoteCard__avatar--logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .quoteCard__avatar--glyph {
   background: var(--navy-08);
   color: var(--navy-16);

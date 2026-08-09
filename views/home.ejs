@@ -482,7 +482,18 @@
                 <% } %>
 
                 <figcaption class="quoteCard__person">
-                  <% if (t.photo) { %>
+                  <%# A company logo beats a portrait here: these are B2B
+                      references, and the client company is the credential a
+                      reader recognises. The artwork is a 300px square card, so
+                      it is contained in a rounded square rather than cropped
+                      into a circle, and it is a plain <img> — the files are
+                      under the derivative pipeline's size floor, so there is no
+                      srcset to offer. %>
+                  <% if (t.logo) { %>
+                    <span class="quoteCard__avatar quoteCard__avatar--logo">
+                      <img src="<%= t.logo %>" alt="<%= t.company || '' %>" width="300" height="300" loading="lazy" decoding="async" />
+                    </span>
+                  <% } else if (t.photo) { %>
                     <%# A 41px circle. Worth a srcset only because t.photo is an
                         arbitrary upload — sizes="41px" makes an oversized one
                         resolve to the 320px derivative instead of the original.

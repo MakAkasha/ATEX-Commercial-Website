@@ -184,8 +184,14 @@ describe("asset references resolve on disk", () => {
         `(${JSON.stringify(byReason)})`
     );
     // A sudden jump means paths silently moved out of static reach.
+    //
+    // 41, not 40: the homepage testimonial avatar renders <img src="<%= t.logo %>">,
+    // which is data-driven and so cannot be decided here. The paths themselves
+    // are literals in server/data/testimonials.js and server/data/partners.js,
+    // both of which this scan already covers — so the coverage is not actually
+    // lost, only relocated. Raise this only with the same kind of reason.
     assert.ok(
-      skipped.length <= 40,
+      skipped.length <= 41,
       `too many undecidable asset paths (${skipped.length}); the static pass is losing coverage`
     );
   });

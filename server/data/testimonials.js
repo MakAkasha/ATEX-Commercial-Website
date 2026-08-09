@@ -20,7 +20,10 @@
  *   company company name
  *   sector  short tag shown as a pill (e.g. الضيافة)
  *   rating  1..5 stars (defaults to 5)
- *   photo   optional image path, e.g. "/assets/testimonials/name.webp"
+ *   logo    optional company logo, e.g. "/assets/partners/sadana.webp".
+ *           Preferred over `photo`: these are B2B references, and the client
+ *           company is the credential a reader recognises, not the face.
+ *   photo   optional portrait, e.g. "/assets/testimonials/name.webp"
  *   project optional project reference line
  */
 
@@ -36,6 +39,7 @@ const TESTIMONIALS = [
     company: "شركة كفاءات العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/kafaat.webp",
     photo: "",
     project: "",
   },
@@ -47,6 +51,7 @@ const TESTIMONIALS = [
     company: "شركة سدنة العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/sadana.webp",
     photo: "",
     project: "",
   },
@@ -58,6 +63,7 @@ const TESTIMONIALS = [
     company: "شركة إشراق العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/ishraq.webp",
     photo: "",
     project: "",
   },
@@ -69,6 +75,7 @@ const TESTIMONIALS = [
     company: "شركة درة العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/durrah.webp",
     photo: "",
     project: "",
   },
@@ -80,6 +87,7 @@ const TESTIMONIALS = [
     company: "شركة التوباز العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/al-topaz.webp",
     photo: "",
     project: "",
   },
@@ -91,12 +99,13 @@ const TESTIMONIALS = [
     company: "شركة سين العقارية",
     sector: "العقارات",
     rating: 5,
+    logo: "/assets/partners/seen.webp",
     photo: "",
     project: "",
   },
 ];
 
-const TEXT_FIELDS = ["quote", "name", "role", "company", "sector", "photo", "project"];
+const TEXT_FIELDS = ["quote", "name", "role", "company", "sector", "logo", "photo", "project"];
 const PLACEHOLDER_RE = /[[\]]/;
 
 const text = (value) => String(value ?? "").trim();
@@ -128,11 +137,12 @@ function monogram(entry) {
  * Publishable testimonials, normalized for the view.
  * Returns [] when fewer than MIN_VISIBLE entries are ready, so the caller can
  * hide the whole section with a single truthiness check.
- * @returns {Array<{quote:string,name:string,role:string,company:string,sector:string,rating:number,photo:string,project:string,initial:string}>}
+ * @returns {Array<{quote:string,logo:string,name:string,role:string,company:string,sector:string,rating:number,photo:string,project:string,initial:string}>}
  */
 function getTestimonials() {
   const ready = TESTIMONIALS.filter(isPublishable).map((entry) => ({
     quote: text(entry.quote),
+    logo: text(entry.logo),
     name: text(entry.name),
     role: text(entry.role),
     company: text(entry.company),
