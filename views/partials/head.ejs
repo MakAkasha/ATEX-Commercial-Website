@@ -67,6 +67,16 @@
      every bold/extrabold rule (700/800). @font-face lives in styles.css. -->
 <link rel="preload" href="/assets/fonts/cairo/cairo-v31-var-arabic.woff2" as="font" type="font/woff2" crossorigin />
 
+<%# The home hero is a YouTube embed with nothing behind it but black, so every
+    millisecond of connection setup is a millisecond of black screen. Opening
+    the connections during head parse removes the DNS and TLS round trips from
+    the player's start-up. Only on the page that has the hero. %>
+<% if (typeof hasHeroVideo !== 'undefined' && hasHeroVideo) { %>
+<link rel="preconnect" href="https://www.youtube-nocookie.com" crossorigin />
+<link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+<link rel="dns-prefetch" href="https://www.google.com" />
+<% } %>
+
 <!-- Stylesheets -->
 <%# asset() resolves to the content-hashed /assets/build/styles-<hash>.css when
     a build exists, and to /assets/css/styles.css?v=<assetVer> when it does not.

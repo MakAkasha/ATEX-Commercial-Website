@@ -1073,14 +1073,14 @@ function initHeroVideoLazyLoad() {
 
     // Load YouTube iframe
     if (heroYoutubeVideo) {
-      const iframeSrc = heroYoutubeVideo.getAttribute("data-src");
-      if (iframeSrc) {
-        // The iframe's load event fires when the player page is up, which is
-        // before the first video frame is painted; the short wait covers that
-        // gap so the fade does not expose the player's own black frame.
-        heroYoutubeVideo.addEventListener("load", () => setTimeout(reveal, 600), { once: true });
-        heroYoutubeVideo.src = iframeSrc;
-      }
+      // The src is rendered server-side so the request starts during HTML
+      // parse; there is nothing to assign here. The player's own first frame is
+      // black, which is exactly what sits behind it, so it is revealed on load
+      // with no waiting.
+      heroYoutubeVideo.addEventListener("load", reveal, { once: true });
+      // If load has already fired before this script ran, nothing would reveal
+      // it; the backstop costs nothing because black is what shows either way.
+      setTimeout(reveal, 1500);
     }
 
   };
