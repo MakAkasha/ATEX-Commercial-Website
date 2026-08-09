@@ -34,7 +34,29 @@ If that ever changes, removing a file is enough: `integrationLogo()` in
 `views/home.ejs` falls back to the technology's name as text when no mark is
 matched, so nothing breaks and the chip simply reads as before.
 
-Technologies with no published mark — Matter, ONVIF, DALI-2, OCPP, CoAP, WPA3,
-TLS, PoE, SIP, RTSP, OSDP, NB-IoT, LTE-M — and the categories that are not
-brands at all — REST API, Webhooks, ERP, CRM, GIS, SMS, Email — stay as text by
-design.
+## Marks supplied by Okasha, 2026-08-09
+
+Six further marks were handed over directly as PNGs (`C:\Users\m2kak\Downloads\tech`)
+rather than pulled from Wikimedia, so **their source and licence are not
+recorded here** — unlike every file above, whose Commons provenance is stated.
+If this site is ever handed to a client, these six need their permission
+confirmed.
+
+They were downscaled to a 3× of the 26px the strip renders them at
+(227 KB → 32 KB in total); the originals live in that Downloads folder.
+
+| File | Chip label | Programme |
+|---|---|---|
+| `matter.png` | Matter 1.5 | Connectivity Standards Alliance certification |
+| `dali-2.png` | DALI-2 | DiiA certification |
+| `onvif.png` | ONVIF | ONVIF membership / conformance |
+| `poe-ieee.png` | PoE IEEE 802.3bt | IEEE standard mark |
+| `coap.png` | CoAP 1.0 | protocol mark |
+| `nb-iot.png` | NB-IoT | technology mark |
+
+The same caution as above applies: several of these read as a claim of
+certification or membership.
+
+Technologies still without a mark — OCPP, WPA3, TLS, SIP, RTSP, OSDP, LTE-M —
+and the categories that are not brands at all — REST API, Webhooks, ERP, CRM,
+GIS, SMS, Email — stay as text by design.

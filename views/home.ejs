@@ -355,7 +355,17 @@
                ['lorawan',   '/assets/tech/lorawan.svg',   300,  97],
                ['mqtt',      '/assets/tech/mqtt.svg',      300,  76],
                ['power bi',  '/assets/tech/power-bi.svg',  630, 630],
-               ['whatsapp',  '/assets/tech/whatsapp.svg',  360, 362]
+               ['whatsapp',  '/assets/tech/whatsapp.svg',  360, 362],
+               // Supplied by Okasha 2026-08-09, not sourced from Wikimedia like
+               // the marks above — see assets/tech/SOURCES.md. Downscaled to a
+               // 3x of the 26px the strip draws them at. "poe ieee" is matched
+               // as one token so the leftover reads "802.3bt", not "IEEE 802.3bt".
+               ['matter',    '/assets/tech/matter.png',    298,  72],
+               ['dali-2',    '/assets/tech/dali-2.png',    218,  78],
+               ['onvif',     '/assets/tech/onvif.png',     304,  78],
+               ['poe ieee',  '/assets/tech/poe-ieee.png',  243,  78],
+               ['coap',      '/assets/tech/coap.png',      257,  78],
+               ['nb-iot',    '/assets/tech/nb-iot.png',    193,  78]
              ]; %>
           <% function integrationLogo(label){
                const raw = String(label || '').trim();
