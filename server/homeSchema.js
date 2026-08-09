@@ -52,6 +52,64 @@ function PROCESS_DEFAULT() {
   };
 }
 
+// The "التقنيات الذكية التي ندعمها" strip. IoT first — the protocols and radios
+// the smart-home, building, intercom, access, CCTV and EV-charging work actually
+// runs on — then the business systems the platform integrates with, which is
+// what the v2 list held on its own.
+function INTEGRATION_CHIPS() {
+  return [
+    "Matter 1.5",
+    "KNX",
+    "Zigbee 3.0",
+    "Z-Wave",
+    "Thread 1.4",
+    "Wi-Fi 7",
+    "بلوتوث LE 5.4",
+    "PoE IEEE 802.3bt",
+    "BACnet/IP",
+    "Modbus TCP",
+    "DALI-2",
+    "ONVIF",
+    "RTSP 2.0",
+    "SIP",
+    "OSDP",
+    "OCPP 2.0.1",
+    "MQTT 5.0",
+    "CoAP 1.0",
+    "LoRaWAN 1.1",
+    "NB-IoT",
+    "LTE-M",
+    "WPA3",
+    "TLS 1.3",
+    "REST API",
+    "Webhooks",
+    "ERP",
+    "CRM",
+    "Power BI",
+    "GIS",
+    "WhatsApp",
+    "SMS",
+    "Email",
+  ];
+}
+
+// The v2 integrations block. Ten business systems under a heading that promises
+// smart technologies, with MQTT the only nod to IoT.
+const RETIRED_INTEGRATIONS_V2 = {
+  heading: "التكاملات",
+  subheading: "ربط سلس مع الأنظمة وأدوات العمل—مع واجهات API جاهزة للتوسع.",
+  chips: ["ERP", "CRM", "Email", "SMS", "WhatsApp", "Webhooks", "Power BI", "GIS", "MQTT", "REST API"],
+};
+
+function isRetiredIntegrationsBoilerplate(p) {
+  if (!p || typeof p !== "object") return false;
+  const chips = Array.isArray(p.chips) ? p.chips : [];
+  if (asString(p.heading) !== RETIRED_INTEGRATIONS_V2.heading) return false;
+  if (asString(p.subheading) !== RETIRED_INTEGRATIONS_V2.subheading) return false;
+  if (chips.length !== RETIRED_INTEGRATIONS_V2.chips.length) return false;
+  return chips.every((c, i) => asString(c) === RETIRED_INTEGRATIONS_V2.chips[i]);
+}
+
 // The v2 wording. It described a sensor-monitoring consultancy rather than what
 // أتكس sells, and it shipped identical to every database row — nobody ever
 // edited it, because the section did not read stored content at all (the view
@@ -176,9 +234,9 @@ function getDefaultHomeContent() {
     process: PROCESS_DEFAULT(),
 
     integrations: {
-      heading: "التكاملات",
-      subheading: "ربط سلس مع الأنظمة وأدوات العمل—مع واجهات API جاهزة للتوسع.",
-      chips: ["ERP", "CRM", "Email", "SMS", "WhatsApp", "Webhooks", "Power BI", "GIS", "MQTT", "REST API"],
+      heading: "التقنيات الذكية التي ندعمها",
+      subheading: "منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.",
+      chips: INTEGRATION_CHIPS(),
     },
 
     faq: {
@@ -350,7 +408,7 @@ function normalizeHomeContent(input) {
     }
   }
 
-  if (src.integrations && typeof src.integrations === "object") {
+  if (src.integrations && typeof src.integrations === "object" && !isRetiredIntegrationsBoilerplate(src.integrations)) {
     out.integrations.heading = asString(src.integrations.heading) || out.integrations.heading;
     out.integrations.subheading = asString(src.integrations.subheading) || out.integrations.subheading;
     if (Array.isArray(src.integrations.chips)) {

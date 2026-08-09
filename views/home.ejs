@@ -311,18 +311,21 @@
       <section class="section section--tight" id="integrations">
         <div class="container">
           <div class="section__head section__head--start">
-            <h2>التقنيات الذكية التي ندعمها</h2>
-            <p>منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.</p>
+            <h2><%= content?.integrations?.heading || 'التقنيات الذكية التي ندعمها' %></h2>
+            <p><%= content?.integrations?.subheading || 'منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.' %></p>
           </div>
 
-          <% const defaultChips = ['Wi-Fi 7', 'WPA3', 'بلوتوث 5.4', 'Zigbee 3.0', 'Thread 1.4', 'Matter 1.5', 'LoRaWAN 1.1', 'NB-IoT', 'LTE-M / eMTC', 'MQTT 5.0', 'CoAP 1.0', 'HTTP/3', 'QUIC v1', 'RTSP 2.0', 'PoE IEEE 802.3bt', 'TLS 1.3']; %>
+          <%# Fallback only — the real source is integrations.chips in
+              server/homeSchema.js, which the admin panel edits. %>
+          <% const defaultChips = ['Matter 1.5', 'KNX', 'Zigbee 3.0', 'Z-Wave', 'Thread 1.4', 'Wi-Fi 7', 'بلوتوث LE 5.4', 'PoE IEEE 802.3bt', 'BACnet/IP', 'Modbus TCP', 'DALI-2', 'ONVIF', 'RTSP 2.0', 'SIP', 'OSDP', 'OCPP 2.0.1', 'MQTT 5.0', 'CoAP 1.0', 'LoRaWAN 1.1', 'NB-IoT', 'LTE-M', 'WPA3', 'TLS 1.3', 'REST API', 'Webhooks', 'ERP', 'CRM', 'Power BI', 'GIS', 'WhatsApp', 'SMS', 'Email']; %>
           <% const chips = (Array.isArray(content?.integrations?.chips) ? content.integrations.chips : defaultChips).map(function(c){ return String(c || '').trim(); }).filter(Boolean); %>
           <% function integrationIcon(label){
                const l = String(label || '').toLowerCase();
                if (l.includes('wi-fi') || l.includes('wpa')) return 'wifi';
                if (l.includes('بلوتوث') || l.includes('bluetooth')) return 'bluetooth';
                if (l.includes('mqtt')) return 'mqtt';
-               if (l.includes('zigbee') || l.includes('thread') || l.includes('matter')) return 'mesh';
+               if (l.includes('zigbee') || l.includes('thread') || l.includes('matter') || l.includes('z-wave')) return 'mesh';
+               if (l.includes('coap')) return 'mqtt';
                return 'chip';
              }
           %>
