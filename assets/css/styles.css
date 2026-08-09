@@ -857,57 +857,56 @@ body.nav-open .nav__toggleLines::after {
   line-height: 1.8;
 }
 
-/* Process flow chart */
+/* Process flow — a rail with markers on it, not five identical slabs.
+   Same shape as .recJourney on the /rec landing pages: the amber rail is the
+   one thread that makes the sequence legible as a sequence, and the numbers
+   sit on it in navy because #fff on #ff9933 is 2.13:1 and the numerals turn
+   to mush. Mobile-first: a vertical rail; the horizontal timeline starts at
+   1024, where five columns actually fit. */
 .processFlow {
+  position: relative;
   list-style: none;
   margin: 0;
-  padding: calc(26px * var(--font-scale));
-  border: calc(1px * var(--font-scale)) solid var(--navy-12);
-  border-radius: calc(var(--radius) + calc(6px * var(--font-scale)));
-  background:
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 88% 12%, var(--primary-18), transparent 64%),
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 20% 92%, rgba(0, 43, 68, 0.10), transparent 64%),
-    rgba(255, 255, 255, 0.84);
-  box-shadow: var(--shadow-soft);
+  padding: 0;
+  padding-inline-start: calc(46px * var(--font-scale));
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--s-4);
+  gap: var(--s-5);
+}
+
+.processFlow::before {
+  content: "";
+  position: absolute;
+  inset-block: calc(18px * var(--font-scale));
+  inset-inline-start: calc(17px * var(--font-scale));
+  inline-size: calc(2px * var(--font-scale));
+  background: var(--primary-35);
 }
 
 .processFlow__item {
   position: relative;
-  border: calc(1px * var(--font-scale)) solid rgba(0, 43, 68, 0.11);
-  border-radius: calc(14px * var(--font-scale));
-  background: var(--white-90);
-  box-shadow: 0 calc(10px * var(--font-scale)) var(--s-5) rgba(0, 0, 0, 0.05);
-  padding: calc(18px * var(--font-scale));
   display: grid;
+  align-content: start;
   gap: var(--s-2);
-  min-height: calc(196px * var(--font-scale));
-  transition: transform var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
-}
-
-.processFlow__item:hover {
-  transform: translateY(calc(-2px * var(--font-scale)));
-  border-color: var(--primary-36);
-  box-shadow: var(--shadow-sm);
 }
 
 .processFlow__stepNo {
+  position: absolute;
+  inset-inline-start: calc(-46px * var(--font-scale));
+  inset-block-start: 0;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: calc(44px * var(--font-scale));
-  width: fit-content;
-  padding: calc(5px * var(--font-scale)) calc(10px * var(--font-scale));
-  border-radius: var(--radius-pill);
-  border: calc(1px * var(--font-scale)) solid var(--primary-36);
-  background: var(--primary-14);
-  color: var(--accent-text-deep);
+  inline-size: calc(36px * var(--font-scale));
+  block-size: calc(36px * var(--font-scale));
+  border-radius: 50%;
+  background: var(--navy);
+  box-shadow: 0 0 0 calc(4px * var(--font-scale)) var(--primary-15);
+  color: #fff;
   font-size: var(--s-3);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
 }
 
 .processFlow__title {
@@ -922,26 +921,36 @@ body.nav-open .nav__toggleLines::after {
   color: var(--muted);
   font-weight: 700;
   line-height: 1.95;
+  max-inline-size: 36em;
 }
 
-.processFlow__arrow {
-  position: absolute;
-  inset-inline-start: auto;
-  inset-inline-end: calc(-18px * var(--font-scale));
-  top: 50%;
-  transform: translateY(-50%);
-  width: calc(30px * var(--font-scale));
-  height: calc(30px * var(--font-scale));
-  border-radius: var(--radius-pill);
-  border: calc(1px * var(--font-scale)) solid var(--primary-36);
-  background: var(--primary-14);
-  display: grid;
-  place-items: center;
-  color: var(--accent-text-deep);
-  font-size: calc(15px * var(--font-scale));
-  font-weight: 800;
-  line-height: 1;
-  z-index: 2;
+/* The section had no way to act on it. This is the one amber thing here. */
+.processFlow__foot {
+  margin-block-start: var(--s-6);
+}
+
+@media (min-width: 1024px) {
+  .processFlow {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--s-5);
+    padding-inline-start: 0;
+  }
+
+  /* Rail runs from the first marker's centre to the last one's, not edge to
+     edge — a line overshooting the end markers reads as an unfinished process. */
+  .processFlow::before {
+    inset-block: auto;
+    inset-block-start: calc(18px * var(--font-scale));
+    inset-inline: calc(18px * var(--font-scale));
+    inline-size: auto;
+    block-size: calc(2px * var(--font-scale));
+  }
+
+  .processFlow__stepNo {
+    position: relative;
+    inset-inline-start: auto;
+    margin-block-end: var(--s-2);
+  }
 }
 
 #process.section {
@@ -3713,22 +3722,6 @@ body.nav-open .nav__toggleLines::after {
     grid-template-columns: 1fr;
   }
 
-  .processFlow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: calc(18px * var(--font-scale));
-    gap: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__item {
-    min-height: calc(172px * var(--font-scale));
-    padding: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__arrow {
-    inset-inline-start: auto;
-    inset-inline-end: calc(-16px * var(--font-scale));
-  }
-
   .cta {
     grid-template-columns: 1fr;
   }
@@ -4086,26 +4079,6 @@ body.nav-open .nav__toggleLines::after {
     min-height: calc(350px * var(--font-scale));
   }
 
-  .processFlow {
-    grid-template-columns: 1fr;
-    padding: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__item {
-    min-height: auto;
-    border-radius: var(--s-3);
-    padding: calc(14px * var(--font-scale)) var(--s-3);
-  }
-
-  .processFlow__arrow {
-    inset-inline-start: 50%;
-    inset-inline-end: auto;
-    top: auto;
-    bottom: calc(-16px * var(--font-scale));
-    transform: translateX(-50%);
-    font-size: calc(14px * var(--font-scale));
-  }
-
   .whyKeypoints__item {
     padding: var(--s-3);
   }
@@ -4277,14 +4250,6 @@ body.consent-open .waBtn {
 
 .whyKeypoints__item:hover {
   border-inline-start-color: var(--primary);
-}
-
-/* --- Process flow — slightly darker background --- */
-.processFlow {
-  background:
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 88% 12%, rgba(255, 153, 51, 0.2), transparent 64%),
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 20% 92%, var(--navy-12), transparent 64%),
-    #f6f8fa;
 }
 
 /* final CTA remains light mode by request */
@@ -4490,69 +4455,7 @@ body.consent-open .waBtn {
   background: rgba(74, 222, 128, 0.1);
 }
 
-/* ============================================================
-   Process flow: diagonal stagger layout
-   ============================================================ */
-
-/* Custom property stagger — hover still works cleanly */
-.processFlow__item {
-  --stagger: 0px;
-  transform: translateY(var(--stagger));
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-  align-self: start;
-}
-
-.processFlow__item:hover {
-  transform: translateY(calc(var(--stagger) - var(--s-1)));
-  border-color: var(--primary-50);
-  box-shadow: 0 calc(18px * var(--font-scale)) calc(38px * var(--font-scale)) rgba(0, 0, 0, 0.12), 0 0 0 calc(1px * var(--font-scale)) rgba(255, 153, 51, 0.2);
-}
-
-/* Stagger each step down calc(20px * var(--font-scale)) */
-.processFlow__item:nth-child(2) { --stagger: calc(18px * var(--font-scale)); }
-.processFlow__item:nth-child(3) { --stagger: calc(36px * var(--font-scale)); }
-.processFlow__item:nth-child(4) { --stagger: calc(54px * var(--font-scale)); }
-.processFlow__item:nth-child(5) { --stagger: calc(72px * var(--font-scale)); }
-
-/* Extra bottom padding so staggered items don't clip the container */
-.processFlow {
-  padding-bottom: calc(calc(26px * var(--font-scale)) + calc(72px * var(--font-scale)));
-  align-items: start;
-}
-
-/* Step number — bigger, amber, bold */
-.processFlow__stepNo {
-  font-size: clamp(calc(22px * var(--font-scale)), 2.8vw, var(--s-6));
-  font-weight: 800;
-  letter-spacing: calc(-0.5px * var(--font-scale));
-  background: linear-gradient(135deg, var(--primary), #cc6600);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  background-color: transparent;
-  color: transparent;
-  line-height: 1;
-  min-width: unset;
-  width: auto;
-}
-
-/* Arrow — amber connecting line, vertically centered between staggered items */
-.processFlow__arrow {
-  font-size: calc(18px * var(--font-scale));
-  color: rgba(255, 153, 51, 0.7);
-  top: calc(28px * var(--font-scale));
-  transform: none;
-  z-index: 2;
-}
-
-/* Reset stagger on mobile (single-column, no stagger needed) */
 @media (max-width: 640px) {
-  .processFlow__item { --stagger: 0px !important; }
-  .processFlow { padding-bottom: calc(26px * var(--font-scale)); }
-
   /* tighten section vertical rhythm on small phones */
   .section { padding-block: var(--s-7); }
   .section--feature { padding-block: var(--s-8); }

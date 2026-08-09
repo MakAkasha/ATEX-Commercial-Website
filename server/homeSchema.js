@@ -1,4 +1,4 @@
-const HOME_SCHEMA_VERSION = 2;
+const HOME_SCHEMA_VERSION = 3;
 
 // NOTE ON `iconClass` (solutions.cards / why.cards)
 //
@@ -18,6 +18,68 @@ const HOME_SCHEMA_VERSION = 2;
 
 function clone(x) {
   return JSON.parse(JSON.stringify(x));
+}
+
+// The "كيف نعمل" steps, current wording. Held in a function rather than inline
+// in getDefaultHomeContent() so the retired-boilerplate check below can compare
+// against the previous wording without duplicating this one.
+function PROCESS_DEFAULT() {
+  return {
+    heading: "كيف نعمل",
+    subheading: "من مخططات المشروع إلى التسليم والضمان — خطوات واضحة تناسب جدول المطوّر.",
+    steps: [
+      {
+        title: "زيارة الموقع ودراسة المخططات",
+        desc: "نطّلع على مخططات المشروع ونماذج الوحدات، ثم نحدد ما يناسب كل نموذج من أنظمة المنزل الذكي والاتصال الداخلي والتحكم بالدخول وشواحن المركبات الكهربائية.",
+      },
+      {
+        title: "التصميم والتنسيق مع الاستشاري",
+        desc: "مخططات تنفيذية للمسارات والكهرباء والشبكة، وتنسيق مبكر مع المقاول والاستشاري قبل إغلاق الجدران.",
+      },
+      {
+        title: "التوريد والتركيب ضمن جدول المشروع",
+        desc: "توريد الأجهزة وتركيبها على مراحل تتبع تقدّم البناء: التمديدات أولاً، ثم التركيب النهائي دون تعطيل بقية الأعمال.",
+      },
+      {
+        title: "الاختبار والتشغيل وتسليم الوحدات",
+        desc: "اختبارات قبول لكل وحدة، تشغيل تجريبي، وتدريب فريق الإدارة والملّاك على استخدام الأنظمة.",
+      },
+      {
+        title: "الضمان والدعم بعد التسليم",
+        desc: "ضمان على المكونات وخطة صيانة واتفاقية مستوى خدمة (SLA)، مع فريق فني داخل المملكة.",
+      },
+    ],
+  };
+}
+
+// The v2 wording. It described a sensor-monitoring consultancy rather than what
+// أتكس sells, and it shipped identical to every database row — nobody ever
+// edited it, because the section did not read stored content at all (the view
+// rendered its own copy of this array). Rows still carrying it verbatim are
+// moved forward to PROCESS_DEFAULT(); a row an admin has since edited is left
+// alone.
+const RETIRED_PROCESS_V2 = {
+  heading: "كيف نعمل",
+  subheading: "خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.",
+  steps: [
+    { title: "تحليل حالة الاستخدام", desc: "تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل." },
+    { title: "اختيار الأجهزة والاتصال", desc: "ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة." },
+    { title: "التركيب والتهيئة", desc: "تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول." },
+    { title: "لوحات وتقارير", desc: "لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات." },
+    { title: "تحسين مستمر", desc: "تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق." },
+  ],
+};
+
+function isRetiredProcessBoilerplate(p) {
+  if (!p || typeof p !== "object") return false;
+  const steps = Array.isArray(p.steps) ? p.steps : [];
+  if (steps.length !== RETIRED_PROCESS_V2.steps.length) return false;
+  if (asString(p.heading) !== RETIRED_PROCESS_V2.heading) return false;
+  if (asString(p.subheading) !== RETIRED_PROCESS_V2.subheading) return false;
+  return steps.every((s, i) => {
+    const was = RETIRED_PROCESS_V2.steps[i];
+    return asString(s?.title) === was.title && asString(s?.desc) === was.desc;
+  });
 }
 
 function getDefaultHomeContent() {
@@ -111,17 +173,7 @@ function getDefaultHomeContent() {
       ],
     },
 
-    process: {
-      heading: "كيف نعمل",
-      subheading: "خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.",
-      steps: [
-        { title: "تحليل حالة الاستخدام", desc: "تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل." },
-        { title: "اختيار الأجهزة والاتصال", desc: "ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة." },
-        { title: "التركيب والتهيئة", desc: "تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول." },
-        { title: "لوحات وتقارير", desc: "لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات." },
-        { title: "تحسين مستمر", desc: "تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق." },
-      ],
-    },
+    process: PROCESS_DEFAULT(),
 
     integrations: {
       heading: "التكاملات",
@@ -285,9 +337,17 @@ function normalizeHomeContent(input) {
     }
   }
 
-  if (src.process && typeof src.process === "object") {
+  if (src.process && typeof src.process === "object" && !isRetiredProcessBoilerplate(src.process)) {
     out.process.heading = asString(src.process.heading) || out.process.heading;
     out.process.subheading = asString(src.process.subheading) || out.process.subheading;
+    // Steps were previously dropped here, so anything an admin saved was reset
+    // to the defaults on the next normalise pass.
+    if (Array.isArray(src.process.steps)) {
+      out.process.steps = src.process.steps
+        .filter((s) => s && typeof s === "object")
+        .map((s) => ({ title: asString(s.title) || "", desc: asString(s.desc) || "" }))
+        .filter((s) => s.title || s.desc);
+    }
   }
 
   if (src.integrations && typeof src.integrations === "object") {

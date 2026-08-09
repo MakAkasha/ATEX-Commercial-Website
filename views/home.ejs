@@ -275,30 +275,39 @@
       <section class="section" id="process">
         <div class="container">
           <div class="section__head section__head--start">
-            <h2>كيف نعمل</h2>
-            <p>خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.</p>
+            <h2><%= content?.process?.heading || 'كيف نعمل' %></h2>
+            <p><%= content?.process?.subheading || 'من مخططات المشروع إلى التسليم والضمان — خطوات واضحة تناسب جدول المطوّر.' %></p>
           </div>
 
+          <%# Fallback only — the real source is process.steps in server/homeSchema.js,
+              which the admin panel edits. Kept in step with the schema defaults. %>
           <% const processDefaultSteps = [
-            { title: 'تحليل حالة الاستخدام', desc: 'تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل.' },
-            { title: 'اختيار الأجهزة والاتصال', desc: 'ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة.' },
-            { title: 'التركيب والتهيئة', desc: 'تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول.' },
-            { title: 'لوحات وتقارير', desc: 'لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات.' },
-            { title: 'تحسين مستمر', desc: 'تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق.' }
+            { title: 'زيارة الموقع ودراسة المخططات', desc: 'نطّلع على مخططات المشروع ونماذج الوحدات، ثم نحدد ما يناسب كل نموذج من أنظمة المنزل الذكي والاتصال الداخلي والتحكم بالدخول وشواحن المركبات الكهربائية.' },
+            { title: 'التصميم والتنسيق مع الاستشاري', desc: 'مخططات تنفيذية للمسارات والكهرباء والشبكة، وتنسيق مبكر مع المقاول والاستشاري قبل إغلاق الجدران.' },
+            { title: 'التوريد والتركيب ضمن جدول المشروع', desc: 'توريد الأجهزة وتركيبها على مراحل تتبع تقدّم البناء: التمديدات أولاً، ثم التركيب النهائي دون تعطيل بقية الأعمال.' },
+            { title: 'الاختبار والتشغيل وتسليم الوحدات', desc: 'اختبارات قبول لكل وحدة، تشغيل تجريبي، وتدريب فريق الإدارة والملّاك على استخدام الأنظمة.' },
+            { title: 'الضمان والدعم بعد التسليم', desc: 'ضمان على المكونات وخطة صيانة واتفاقية مستوى خدمة (SLA)، مع فريق فني داخل المملكة.' }
           ]; %>
-          <% const processSteps = processDefaultSteps; %>
-          <ol class="processFlow" aria-label="مخطط تدفق خطوات التنفيذ">
+          <% const processContentSteps = (Array.isArray(content?.process?.steps) ? content.process.steps : []).map(function(s){
+            return { title: String(s?.title || '').trim(), desc: String(s?.desc || '').trim() };
+          }).filter(function(s){ return s.title || s.desc; }); %>
+          <% const processSteps = processContentSteps.length ? processContentSteps : processDefaultSteps; %>
+          <%# The amber rail carries the sequence, so there is no arrow glyph to
+              mirror: `←` was hardcoded in a dir="rtl" document and pointed the
+              wrong way once the grid wrapped. %>
+          <ol class="processFlow" aria-label="خطوات التنفيذ">
             <% processSteps.forEach(function(s, idx){ %>
               <li class="processFlow__item">
-                <span class="processFlow__stepNo" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
+                <span class="processFlow__stepNo" aria-hidden="true"><%= idx + 1 %></span>
                 <h3 class="processFlow__title"><%= s.title %></h3>
                 <p class="processFlow__desc"><%= s.desc %></p>
-                <% if (idx < processSteps.length - 1) { %>
-                  <span class="processFlow__arrow" aria-hidden="true">←</span>
-                <% } %>
               </li>
             <% }) %>
           </ol>
+
+          <div class="processFlow__foot">
+            <a class="btn btn--primary" href="/contact-us">نسّق مع فريق المشاريع مبكراً</a>
+          </div>
         </div>
       </section>
 
