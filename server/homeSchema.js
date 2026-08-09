@@ -150,6 +150,11 @@ function isRetiredProcessBoilerplate(p) {
 // rendered, so a stored value here is by definition a default nobody could have
 // seen take effect.
 const RETIRED_FIELDS_V3 = {
+  // Production's row holds "+966 11 000 0000" — a placeholder from an early
+  // schema that was never visible, because the header printed the real number
+  // instead of reading this field. Wiring the field up would have put the
+  // placeholder in the header and pointed the WhatsApp link at it.
+  topbarPhone: "+966 11 000 0000",
   topbarCtaText: "اطلب عرضاً",
   topbarCtaHref: "#contact",
   heroKicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
@@ -352,7 +357,7 @@ function normalizeHomeContent(input) {
   // Simple deep-ish merge with type guards
   if (src.topbar && typeof src.topbar === "object") {
     out.topbar.supportText = asString(src.topbar.supportText) || out.topbar.supportText;
-    out.topbar.phone = asString(src.topbar.phone) || out.topbar.phone;
+    out.topbar.phone = forwardField(src.topbar.phone, RETIRED_FIELDS_V3.topbarPhone, out.topbar.phone);
     out.topbar.tagline = asString(src.topbar.tagline) || out.topbar.tagline;
     out.topbar.ctaText = forwardField(src.topbar.ctaText, RETIRED_FIELDS_V3.topbarCtaText, out.topbar.ctaText);
     out.topbar.ctaHref = forwardField(src.topbar.ctaHref, RETIRED_FIELDS_V3.topbarCtaHref, out.topbar.ctaHref);
