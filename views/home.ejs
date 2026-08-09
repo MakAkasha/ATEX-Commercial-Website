@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
-    <%- include('partials/head', { meta }) %>
+    <%- include('partials/head', { meta, hasHeroVideo: true }) %>
     <%- include('partials/structured-data') %>
   </head>
 
@@ -43,13 +43,17 @@
               id="heroYoutubeVideo"
               tabindex="-1"
               aria-hidden="true"
-              data-src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
+              <%# Requested during HTML parse, not handed to JavaScript to start
+                  later. Deferring it cost about half a second on top of the
+                  player's own start-up, and every one of those milliseconds was
+                  spent showing the still image instead of the video. %>
+              src="https://www.youtube-nocookie.com/embed/<%= __heroVideoYoutubeId %>?autoplay=1&mute=1&controls=0&loop=1&playlist=<%= __heroVideoYoutubeId %>&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1"
               title="IoT background video"
               frameborder="0"
               allow="autoplay; encrypted-media; picture-in-picture"
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
-              loading="lazy"></iframe>
+              loading="eager"></iframe>
           <% } else { %>
             <video id="heroVideo" muted loop playsinline preload="none" fetchpriority="high" data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4">
               <source data-src="https://cdn.coverr.co/videos/coverr-smart-city-overview-1579/1080p.mp4" type="video/mp4" />

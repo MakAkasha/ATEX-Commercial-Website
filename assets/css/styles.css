@@ -1370,7 +1370,7 @@ body.nav-open .nav__toggleLines::after {
 .heroVideo__media video,
 .heroVideo__media iframe {
   opacity: 0;
-  transition: opacity 700ms ease;
+  transition: opacity 450ms ease;
 }
 
 .heroVideo__media.is-ready video,
@@ -4315,12 +4315,13 @@ body.consent-open .waBtn {
   bottom: calc(var(--s-5) + 150px);
 }
 
-/* --- Hero video: fallback bg if video fails --- */
+/* --- Hero video: black behind it, never a still image ---
+   A poster used to sit here and show for the second or two the player needed
+   to start, which read as a wrong image flashing before the video. Okasha's
+   call (2026-08-09): video only, black behind it. So the video fades up out of
+   black, and black is also what stays if the player is blocked or fails. */
 .heroVideo__media {
-  background:
-    linear-gradient(135deg, rgba(0, 24, 37, 0.72) 0%, rgba(0, 43, 68, 0.62) 100%),
-    url("/assets/hero-video/video-keeper.webp") center/cover no-repeat,
-    linear-gradient(135deg, #001825 0%, var(--navy) 100%);
+  background: #000;
 }
 
 /* ============================================================
