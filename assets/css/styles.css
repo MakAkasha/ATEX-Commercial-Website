@@ -1015,11 +1015,6 @@ body.nav-open .nav__toggleLines::after {
   max-inline-size: 36em;
 }
 
-/* The section had no way to act on it. This is the one amber thing here. */
-.processFlow__foot {
-  margin-block-start: var(--s-6);
-}
-
 @media (min-width: 1024px) {
   .processFlow {
     grid-template-columns: repeat(5, minmax(0, 1fr));
