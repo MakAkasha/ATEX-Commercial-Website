@@ -329,18 +329,75 @@
                return 'chip';
              }
           %>
+          <%# Marks for the technologies that publish one. Files in assets/tech,
+              all from Wikimedia Commons and all public domain there (PD-textlogo)
+              — see assets/tech/SOURCES.md. A technology with no published mark,
+              or one that is a category rather than a brand (ERP, SMS, REST API),
+              keeps its name as text. Matched on a token so an admin can retitle
+              a chip ("Zigbee 3.0" -> "Zigbee 3.1") without losing its logo. %>
+          <%# Paths are written out in full, not assembled from the token, so the
+              asset-reference test can still resolve them statically. Width and
+              height are each file's intrinsic size — they reserve the box. %>
+          <% const integrationLogos = [
+               ['zigbee',    '/assets/tech/zigbee.svg',    188,  45],
+               ['z-wave',    '/assets/tech/z-wave.svg',    256, 114],
+               ['thread',    '/assets/tech/thread.svg',    541, 100],
+               ['knx',       '/assets/tech/knx.svg',      1069, 510],
+               ['bacnet',    '/assets/tech/bacnet.svg',    300,  58],
+               ['modbus',    '/assets/tech/modbus.svg',    692, 105],
+               ['wi-fi',     '/assets/tech/wifi.svg',      815, 483],
+               ['بلوتوث',    '/assets/tech/bluetooth.svg', 347,  86],
+               ['bluetooth', '/assets/tech/bluetooth.svg', 347,  86],
+               ['lorawan',   '/assets/tech/lorawan.svg',   300,  97],
+               ['mqtt',      '/assets/tech/mqtt.svg',      300,  76],
+               ['power bi',  '/assets/tech/power-bi.svg',  630, 630],
+               ['whatsapp',  '/assets/tech/whatsapp.svg',  360, 362]
+             ]; %>
+          <% function integrationLogo(label){
+               const raw = String(label || '').trim();
+               const l = raw.toLowerCase();
+               for (const [token, src, w, h] of integrationLogos) {
+                 const at = l.indexOf(token);
+                 if (at === -1) continue;
+                 // Whatever is left of the label is its qualifier — "Wi-Fi 7" -> "7",
+                 // "BACnet/IP" -> "IP. Leading joiners are stripped so the leftover
+                 // reads as a label rather than as a fragment of the removed word.
+                 const rest = (raw.slice(0, at) + raw.slice(at + token.length))
+                   .replace(/^[\s/\-–—·،,]+|[\s/\-–—·،,]+$/g, '')
+                   .trim();
+                 return { src: src, w: w, h: h, rest: rest };
+               }
+               return null;
+             }
+          %>
+          <%
+             function chipMarkup(label){
+               const logo = integrationLogo(label);
+               if (!logo) {
+                 return '<span class="marquee__icon marquee__icon--' + integrationIcon(label) + '" aria-hidden="true"></span>' + escapeHtml(label);
+               }
+               return '<img class="marquee__logo" src="' + logo.src + '" alt="' + escapeHtml(label) +
+                 '" width="' + logo.w + '" height="' + logo.h + '" loading="lazy" decoding="async">' +
+                 (logo.rest ? '<span class="marquee__ver" aria-hidden="true">' + escapeHtml(logo.rest) + '</span>' : '');
+             }
+             function escapeHtml(s){
+               return String(s).replace(/[&<>"']/g, function(c){
+                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+               });
+             }
+          %>
           <div class="marquee" data-marquee aria-label="شريط تكاملات">
             <div class="marquee__viewport" data-marquee-viewport>
               <div class="marquee__runner" data-marquee-runner>
                 <div class="marquee__content" data-marquee-content>
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
+                    <span class="marquee__text"><%- chipMarkup(label) %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>
                 <div class="marquee__content" data-marquee-static-clone aria-hidden="true">
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
+                    <span class="marquee__text"><%- chipMarkup(label) %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>

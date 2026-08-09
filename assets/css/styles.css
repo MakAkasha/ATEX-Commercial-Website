@@ -1159,6 +1159,26 @@ body.nav-open .nav__toggleLines::after {
 .marquee__icon--mesh::before { content: "◈"; font-size: calc(10px * var(--font-scale)); position: absolute; inset: 0; text-align: center; line-height: calc(15px * var(--font-scale)); color: var(--accent-text); }
 .marquee__icon--chip::before { content: "▦"; font-size: calc(10px * var(--font-scale)); position: absolute; inset: 0; text-align: center; line-height: calc(15px * var(--font-scale)); color: var(--accent-text); }
 
+/* Brand marks in the strip. One block-size for all of them so a wide wordmark
+   and a square mark carry the same weight; inline-size follows each file's own
+   ratio, capped so a long wordmark cannot dominate the row. */
+.marquee__logo {
+  display: block;
+  block-size: calc(26px * var(--font-scale));
+  inline-size: auto;
+  /* Wide enough for a 6:1 wordmark (Modbus, Thread) to keep full height. */
+  max-inline-size: calc(150px * var(--font-scale));
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/* The version left over from the chip's name — "Wi-Fi 7" keeps its 7. */
+.marquee__ver {
+  font-size: calc(15px * var(--font-scale));
+  font-weight: 700;
+  color: var(--muted);
+}
+
 .marquee__sep {
   display: inline-block;
   padding-inline: calc(6px * var(--font-scale));
