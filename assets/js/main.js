@@ -1024,6 +1024,11 @@ function initHeroVideoLazyLoad() {
 
   if (!heroVideo && !heroYoutubeVideo) return;
 
+  // The still image behind the hero stays visible until the player is actually
+  // running; revealing it any earlier is what made the still read as a flash.
+  const media = (heroVideo || heroYoutubeVideo).closest(".heroVideo__media");
+  const reveal = () => media && media.classList.add("is-ready");
+
   const loadVideo = () => {
     // Load native video
     if (heroVideo) {
@@ -1048,6 +1053,13 @@ function initHeroVideoLazyLoad() {
         }
         heroVideo.load();
 
+        // A paused first frame is still the right picture, so reduced motion
+        // reveals on the first decoded frame rather than on playback.
+        heroVideo.addEventListener("playing", reveal);
+        heroVideo.addEventListener("loadeddata", () => {
+          if (prefersReducedMotion) reveal();
+        });
+
         heroVideo.addEventListener("loadedmetadata", () => {
           if (prefersReducedMotion) {
             heroVideo.pause();
@@ -1063,21 +1075,24 @@ function initHeroVideoLazyLoad() {
     if (heroYoutubeVideo) {
       const iframeSrc = heroYoutubeVideo.getAttribute("data-src");
       if (iframeSrc) {
+        // The iframe's load event fires when the player page is up, which is
+        // before the first video frame is painted; the short wait covers that
+        // gap so the fade does not expose the player's own black frame.
+        heroYoutubeVideo.addEventListener("load", () => setTimeout(reveal, 600), { once: true });
         heroYoutubeVideo.src = iframeSrc;
       }
     }
 
   };
 
-  // Load video after page becomes interactive (DOMContentLoaded + small delay)
+  // Started as soon as the DOM is ready. There used to be a further 300ms wait
+  // "to ensure page content is rendered first", which only lengthened the time
+  // the still was on screen — the player is a separate, lower-priority request
+  // and does not compete with the page's own render.
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      // Small delay to ensure page content is rendered first
-      setTimeout(loadVideo, 300);
-    });
+    document.addEventListener("DOMContentLoaded", loadVideo);
   } else {
-    // DOM already loaded
-    setTimeout(loadVideo, 300);
+    loadVideo();
   }
 }
 
