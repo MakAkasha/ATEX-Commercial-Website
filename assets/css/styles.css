@@ -1361,6 +1361,30 @@ body.nav-open .nav__toggleLines::after {
   pointer-events: none;
 }
 
+/* The still behind the hero (the .heroVideo__media background) is what a
+   visitor sees for the second or so the player needs to start. It used to be
+   replaced in a single frame, which read as a wrong image flashing before the
+   video. The player now fades up over it instead, and is only revealed once it
+   is actually playing — so if it is blocked or fails, the still simply stays
+   rather than cutting to a blank frame. */
+.heroVideo__media video,
+.heroVideo__media iframe {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.heroVideo__media.is-ready video,
+.heroVideo__media.is-ready iframe {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroVideo__media video,
+  .heroVideo__media iframe {
+    transition: none;
+  }
+}
+
 .heroVideo__inner {
   position: relative;
   z-index: 1;
