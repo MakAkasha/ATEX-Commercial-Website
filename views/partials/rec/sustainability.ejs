@@ -1,0 +1,19 @@
+<section class="section section--loud recSustain recBand--navy" aria-labelledby="recSustainTitle">
+  <div class="container">
+    <div class="section__head">
+      <p class="solutionsPage__sectionKicker"><%= page.sustainability.kicker %></p>
+      <h2 id="recSustainTitle"><%= page.sustainability.title %></h2>
+    </div>
+
+    <ul class="recSustain__grid">
+      <% page.sustainability.items.forEach(function (item) { %>
+        <li class="recSustain__item">
+          <h3 class="recSustain__itemTitle"><%= item.title %></h3>
+          <p class="recSustain__itemBody">
+            <%= item.body.before %><% if (item.body.em) { %><strong><bdi><%= item.body.em %></bdi></strong><% } %><%= item.body.after %>
+          </p>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>

@@ -181,6 +181,20 @@ const IMAGE_SIZES = Object.freeze({
     "(max-width: 450px) calc(50vw - 71px), (max-width: 768px) calc(46vw - 53px), (max-width: 1200px) calc(30.6vw - 55px), (max-width: 1413px) calc(33.3vw - 87px), 378px",
 
   /**
+   * views/partials/rec/products.ejs — .recCard__media inside .recProducts__grid
+   * (assets/css/rec-landing.css). The grid is
+   * `repeat(auto-fill, minmax(calc(280px * var(--font-scale)), 1fr))` with a
+   * --s-4 (13.6px) gap inside .container, so at the 986px container cap it
+   * settles at 3 columns -> (986 - 27.2) / 3 = 320px. Measured against Chrome
+   * at 1440px: 319.6px.
+   * Below 1020px .container is `100vw - 34px` and the same minmax gives two
+   * columns -> (100vw - 47.6) / 2, until the 238px track minimum stops fitting
+   * twice at a ~524px viewport and it drops to one full-width column.
+   */
+  recProductCard:
+    "(max-width: 559px) calc((100vw - 34px) * 0.84), (max-width: 1020px) calc((100vw - 47.6px) / 2), 320px",
+
+  /**
    * home.ejs — .quoteCard__avatar is a fixed 40.8px box (48px * 0.85) with
    * `object-fit: cover`. Stated so an oversized uploaded photo resolves to the
    * 320px derivative instead of the original.

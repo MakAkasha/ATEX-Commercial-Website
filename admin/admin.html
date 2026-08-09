@@ -352,12 +352,12 @@
                     <input class="form-control" id="topbarTagline" type="text" />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">زر (نص)</label>
+                    <label class="form-label">رابط البوابة (نص)</label>
                     <input class="form-control" id="topbarCtaText" type="text" />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">زر (رابط)</label>
-                    <input class="form-control" id="topbarCtaHref" type="text" dir="ltr" placeholder="#contact" />
+                    <label class="form-label">رابط البوابة (العنوان)</label>
+                    <input class="form-control" id="topbarCtaHref" type="text" dir="ltr" placeholder="https://portal.atex-ksa.com" />
                   </div>
                 </div>
               </div>
@@ -437,10 +437,10 @@
                     <input class="form-control" id="solutionsSubheading" type="text" />
                   </div>
                 </div>
-                <div class="array" id="solutionsCards" data-array="solutions.cards"></div>
-                <button class="btn btn-outline-secondary btn-sm mt-2" type="button" data-add-item="solutions.cards">
-                  <i class="ti ti-plus me-1"></i> إضافة بطاقة
-                </button>
+                <!-- The cards in this section are drawn from the solutions
+                     registry (server/data/solutions.js), not from home content,
+                     so the card editor that used to sit here edited data no page
+                     rendered. Stored solutions.cards values are left untouched. -->
               </div>
             </div>
 
@@ -523,13 +523,9 @@
             <div class="card mb-3" id="home-sections">
               <div class="card-header"><h3 class="card-title">إظهار/إخفاء الأقسام</h3></div>
               <div class="card-body">
+                <!-- The products section was removed from the home page, so its
+                     toggle switched nothing and has been dropped. -->
                 <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="sectionsProductsEnabled" />
-                      <span class="form-check-label">إظهار قسم المنتجات في الصفحة الرئيسية</span>
-                    </label>
-                  </div>
                   <div class="col-md-6">
                     <label class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" id="sectionsBlogEnabled" />
@@ -607,10 +603,8 @@
                     <label class="form-label">العنوان (City/Address)</label>
                     <input class="form-control" id="contactAddress" type="text" />
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">نص زر العودة للأعلى</label>
-                    <input class="form-control" id="contactBackToTopText" type="text" />
-                  </div>
+                  <!-- There is no back-to-top button anywhere on the site, so the
+                       text field that used to sit here changed nothing. -->
                 </div>
               </div>
             </div>

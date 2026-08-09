@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
+    <%# Page-scoped stylesheet, deliberately NOT part of the Vite bundle: this
+        CSS serves two campaign URLs, and folding it into assets/css/styles.css
+        would ship it to every other page on the site. Served straight off the
+        /assets static mount; ?v= busts on deploy because server/app.js includes
+        this file in the assetVer mtime set. %>
+    <link rel="stylesheet" href="/assets/css/rec-landing.css?v=<%= assetVer %>" />
+  </head>
+  <body class="recPage recPage--<%= page.audience %>">
+    <%- include('partials/site-header', { content }) %>
+
+    <main class="recPage__main" id="main-content" tabindex="-1" aria-label="المحتوى الرئيسي">
+      <%# Section order comes from the data module, not from this file. The two
+          audiences want different sequences (a developer wants proof before
+          specs; a villa owner wants the visit process before the returns), and
+          expressing that as `sections: [...]` keeps this view free of
+          per-audience branches. %>
+      <% page.sections.forEach(function (section) { %>
+        <%- include('partials/rec/' + section, { page: page, quoteFormId: quoteFormId }) %>
+      <% }) %>
+    </main>
+
+    <%- include('partials/site-footer', { content }) %>
+
+    <%# Product detail dialog.
+
+        A native <dialog> rather than a hand-rolled overlay: showModal() gives
+        the top layer, Escape-to-close and focus containment for free. This
+        codebase has no other modal to copy from, so inventing a focus trap here
+        would be inventing the most commonly broken part of the pattern. %>
+    <dialog class="recModal" id="recProductModal" aria-labelledby="recModalTitle">
+      <form method="dialog" class="recModal__dismiss">
+        <button class="recModal__close" type="submit" aria-label="إغلاق تفاصيل المنتج">&times;</button>
+      </form>
+      <div class="recModal__body">
+        <figure class="recModal__media">
+          <img id="recModalImage" src="" alt="" width="900" height="561" />
+        </figure>
+        <div class="recModal__copy">
+          <p class="recModal__tag"><bdi id="recModalTag"></bdi></p>
+          <h2 class="recModal__title" id="recModalTitle"></h2>
+          <p class="recModal__desc" id="recModalDesc"></p>
+          <ul class="recModal__bullets" id="recModalBullets"></ul>
+          <p class="recModal__extra" id="recModalExtra"></p>
+          <a class="btn btn--primary recModal__cta" id="recModalCta" href="#<%= quoteFormId %>"
+            >اطلب هذا النظام</a
+          >
+        </div>
+      </div>
+    </dialog>
+
+    <%# Sticky mobile action bar. Hidden above the mobile breakpoint in CSS. %>
+    <div class="recSticky" role="group" aria-label="إجراءات سريعة">
+      <a
+        class="recSticky__btn recSticky__btn--call"
+        href="tel:<%= page.wa.phone %>"
+        aria-label="اتصل بقسم المبيعات"
+      >
+        <%- icon('phone') %><span>اتصال</span>
+      </a>
+      <a
+        class="recSticky__btn recSticky__btn--wa"
+        data-rec-wa
+        href="https://wa.me/<%= page.wa.number %>?text=<%= encodeURIComponent(page.primaryCta.waText) %>"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <%- icon('whatsapp') %><span><%= page.primaryCta.label %></span>
+      </a>
+    </div>
+
+    <%# Page config for assets/js/rec-landing.js.
+
+        A JSON island rather than inline JS or data-* attributes: the copy is
+        Arabic prose with quotes and newlines, and JSON.stringify + escaping the
+        `<` is the only encoding that survives both the HTML parser and a stray
+        "</script>" appearing inside a future copy edit. %>
+    <script type="application/json" id="recLandingConfig">
+      <%- JSON.stringify(clientConfig).replace(/</g, '\\u003c') %>
+    </script>
+    <script src="/assets/js/rec-landing.js?v=<%= assetVer %>" defer></script>
+  </body>
+</html>

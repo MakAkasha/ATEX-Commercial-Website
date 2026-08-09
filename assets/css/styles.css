@@ -12,6 +12,35 @@
 
    Tajawal is static, one file per weight.
    ============================================================ */
+/* Cairo 300 — arabic. Same variable file as 400, so no extra bytes. Adding a
+   face below 400 does not disturb how 500 / 600 resolve: both still match the
+   400 face under the CSS font-matching rules. */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/assets/fonts/cairo/cairo-v31-var-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+/* Cairo 300 — latin-ext */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/assets/fonts/cairo/cairo-v31-var-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Cairo 300 — latin */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/assets/fonts/cairo/cairo-v31-var-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 /* Cairo 400 — arabic */
 @font-face {
   font-family: 'Cairo';
@@ -857,95 +886,183 @@ body.nav-open .nav__toggleLines::after {
   line-height: 1.8;
 }
 
-/* Process flow chart */
+/* Process flow — a rail with markers on it, not five identical slabs.
+   Same shape as .recJourney on the /rec landing pages: the amber rail is the
+   one thread that makes the sequence legible as a sequence, and the numbers
+   sit on it in navy because #fff on #ff9933 is 2.13:1 and the numerals turn
+   to mush. Mobile-first: a vertical rail; the horizontal timeline starts at
+   1024, where five columns actually fit. */
 .processFlow {
+  --pf-marker: calc(38px * var(--font-scale));
+  --pf-half: calc(var(--pf-marker) / 2);
+  position: relative;
   list-style: none;
+  counter-reset: pfStep;
   margin: 0;
-  padding: calc(26px * var(--font-scale));
-  border: calc(1px * var(--font-scale)) solid var(--navy-12);
-  border-radius: calc(var(--radius) + calc(6px * var(--font-scale)));
-  background:
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 88% 12%, var(--primary-18), transparent 64%),
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 20% 92%, rgba(0, 43, 68, 0.10), transparent 64%),
-    rgba(255, 255, 255, 0.84);
-  box-shadow: var(--shadow-soft);
+  padding: 0;
+  padding-inline-start: calc(var(--pf-marker) + var(--s-4));
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--s-4);
 }
 
+.processFlow::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--pf-half);
+  inset-inline-start: calc(var(--pf-half) - calc(1.5px * var(--font-scale)));
+  inline-size: calc(3px * var(--font-scale));
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, var(--primary) 0%, rgba(255, 153, 51, 0.55) 82%, transparent 100%);
+}
+
+/* Cards again — but hung off the rail with the marker straddling the edge, so
+   the section reads as layered rather than as five slabs in a row. */
 .processFlow__item {
+  counter-increment: pfStep;
   position: relative;
-  border: calc(1px * var(--font-scale)) solid rgba(0, 43, 68, 0.11);
-  border-radius: calc(14px * var(--font-scale));
-  background: var(--white-90);
-  box-shadow: 0 calc(10px * var(--font-scale)) var(--s-5) rgba(0, 0, 0, 0.05);
-  padding: calc(18px * var(--font-scale));
   display: grid;
-  gap: var(--s-2);
-  min-height: calc(196px * var(--font-scale));
+  align-content: start;
+  gap: calc(6px * var(--font-scale));
+  padding: calc(18px * var(--font-scale));
+  border: calc(1px * var(--font-scale)) solid var(--navy-12);
+  border-inline-start: calc(3px * var(--font-scale)) solid var(--primary-35);
+  border-radius: calc(var(--radius-sm) + var(--s-1));
+  background:
+    radial-gradient(calc(260px * var(--font-scale)) calc(120px * var(--font-scale)) at 92% 6%, var(--primary-14), transparent 68%),
+    #fff;
+  box-shadow: var(--shadow-soft);
   transition: transform var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
 }
 
+/* Oversized ghost numeral: the scale contrast the flat version was missing.
+   Drawn from a counter, so admin-edited or reordered steps stay correct. The
+   card is not clipped — the marker hangs outside it — so the numeral is sized
+   and tucked to stay inside instead. */
+.processFlow__item::after {
+  content: counter(pfStep);
+  position: absolute;
+  inset-block-end: calc(4px * var(--font-scale));
+  inset-inline-end: calc(10px * var(--font-scale));
+  color: rgba(0, 43, 68, 0.07);
+  font-size: calc(84px * var(--font-scale));
+  font-weight: 800;
+  line-height: 0.74;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .processFlow__item:hover {
-  transform: translateY(calc(-2px * var(--font-scale)));
-  border-color: var(--primary-36);
+  transform: translateY(calc(-3px * var(--font-scale)));
+  border-color: var(--navy-12);
+  border-inline-start-color: var(--primary);
   box-shadow: var(--shadow-sm);
 }
 
 .processFlow__stepNo {
+  position: absolute;
+  inset-inline-start: calc(0px - var(--pf-marker) - var(--s-4));
+  inset-block-start: 0;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: calc(44px * var(--font-scale));
-  width: fit-content;
-  padding: calc(5px * var(--font-scale)) calc(10px * var(--font-scale));
-  border-radius: var(--radius-pill);
-  border: calc(1px * var(--font-scale)) solid var(--primary-36);
-  background: var(--primary-14);
-  color: var(--accent-text-deep);
-  font-size: var(--s-3);
+  inline-size: var(--pf-marker);
+  block-size: var(--pf-marker);
+  border-radius: 50%;
+  /* Navy, not amber: #fff on #ff9933 is 2.13:1 and the numeral turns to mush.
+     The amber lives in the ring and the rail. */
+  background: var(--navy);
+  box-shadow:
+    0 0 0 calc(4px * var(--font-scale)) var(--primary-35),
+    0 calc(6px * var(--font-scale)) calc(16px * var(--font-scale)) rgba(0, 43, 68, 0.22);
+  color: #fff;
+  font-size: var(--s-4);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  transition: box-shadow var(--dur) ease;
 }
 
+.processFlow__item:hover .processFlow__stepNo {
+  box-shadow:
+    0 0 0 calc(6px * var(--font-scale)) var(--primary-35),
+    0 calc(8px * var(--font-scale)) calc(20px * var(--font-scale)) rgba(0, 43, 68, 0.26);
+}
+
+/* One size at every width, not a clamp: the titles are short and reading them
+   at three different sizes down the page made the row look uneven. */
 .processFlow__title {
+  position: relative;
+  z-index: 1;
   margin: 0;
-  font-size: clamp(var(--s-4), 1.8vw, calc(19px * var(--font-scale)));
+  font-size: calc(17px * var(--font-scale));
   color: var(--navy);
   line-height: 1.5;
 }
 
+/* 15 * 0.85 = 12.75px, the Arabic legibility floor this stylesheet is built
+   around — do not go below it. Weight 300 is real here, not synthesised: the
+   Cairo faces above now declare it. */
 .processFlow__desc {
+  position: relative;
+  z-index: 1;
   margin: 0;
   color: var(--muted);
-  font-weight: 700;
-  line-height: 1.95;
+  font-size: calc(15px * var(--font-scale));
+  font-weight: 300;
+  line-height: 1.9;
+  max-inline-size: 36em;
 }
 
-.processFlow__arrow {
-  position: absolute;
-  inset-inline-start: auto;
-  inset-inline-end: calc(-18px * var(--font-scale));
-  top: 50%;
-  transform: translateY(-50%);
-  width: calc(30px * var(--font-scale));
-  height: calc(30px * var(--font-scale));
-  border-radius: var(--radius-pill);
-  border: calc(1px * var(--font-scale)) solid var(--primary-36);
-  background: var(--primary-14);
-  display: grid;
-  place-items: center;
-  color: var(--accent-text-deep);
-  font-size: calc(15px * var(--font-scale));
-  font-weight: 800;
-  line-height: 1;
-  z-index: 2;
+@media (min-width: 1024px) {
+  .processFlow {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: stretch;
+    column-gap: var(--s-4);
+    padding-inline-start: 0;
+    /* Room for the marker to straddle each card's top edge. */
+    padding-block-start: var(--pf-half);
+  }
+
+  /* Rail runs from the first marker's centre to the last one's, not edge to
+     edge — a line overshooting the end markers reads as an unfinished process. */
+  .processFlow::before {
+    inset-block: auto;
+    inset-block-start: var(--pf-half);
+    inset-inline: var(--pf-half);
+    inline-size: auto;
+    block-size: calc(3px * var(--font-scale));
+    background: linear-gradient(to left, var(--primary) 0%, rgba(255, 153, 51, 0.55) 82%, transparent 100%);
+  }
+
+  .processFlow__item {
+    /* The top edge is the rail's line now, so the amber accent moves there. */
+    border-inline-start: calc(1px * var(--font-scale)) solid var(--navy-12);
+    padding-block-start: calc(var(--pf-half) + var(--s-3));
+  }
+
+  .processFlow__item:hover {
+    border-color: var(--primary-35);
+  }
+
+  .processFlow__stepNo {
+    inset-inline-start: 50%;
+    inset-block-start: calc(0px - var(--pf-half));
+    transform: translateX(50%);
+  }
 }
 
 #process.section {
   padding-block: calc(92px * var(--font-scale));
+  /* Blueprint hatch, not the dot grid #why uses — this section is literally
+     about drawings, and the two grounds should not read as the same band. */
+  background-color: #f4f7fa;
+  background-image:
+    linear-gradient(to left, rgba(0, 43, 68, 0.05) calc(1px * var(--font-scale)), transparent calc(1px * var(--font-scale))),
+    linear-gradient(to bottom, rgba(0, 43, 68, 0.05) calc(1px * var(--font-scale)), transparent calc(1px * var(--font-scale)));
+  background-size: calc(30px * var(--font-scale)) calc(30px * var(--font-scale));
+  border-block: calc(1px * var(--font-scale)) solid var(--navy-08);
 }
 
 #process .section__head {
@@ -957,11 +1074,7 @@ body.nav-open .nav__toggleLines::after {
   --marquee-distance: 0px;
   --marquee-duration: 20s;
 
-  border: calc(1px * var(--font-scale)) solid var(--line);
-  border-radius: calc(var(--radius) + var(--s-1));
-  background: rgba(0, 43, 68, 0.03);
-  box-shadow: var(--shadow-soft);
-  padding: calc(14px * var(--font-scale));
+  padding-block: calc(14px * var(--font-scale));
 }
 
 .marquee__viewport {
@@ -1045,6 +1158,26 @@ body.nav-open .nav__toggleLines::after {
 .marquee__icon--mqtt::before { content: "MQ"; font-size: var(--s-2); position: absolute; inset: 0; text-align: center; line-height: calc(15px * var(--font-scale)); color: var(--accent-text); font-weight: 800; }
 .marquee__icon--mesh::before { content: "◈"; font-size: calc(10px * var(--font-scale)); position: absolute; inset: 0; text-align: center; line-height: calc(15px * var(--font-scale)); color: var(--accent-text); }
 .marquee__icon--chip::before { content: "▦"; font-size: calc(10px * var(--font-scale)); position: absolute; inset: 0; text-align: center; line-height: calc(15px * var(--font-scale)); color: var(--accent-text); }
+
+/* Brand marks in the strip. One block-size for all of them so a wide wordmark
+   and a square mark carry the same weight; inline-size follows each file's own
+   ratio, capped so a long wordmark cannot dominate the row. */
+.marquee__logo {
+  display: block;
+  block-size: calc(26px * var(--font-scale));
+  inline-size: auto;
+  /* Wide enough for a 6:1 wordmark (Modbus, Thread) to keep full height. */
+  max-inline-size: calc(150px * var(--font-scale));
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/* The version left over from the chip's name — "Wi-Fi 7" keeps its 7. */
+.marquee__ver {
+  font-size: calc(15px * var(--font-scale));
+  font-weight: 700;
+  color: var(--muted);
+}
 
 .marquee__sep {
   display: inline-block;
@@ -2238,21 +2371,15 @@ body.nav-open .nav__toggleLines::after {
 .socialProof__logo {
   width: clamp(calc(124px * var(--font-scale)), 13vw, calc(176px * var(--font-scale)));
   aspect-ratio: 1 / 1;
-  border-radius: calc(14px * var(--font-scale));
-  border: calc(1px * var(--font-scale)) solid rgba(0, 43, 68, 0.11);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: var(--shadow-soft);
   display: grid;
   place-items: center;
-  padding: var(--s-3);
   flex: 0 0 auto;
-  transition: transform var(--dur) ease, box-shadow var(--dur) ease, border-color var(--dur) ease;
 }
 
+/* No lift and no shadow: the tile has no edge to lift off now, and the strip is
+   always moving, so a hover state on a passing logo reads as a glitch. */
 .socialProof__logo:hover {
-  transform: translateY(calc(-2px * var(--font-scale)));
-  border-color: rgba(255, 153, 51, 0.34);
-  box-shadow: var(--shadow-sm);
+  transform: none;
 }
 
 .socialProof__logo img {
@@ -2278,9 +2405,9 @@ body.nav-open .nav__toggleLines::after {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-1);
   margin: 0;
-  padding: var(--s-5);
+  padding: var(--s-3) var(--s-5) var(--s-4);
   border: 0;
   border-inline-start: calc(3px * var(--font-scale)) solid var(--primary-50);
   border-radius: var(--radius);
@@ -2300,9 +2427,9 @@ body.nav-open .nav__toggleLines::after {
 .quoteCard__mark {
   position: absolute;
   inset-inline-end: var(--s-3);
-  top: calc(-18px * var(--font-scale));
+  top: calc(-26px * var(--font-scale));
   font-family: var(--font-display);
-  font-size: calc(120px * var(--font-scale));
+  font-size: calc(96px * var(--font-scale));
   line-height: 1;
   color: var(--primary-22);
   pointer-events: none;
@@ -2331,7 +2458,11 @@ body.nav-open .nav__toggleLines::after {
 
 .quoteCard__quote {
   margin: 0;
-  line-height: 1.85;
+  /* 1.85 is the site's Arabic body leading; these quotes run 3-5 lines inside a
+     card, where that much air makes the block look loose rather than readable.
+     1.6 is the floor — Arabic ascenders and the tanween above them start to
+     crowd below it. */
+  line-height: 1.6;
   font-weight: 700;
   font-size: clamp(calc(17px * var(--font-scale)), 1.6vw, calc(20px * var(--font-scale)));
   color: var(--navy);
@@ -2355,7 +2486,7 @@ body.nav-open .nav__toggleLines::after {
   gap: var(--s-3);
   margin: 0;
   margin-top: auto;
-  padding-top: var(--s-4);
+  padding-top: var(--s-2);
   border-top: calc(1px * var(--font-scale)) solid var(--navy-10);
 }
 
@@ -2382,6 +2513,24 @@ body.nav-open .nav__toggleLines::after {
   display: block;
 }
 
+/* Company logo variant. The circular avatar crops a square logo card and eats
+   its edges, so this is a rounded square, larger, with the mark contained
+   rather than covered. The supplied artwork already carries its own white card,
+   hence the white ground and no padding of our own. */
+.quoteCard__avatar--logo {
+  width: calc(64px * var(--font-scale));
+  height: calc(64px * var(--font-scale));
+  border-radius: calc(14px * var(--font-scale));
+  border: 1px solid var(--navy-08);
+  background: #fff;
+}
+
+.quoteCard__avatar--logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .quoteCard__avatar--glyph {
   background: var(--navy-08);
   color: var(--navy-16);
@@ -2399,6 +2548,16 @@ body.nav-open .nav__toggleLines::after {
 .quoteCard__name {
   font-weight: 800;
   font-size: max(12px, calc(16px * var(--font-scale)));
+  color: var(--navy);
+  unicode-bidi: isolate;
+}
+
+/* The company is the credential a reader recognises in a B2B reference, so it
+   gets its own line under the job title and a weight between the two: heavier
+   than the role it qualifies, lighter than the person's name above it. */
+.quoteCard__company {
+  font-size: max(12px, calc(15px * var(--font-scale)));
+  font-weight: 700;
   color: var(--navy);
   unicode-bidi: isolate;
 }
@@ -3691,22 +3850,6 @@ body.nav-open .nav__toggleLines::after {
     grid-template-columns: 1fr;
   }
 
-  .processFlow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: calc(18px * var(--font-scale));
-    gap: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__item {
-    min-height: calc(172px * var(--font-scale));
-    padding: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__arrow {
-    inset-inline-start: auto;
-    inset-inline-end: calc(-16px * var(--font-scale));
-  }
-
   .cta {
     grid-template-columns: 1fr;
   }
@@ -4064,26 +4207,6 @@ body.nav-open .nav__toggleLines::after {
     min-height: calc(350px * var(--font-scale));
   }
 
-  .processFlow {
-    grid-template-columns: 1fr;
-    padding: calc(14px * var(--font-scale));
-  }
-
-  .processFlow__item {
-    min-height: auto;
-    border-radius: var(--s-3);
-    padding: calc(14px * var(--font-scale)) var(--s-3);
-  }
-
-  .processFlow__arrow {
-    inset-inline-start: 50%;
-    inset-inline-end: auto;
-    top: auto;
-    bottom: calc(-16px * var(--font-scale));
-    transform: translateX(-50%);
-    font-size: calc(14px * var(--font-scale));
-  }
-
   .whyKeypoints__item {
     padding: var(--s-3);
   }
@@ -4255,14 +4378,6 @@ body.consent-open .waBtn {
 
 .whyKeypoints__item:hover {
   border-inline-start-color: var(--primary);
-}
-
-/* --- Process flow — slightly darker background --- */
-.processFlow {
-  background:
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 88% 12%, rgba(255, 153, 51, 0.2), transparent 64%),
-    radial-gradient(calc(680px * var(--font-scale)) calc(280px * var(--font-scale)) at 20% 92%, var(--navy-12), transparent 64%),
-    #f6f8fa;
 }
 
 /* final CTA remains light mode by request */
@@ -4468,69 +4583,7 @@ body.consent-open .waBtn {
   background: rgba(74, 222, 128, 0.1);
 }
 
-/* ============================================================
-   Process flow: diagonal stagger layout
-   ============================================================ */
-
-/* Custom property stagger — hover still works cleanly */
-.processFlow__item {
-  --stagger: 0px;
-  transform: translateY(var(--stagger));
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-  align-self: start;
-}
-
-.processFlow__item:hover {
-  transform: translateY(calc(var(--stagger) - var(--s-1)));
-  border-color: var(--primary-50);
-  box-shadow: 0 calc(18px * var(--font-scale)) calc(38px * var(--font-scale)) rgba(0, 0, 0, 0.12), 0 0 0 calc(1px * var(--font-scale)) rgba(255, 153, 51, 0.2);
-}
-
-/* Stagger each step down calc(20px * var(--font-scale)) */
-.processFlow__item:nth-child(2) { --stagger: calc(18px * var(--font-scale)); }
-.processFlow__item:nth-child(3) { --stagger: calc(36px * var(--font-scale)); }
-.processFlow__item:nth-child(4) { --stagger: calc(54px * var(--font-scale)); }
-.processFlow__item:nth-child(5) { --stagger: calc(72px * var(--font-scale)); }
-
-/* Extra bottom padding so staggered items don't clip the container */
-.processFlow {
-  padding-bottom: calc(calc(26px * var(--font-scale)) + calc(72px * var(--font-scale)));
-  align-items: start;
-}
-
-/* Step number — bigger, amber, bold */
-.processFlow__stepNo {
-  font-size: clamp(calc(22px * var(--font-scale)), 2.8vw, var(--s-6));
-  font-weight: 800;
-  letter-spacing: calc(-0.5px * var(--font-scale));
-  background: linear-gradient(135deg, var(--primary), #cc6600);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  background-color: transparent;
-  color: transparent;
-  line-height: 1;
-  min-width: unset;
-  width: auto;
-}
-
-/* Arrow — amber connecting line, vertically centered between staggered items */
-.processFlow__arrow {
-  font-size: calc(18px * var(--font-scale));
-  color: rgba(255, 153, 51, 0.7);
-  top: calc(28px * var(--font-scale));
-  transform: none;
-  z-index: 2;
-}
-
-/* Reset stagger on mobile (single-column, no stagger needed) */
 @media (max-width: 640px) {
-  .processFlow__item { --stagger: 0px !important; }
-  .processFlow { padding-bottom: calc(26px * var(--font-scale)); }
-
   /* tighten section vertical rhythm on small phones */
   .section { padding-block: var(--s-7); }
   .section--feature { padding-block: var(--s-8); }

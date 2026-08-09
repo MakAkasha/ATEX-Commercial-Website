@@ -3,7 +3,11 @@
  *
  * HOW TO ADD A REAL TESTIMONIAL
  * -----------------------------
- * Edit an entry below and replace every bracketed placeholder with real text.
+ * Copy an entry below and fill every field with real text. The six here are
+ * real, signed-off quotes from ATEX's development clients (the same set the
+ * /rec campaign pages use). Never leave a square bracket in a field: that is
+ * the placeholder marker, and it is what keeps an unfinished entry off the
+ * live site.
  * An entry is only published once NONE of its fields contain square brackets.
  * Entries that still hold a placeholder are skipped, and the whole social-proof
  * section is hidden when fewer than MIN_VISIBLE entries are publishable — so a
@@ -14,9 +18,14 @@
  *   name    person's name — leave "" to stay anonymous
  *   role    job title / position
  *   company company name
- *   sector  short tag shown as a pill (e.g. الضيافة)
+ *   sector  short tag shown as a pill (e.g. الضيافة). Left empty on the
+ *           current entries: every one is a real-estate developer, so the
+ *           pill repeated the same word six times and said nothing.
  *   rating  1..5 stars (defaults to 5)
- *   photo   optional image path, e.g. "/assets/testimonials/name.webp"
+ *   logo    optional company logo, e.g. "/assets/partners/sadana.webp".
+ *           Preferred over `photo`: these are B2B references, and the client
+ *           company is the credential a reader recognises, not the face.
+ *   photo   optional portrait, e.g. "/assets/testimonials/name.webp"
  *   project optional project reference line
  */
 
@@ -25,68 +34,80 @@ const MIN_VISIBLE = 2;
 
 const TESTIMONIALS = [
   {
-    quote: '"تنفيذ احترافي وسرعة استجابة ممتازة"',
-    name: "",
-    role: "مدير مشروع – قطاع الضيافة",
-    company: "",
-    sector: "الضيافة",
+    quote:
+      "التزام استثنائي بالمواعيد، سرعة في التنفيذ، واستجابة فورية في خدمات ما بعد البيع، مما جعل التعامل أكثر احترافية.",
+    name: "السيد/ عبدالله حسن جيب الله",
+    role: "مدير المشتريات",
+    company: "شركة كفاءات العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/kafaat.webp",
     photo: "",
     project: "",
   },
   {
-    quote: '"تحسن واضح في كفاءة التشغيل بعد التكامل"',
-    name: "",
-    role: "مدير تشغيل – قطاع العقارات",
-    company: "",
-    sector: "العقارات",
+    quote:
+      "تنوع كبير في المنتجات، مع استشارات فنية واضحة وتوصيات تناسب كل مشروع، مما ساعدنا على اختيار الحل الأمثل بثقة واطمئنان.",
+    name: "السيد/ عبدالله الصيعري",
+    role: "مدير المشتريات",
+    company: "شركة سدنة العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/sadana.webp",
     photo: "",
     project: "",
   },
   {
-    quote: '"فريق داعم وخطة تنفيذ واضحة من البداية"',
-    name: "",
-    role: "مالك مشروع – قطاع سكني",
-    company: "",
-    sector: "السكني",
+    quote:
+      "الحلول الذكية وفرت لنا منظومة متكاملة للأمان والتحكم والراحة، وربطت بين أنظمة المشروع بسهولة جعلت إدارة الوحدات السكنية أكثر سلاسة.",
+    name: "السيد/ خالد السلمي",
+    role: "قسم المشتريات",
+    company: "شركة إشراق العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/ishraq.webp",
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "متابعة دقيقة لكل مراحل المشروع، من دراسة الاحتياج والتصميم إلى الإشراف على التنفيذ والتسليم، مع حضور فعال في مرحلة التشغيل والدعم المستمر.",
+    name: "المهندس/ وليد",
+    role: "مدير المشاريع",
+    company: "شركة درة العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/durrah.webp",
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "قدموا حلولا مناسبة لتوجهات عملائنا من حيث التقنيات والميزانية، مع اقتراح بدائل ذكية تجعل المشروع أكثر تميزا وقيمة مضافة للمستخدم النهائي.",
+    name: "المهندس/ بركات",
+    role: "مدير المشاريع",
+    company: "شركة التوباز العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/al-topaz.webp",
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "مرونة عالية في تكييف الحلول مع متطلبات كل مشروع، وسرعة في التعديل والاستجابة، مما عزز الثقة وساهم في استمرارية التعاون بين الجانبين.",
+    name: "المهندس/ خالد ديان",
+    role: "مدير المشتريات",
+    company: "شركة سين العقارية",
+    sector: "",
     rating: 5,
+    logo: "/assets/partners/seen.webp",
     photo: "",
     project: "",
   },
 ];
 
-const TEXT_FIELDS = ["quote", "name", "role", "company", "sector", "photo", "project"];
+const TEXT_FIELDS = ["quote", "name", "role", "company", "sector", "logo", "photo", "project"];
 const PLACEHOLDER_RE = /[[\]]/;
 
 const text = (value) => String(value ?? "").trim();
@@ -118,11 +139,12 @@ function monogram(entry) {
  * Publishable testimonials, normalized for the view.
  * Returns [] when fewer than MIN_VISIBLE entries are ready, so the caller can
  * hide the whole section with a single truthiness check.
- * @returns {Array<{quote:string,name:string,role:string,company:string,sector:string,rating:number,photo:string,project:string,initial:string}>}
+ * @returns {Array<{quote:string,logo:string,name:string,role:string,company:string,sector:string,rating:number,photo:string,project:string,initial:string}>}
  */
 function getTestimonials() {
   const ready = TESTIMONIALS.filter(isPublishable).map((entry) => ({
     quote: text(entry.quote),
+    logo: text(entry.logo),
     name: text(entry.name),
     role: text(entry.role),
     company: text(entry.company),

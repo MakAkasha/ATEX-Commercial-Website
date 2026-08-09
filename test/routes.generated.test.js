@@ -16,13 +16,15 @@ const assert = require("node:assert/strict");
 const { describe, it, before, after } = require("node:test");
 
 const { startServer } = require("./helpers/server");
-const { getSolutions, getIndustries } = require("../server/data/contentRegistry");
+const { getSolutions, getIndustries, getRecLandings } = require("../server/data/contentRegistry");
 
 const SOLUTION_SLUGS = getSolutions().map((s) => s.slug);
 const INDUSTRY_SLUGS = getIndustries().map((i) => i.slug);
+const REC_LANDING_PATHS = getRecLandings().map((p) => `/rec/${p.slug}`);
 
-// server/app.js builds exactly these seven static sitemap entries.
-const STATIC_SITEMAP_PATHS = ["", "/solutions", "/products", "/contact-us", "/privacy", "/terms", "/blog"];
+// server/app.js builds exactly these static sitemap entries: seven fixed pages
+// plus one per /rec campaign landing page.
+const STATIC_SITEMAP_PATHS = ["", "/solutions", "/products", "/contact-us", "/privacy", "/terms", "/blog", ...REC_LANDING_PATHS];
 
 describe("generated endpoints", () => {
   let srv;

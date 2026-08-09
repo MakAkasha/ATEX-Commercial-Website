@@ -58,7 +58,11 @@
         </div>
         <div class="container heroVideo__inner">
           <div class="heroVideo__content">
-            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span>IoT Solutions — المملكة العربية السعودية</p>
+            <%# hero.kicker / hero.ctaPrimary / hero.ctaSecondary belong to this
+                hero, not to the #atex-overview section below, which borrows only
+                hero.title and hero.desc. All three were admin-editable and
+                hardcoded here, so an edit saved and changed nothing. %>
+            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span><%= content?.hero?.kicker || 'IoT Solutions — المملكة العربية السعودية' %></p>
             <h1 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
               <span class="heroVideo__titleStatic">حلول إنترنت الأشياء</span>
               <span class="heroVideo__cycleWrap" aria-hidden="true">
@@ -70,8 +74,8 @@
             </h1>
             <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
             <div class="heroVideo__actions">
-              <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
-              <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions">استكشف الحلول</a>
+              <a class="btn btn--primary" href="/contact-us"><%= content?.hero?.ctaPrimary || 'ابدأ مشروعك الآن' %> <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
+              <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions"><%= content?.hero?.ctaSecondary || 'استكشف الحلول' %></a>
             </div>
           </div>
         </div>
@@ -154,7 +158,7 @@
       <section class="section" id="solutions">
         <div class="container">
           <div class="section__head">
-            <h2>حلول نقدمها</h2>
+            <h2><%= content?.solutions?.heading || 'حلول نقدمها' %></h2>
             <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
           </div>
 
@@ -275,27 +279,32 @@
       <section class="section" id="process">
         <div class="container">
           <div class="section__head section__head--start">
-            <h2>كيف نعمل</h2>
-            <p>خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.</p>
+            <h2><%= content?.process?.heading || 'كيف نعمل' %></h2>
+            <p><%= content?.process?.subheading || 'من مخططات المشروع إلى التسليم والضمان — خطوات واضحة تناسب جدول المطوّر.' %></p>
           </div>
 
+          <%# Fallback only — the real source is process.steps in server/homeSchema.js,
+              which the admin panel edits. Kept in step with the schema defaults. %>
           <% const processDefaultSteps = [
-            { title: 'تحليل حالة الاستخدام', desc: 'تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل.' },
-            { title: 'اختيار الأجهزة والاتصال', desc: 'ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة.' },
-            { title: 'التركيب والتهيئة', desc: 'تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول.' },
-            { title: 'لوحات وتقارير', desc: 'لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات.' },
-            { title: 'تحسين مستمر', desc: 'تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق.' }
+            { title: 'زيارة الموقع ودراسة المخططات', desc: 'نطّلع على مخططات المشروع ونماذج الوحدات، ثم نحدد ما يناسب كل نموذج من أنظمة المنزل الذكي والاتصال الداخلي والتحكم بالدخول وشواحن المركبات الكهربائية.' },
+            { title: 'التصميم والتنسيق مع الاستشاري', desc: 'مخططات تنفيذية للمسارات والكهرباء والشبكة، وتنسيق مبكر مع المقاول والاستشاري قبل إغلاق الجدران.' },
+            { title: 'التوريد والتركيب ضمن جدول المشروع', desc: 'توريد الأجهزة وتركيبها على مراحل تتبع تقدّم البناء: التمديدات أولاً، ثم التركيب النهائي دون تعطيل بقية الأعمال.' },
+            { title: 'الاختبار والتشغيل وتسليم الوحدات', desc: 'اختبارات قبول لكل وحدة، تشغيل تجريبي، وتدريب فريق الإدارة والملّاك على استخدام الأنظمة.' },
+            { title: 'الضمان والدعم بعد التسليم', desc: 'ضمان على المكونات وخطة صيانة واتفاقية مستوى خدمة (SLA)، مع فريق فني داخل المملكة.' }
           ]; %>
-          <% const processSteps = processDefaultSteps; %>
-          <ol class="processFlow" aria-label="مخطط تدفق خطوات التنفيذ">
+          <% const processContentSteps = (Array.isArray(content?.process?.steps) ? content.process.steps : []).map(function(s){
+            return { title: String(s?.title || '').trim(), desc: String(s?.desc || '').trim() };
+          }).filter(function(s){ return s.title || s.desc; }); %>
+          <% const processSteps = processContentSteps.length ? processContentSteps : processDefaultSteps; %>
+          <%# The amber rail carries the sequence, so there is no arrow glyph to
+              mirror: `←` was hardcoded in a dir="rtl" document and pointed the
+              wrong way once the grid wrapped. %>
+          <ol class="processFlow" aria-label="خطوات التنفيذ">
             <% processSteps.forEach(function(s, idx){ %>
               <li class="processFlow__item">
-                <span class="processFlow__stepNo" dir="ltr"><%= String(idx + 1).padStart(2, '0') %></span>
+                <span class="processFlow__stepNo" aria-hidden="true"><%= idx + 1 %></span>
                 <h3 class="processFlow__title"><%= s.title %></h3>
                 <p class="processFlow__desc"><%= s.desc %></p>
-                <% if (idx < processSteps.length - 1) { %>
-                  <span class="processFlow__arrow" aria-hidden="true">←</span>
-                <% } %>
               </li>
             <% }) %>
           </ol>
@@ -306,19 +315,89 @@
       <section class="section section--tight" id="integrations">
         <div class="container">
           <div class="section__head section__head--start">
-            <h2>التقنيات الذكية التي ندعمها</h2>
-            <p>منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.</p>
+            <h2><%= content?.integrations?.heading || 'التقنيات الذكية التي ندعمها' %></h2>
+            <p><%= content?.integrations?.subheading || 'منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.' %></p>
           </div>
 
-          <% const defaultChips = ['Wi-Fi 7', 'WPA3', 'بلوتوث 5.4', 'Zigbee 3.0', 'Thread 1.4', 'Matter 1.5', 'LoRaWAN 1.1', 'NB-IoT', 'LTE-M / eMTC', 'MQTT 5.0', 'CoAP 1.0', 'HTTP/3', 'QUIC v1', 'RTSP 2.0', 'PoE IEEE 802.3bt', 'TLS 1.3']; %>
+          <%# Fallback only — the real source is integrations.chips in
+              server/homeSchema.js, which the admin panel edits. %>
+          <% const defaultChips = ['Matter 1.5', 'KNX', 'Zigbee 3.0', 'Z-Wave', 'Thread 1.4', 'Wi-Fi 7', 'بلوتوث LE 5.4', 'PoE IEEE 802.3bt', 'BACnet/IP', 'Modbus TCP', 'DALI-2', 'ONVIF', 'RTSP 2.0', 'SIP', 'OSDP', 'OCPP 2.0.1', 'MQTT 5.0', 'CoAP 1.0', 'LoRaWAN 1.1', 'NB-IoT', 'LTE-M', 'WPA3', 'TLS 1.3', 'REST API', 'Webhooks', 'ERP', 'CRM', 'Power BI', 'GIS', 'WhatsApp', 'SMS', 'Email']; %>
           <% const chips = (Array.isArray(content?.integrations?.chips) ? content.integrations.chips : defaultChips).map(function(c){ return String(c || '').trim(); }).filter(Boolean); %>
           <% function integrationIcon(label){
                const l = String(label || '').toLowerCase();
                if (l.includes('wi-fi') || l.includes('wpa')) return 'wifi';
                if (l.includes('بلوتوث') || l.includes('bluetooth')) return 'bluetooth';
                if (l.includes('mqtt')) return 'mqtt';
-               if (l.includes('zigbee') || l.includes('thread') || l.includes('matter')) return 'mesh';
+               if (l.includes('zigbee') || l.includes('thread') || l.includes('matter') || l.includes('z-wave')) return 'mesh';
+               if (l.includes('coap')) return 'mqtt';
                return 'chip';
+             }
+          %>
+          <%# Marks for the technologies that publish one. Files in assets/tech,
+              all from Wikimedia Commons and all public domain there (PD-textlogo)
+              — see assets/tech/SOURCES.md. A technology with no published mark,
+              or one that is a category rather than a brand (ERP, SMS, REST API),
+              keeps its name as text. Matched on a token so an admin can retitle
+              a chip ("Zigbee 3.0" -> "Zigbee 3.1") without losing its logo. %>
+          <%# Paths are written out in full, not assembled from the token, so the
+              asset-reference test can still resolve them statically. Width and
+              height are each file's intrinsic size — they reserve the box. %>
+          <% const integrationLogos = [
+               ['zigbee',    '/assets/tech/zigbee.svg',    188,  45],
+               ['z-wave',    '/assets/tech/z-wave.svg',    256, 114],
+               ['thread',    '/assets/tech/thread.svg',    541, 100],
+               ['knx',       '/assets/tech/knx.svg',      1069, 510],
+               ['bacnet',    '/assets/tech/bacnet.svg',    300,  58],
+               ['modbus',    '/assets/tech/modbus.svg',    692, 105],
+               ['wi-fi',     '/assets/tech/wifi.svg',      815, 483],
+               ['بلوتوث',    '/assets/tech/bluetooth.svg', 347,  86],
+               ['bluetooth', '/assets/tech/bluetooth.svg', 347,  86],
+               ['lorawan',   '/assets/tech/lorawan.svg',   300,  97],
+               ['mqtt',      '/assets/tech/mqtt.svg',      300,  76],
+               ['power bi',  '/assets/tech/power-bi.svg',  630, 630],
+               ['whatsapp',  '/assets/tech/whatsapp.svg',  360, 362],
+               // Supplied by Okasha 2026-08-09, not sourced from Wikimedia like
+               // the marks above — see assets/tech/SOURCES.md. Downscaled to a
+               // 3x of the 26px the strip draws them at. "poe ieee" is matched
+               // as one token so the leftover reads "802.3bt", not "IEEE 802.3bt".
+               ['matter',    '/assets/tech/matter.png',    298,  72],
+               ['dali-2',    '/assets/tech/dali-2.png',    218,  78],
+               ['onvif',     '/assets/tech/onvif.png',     304,  78],
+               ['poe ieee',  '/assets/tech/poe-ieee.png',  243,  78],
+               ['coap',      '/assets/tech/coap.png',      257,  78],
+               ['nb-iot',    '/assets/tech/nb-iot.png',    193,  78]
+             ]; %>
+          <% function integrationLogo(label){
+               const raw = String(label || '').trim();
+               const l = raw.toLowerCase();
+               for (const [token, src, w, h] of integrationLogos) {
+                 const at = l.indexOf(token);
+                 if (at === -1) continue;
+                 // Whatever is left of the label is its qualifier — "Wi-Fi 7" -> "7",
+                 // "BACnet/IP" -> "IP. Leading joiners are stripped so the leftover
+                 // reads as a label rather than as a fragment of the removed word.
+                 const rest = (raw.slice(0, at) + raw.slice(at + token.length))
+                   .replace(/^[\s/\-–—·،,]+|[\s/\-–—·،,]+$/g, '')
+                   .trim();
+                 return { src: src, w: w, h: h, rest: rest };
+               }
+               return null;
+             }
+          %>
+          <%
+             function chipMarkup(label){
+               const logo = integrationLogo(label);
+               if (!logo) {
+                 return '<span class="marquee__icon marquee__icon--' + integrationIcon(label) + '" aria-hidden="true"></span>' + escapeHtml(label);
+               }
+               return '<img class="marquee__logo" src="' + logo.src + '" alt="' + escapeHtml(label) +
+                 '" width="' + logo.w + '" height="' + logo.h + '" loading="lazy" decoding="async">' +
+                 (logo.rest ? '<span class="marquee__ver" aria-hidden="true">' + escapeHtml(logo.rest) + '</span>' : '');
+             }
+             function escapeHtml(s){
+               return String(s).replace(/[&<>"']/g, function(c){
+                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+               });
              }
           %>
           <div class="marquee" data-marquee aria-label="شريط تكاملات">
@@ -326,13 +405,13 @@
               <div class="marquee__runner" data-marquee-runner>
                 <div class="marquee__content" data-marquee-content>
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
+                    <span class="marquee__text"><%- chipMarkup(label) %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>
                 <div class="marquee__content" data-marquee-static-clone aria-hidden="true">
                   <% chips.forEach(function(label){ %>
-                    <span class="marquee__text"><span class="marquee__icon marquee__icon--<%= integrationIcon(label) %>" aria-hidden="true"></span><%= label %></span>
+                    <span class="marquee__text"><%- chipMarkup(label) %></span>
                     <span class="marquee__sep" aria-hidden="true">|</span>
                   <% }) %>
                 </div>
@@ -430,7 +509,8 @@
 
       <!-- Social proof -->
       <% var quotes = Array.isArray(locals.testimonials) ? locals.testimonials : []; %>
-      <% if (quotes.length) { %>
+      <% var clientLogos = Array.isArray(locals.partners) ? locals.partners : []; %>
+      <% if (quotes.length || clientLogos.length) { %>
       <section class="section socialProof" id="social-proof">
         <div class="container">
           <div class="section__head">
@@ -438,6 +518,33 @@
             <p>آراء من فرق المشاريع التي عملت مع أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
           </div>
 
+          <%# Client logos. .socialProof__logos and .socialProof__logo have been in
+              styles.css since the section was designed; this is the markup that
+              finally uses them. The data-marquee-* attributes are the contract
+              initMarquee() reads (assets/js/main.js) — the class names alone
+              only carry CSS, and a missing attribute makes it silently no-op.
+
+              width/height are load-bearing: initMarquee measures this row to
+              work out its loop distance, and these images are lazy, so without
+              an intrinsic size they measure as zero-width and the strip loops
+              over nothing. Every card is 300x300. %>
+          <% if (clientLogos.length) { %>
+            <div class="marquee socialProof__logos" data-marquee aria-label="عملاؤنا من المطورين العقاريين">
+              <div class="marquee__viewport" data-marquee-viewport>
+                <div class="marquee__runner" data-marquee-runner>
+                  <div class="marquee__content" data-marquee-content>
+                    <% clientLogos.forEach(function (logo) { %>
+                      <span class="socialProof__logo">
+                        <img src="<%= logo.image %>" alt="<%= logo.name %>" width="300" height="300" loading="lazy" decoding="async" />
+                      </span>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (quotes.length) { %>
           <div class="grid grid--cards quotesGrid">
             <% quotes.forEach(function(t){ %>
               <figure class="quoteCard">
@@ -454,7 +561,18 @@
                 <% } %>
 
                 <figcaption class="quoteCard__person">
-                  <% if (t.photo) { %>
+                  <%# A company logo beats a portrait here: these are B2B
+                      references, and the client company is the credential a
+                      reader recognises. The artwork is a 300px square card, so
+                      it is contained in a rounded square rather than cropped
+                      into a circle, and it is a plain <img> — the files are
+                      under the derivative pipeline's size floor, so there is no
+                      srcset to offer. %>
+                  <% if (t.logo) { %>
+                    <span class="quoteCard__avatar quoteCard__avatar--logo">
+                      <img src="<%= t.logo %>" alt="<%= t.company || '' %>" width="300" height="300" loading="lazy" decoding="async" />
+                    </span>
+                  <% } else if (t.photo) { %>
                     <%# A 41px circle. Worth a srcset only because t.photo is an
                         arbitrary upload — sizes="41px" makes an oversized one
                         resolve to the 320px derivative instead of the original.
@@ -471,8 +589,11 @@
                     <% if (t.name) { %>
                       <span class="quoteCard__name"><%= t.name %></span>
                     <% } %>
-                    <% if (t.role || t.company) { %>
-                      <span class="quoteCard__role"><%= [t.role, t.company].filter(Boolean).join(' — ') %></span>
+                    <% if (t.role) { %>
+                      <span class="quoteCard__role"><%= t.role %></span>
+                    <% } %>
+                    <% if (t.company) { %>
+                      <span class="quoteCard__company"><%= t.company %></span>
                     <% } %>
                     <% if (t.project) { %>
                       <span class="quoteCard__project"><%= t.project %></span>
@@ -482,6 +603,7 @@
               </figure>
             <% }) %>
           </div>
+          <% } %>
         </div>
       </section>
       <% } %>

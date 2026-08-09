@@ -1,0 +1,53 @@
+<section class="section recStack" aria-labelledby="recStackTitle">
+  <div class="container">
+    <div class="section__head">
+      <%# The kicker is a Latin product name inside an RTL document, so it needs
+          its own direction or the punctuation lands on the wrong end. Same
+          reason the platform names below are isolated. %>
+      <p class="solutionsPage__sectionKicker" dir="ltr"><%= page.integration.kicker %></p>
+      <h2 id="recStackTitle"><%= page.integration.title %></h2>
+      <p class="recStack__lede"><%= page.integration.lede %></p>
+    </div>
+
+    <div class="recStack__grid">
+      <ol class="recStack__layers">
+        <% page.integration.layers.forEach(function (layer) { %>
+          <li class="recStack__layer">
+            <p class="recStack__layerName"><%= layer.name %></p>
+            <h3 class="recStack__layerTitle"><%= layer.title %></h3>
+            <p class="recStack__layerBody"><%= layer.body %></p>
+            <% if (Array.isArray(layer.bullets) && layer.bullets.length) { %>
+              <ul class="recStack__layerBullets">
+                <% layer.bullets.forEach(function (bullet) { %>
+                  <li><%- icon('circle-check') %><span><%= bullet %></span></li>
+                <% }) %>
+              </ul>
+            <% } %>
+            <% if (Array.isArray(layer.platforms) && layer.platforms.length) { %>
+              <p class="recStack__platformsTitle"><%= layer.platformsTitle %></p>
+              <ul class="recStack__platforms">
+                <% layer.platforms.forEach(function (platform) { %>
+                  <li><bdi><%= platform %></bdi></li>
+                <% }) %>
+              </ul>
+            <% } %>
+          </li>
+        <% }) %>
+      </ol>
+
+      <aside class="recStack__side" aria-labelledby="recStackSideTitle">
+        <p class="recStack__sideKicker"><bdi><%= page.integration.sidecard.kicker %></bdi></p>
+        <h3 class="recStack__sideTitle" id="recStackSideTitle"><%= page.integration.sidecard.title %></h3>
+        <p class="recStack__sideLede"><%= page.integration.sidecard.lede %></p>
+        <ul class="recStack__sideItems">
+          <% page.integration.sidecard.items.forEach(function (item) { %>
+            <li>
+              <strong><%= item.title %></strong>
+              <span><%= item.body %></span>
+            </li>
+          <% }) %>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>

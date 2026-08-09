@@ -95,6 +95,15 @@
                   </section>
               <% } %>
 
+              <% if (industry.relatedLanding) { %>
+                <%# Contextual link into a campaign landing page that carries no
+                    nav entry. Without it that page is an orphan. %>
+                <p class="solutionsPage__detailNote">
+                  <%= industry.relatedLanding.text %>
+                  <a href="<%= industry.relatedLanding.href %>"><%= industry.relatedLanding.label %></a>
+                </p>
+              <% } %>
+
               <div class="solutionsPage__detailActions">
                 <a class="btn btn--primary btn--small" href="/contact-us">اطلب حلاً لهذا القطاع</a>
                 <a class="btn btn--ghost btn--small" href="https://wa.me/966580102121" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>

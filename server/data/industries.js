@@ -35,6 +35,13 @@ const industries = [
         a: "تظل الأنظمة الأساسية مثل الإضاءة والأمن تعمل محلياً وبشكل يدوي لضمان استمرارية الوظائف الحيوية.",
       },
     ],
+    // Inbound link to the villa-owner campaign landing page — see the matching
+    // note in server/data/solutions.js for why these two links exist.
+    relatedLanding: {
+      href: "/rec/smart-villa",
+      label: "حلول اتكس لملاك الفلل",
+      text: "تملك فيلا؟ اطلع على الصفحة المخصصة لملاك الفلل واحجز معاينة منزلية مجانية.",
+    },
   },
   {
     slug: "commercial",

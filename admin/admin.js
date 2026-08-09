@@ -505,7 +505,6 @@
 
   function defaultItemFor(path) {
     switch (path) {
-      case "solutions.cards":
       case "why.cards":
         return { iconClass: "fa-solid fa-circle", title: "", desc: "" };
       case "process.steps":
@@ -638,7 +637,9 @@
   }
 
   function renderAllArrays() {
-    ["solutions.cards", "stats", "why.cards", "process.steps", "integrations.chips", "faq.items"].forEach(renderArray);
+    // solutions.cards is absent on purpose: the home solutions grid is drawn
+    // from the solutions registry, so editing those cards changed nothing.
+    ["stats", "why.cards", "process.steps", "integrations.chips", "faq.items"].forEach(renderArray);
   }
 
   function wireAddButtons() {
@@ -793,7 +794,6 @@
     $("#contactEmail").value = homeDraft.contact?.email || "";
     $("#contactPhone").value = homeDraft.contact?.phone || "";
     $("#contactAddress").value = homeDraft.contact?.address || "";
-    $("#contactBackToTopText").value = homeDraft.contact?.backToTopText || "";
   }
 
   function setHomeSectionCollapsed(card, collapsed) {
@@ -921,7 +921,6 @@
     homeDraft.contact.email = $("#contactEmail").value.trim();
     homeDraft.contact.phone = $("#contactPhone").value.trim();
     homeDraft.contact.address = $("#contactAddress").value.trim();
-    homeDraft.contact.backToTopText = $("#contactBackToTopText").value.trim();
   }
 
   async function loadHome() {
@@ -966,8 +965,9 @@
 
   async function saveHomeSectionsPatch() {
     const status = $("#homeStatus");
-    const productsToggle = $("#sectionsProductsEnabled");
-    const productsEnabled = productsToggle ? !!productsToggle.checked : true;
+    // No toggle any more — the home products section was removed — so the stored
+    // value is passed straight back rather than being forced on.
+    const productsEnabled = homeDraft?.sections?.productsEnabled !== false;
     const blogToggle = $("#sectionsBlogEnabled");
     const blogEnabled = blogToggle ? !!blogToggle.checked : false;
 
@@ -983,17 +983,6 @@
     showToast("تم حفظ إعدادات الأقسام");
     setTimeout(() => (status.textContent = ""), 1500);
   }
-
-  $("#sectionsProductsEnabled")?.addEventListener("change", async () => {
-    setDirty("home", true);
-    try {
-      await saveHomeSectionsPatch();
-    } catch (err) {
-      const status = $("#homeStatus");
-      status.textContent = err?.status === 401 ? "انتهت الجلسة، سجّل الدخول مرة أخرى" : "فشل حفظ إعدادات الأقسام";
-      showToast(status.textContent, "error");
-    }
-  });
 
   $("#sectionsBlogEnabled")?.addEventListener("change", async () => {
     setDirty("home", true);

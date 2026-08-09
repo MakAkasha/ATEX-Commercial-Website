@@ -1,4 +1,4 @@
-const HOME_SCHEMA_VERSION = 2;
+const HOME_SCHEMA_VERSION = 4;
 
 // NOTE ON `iconClass` (solutions.cards / why.cards)
 //
@@ -20,6 +20,153 @@ function clone(x) {
   return JSON.parse(JSON.stringify(x));
 }
 
+// The "كيف نعمل" steps, current wording. Held in a function rather than inline
+// in getDefaultHomeContent() so the retired-boilerplate check below can compare
+// against the previous wording without duplicating this one.
+function PROCESS_DEFAULT() {
+  return {
+    heading: "كيف نعمل",
+    subheading: "من مخططات المشروع إلى التسليم والضمان — خطوات واضحة تناسب جدول المطوّر.",
+    steps: [
+      {
+        title: "زيارة الموقع ودراسة المخططات",
+        desc: "نطّلع على مخططات المشروع ونماذج الوحدات، ثم نحدد ما يناسب كل نموذج من أنظمة المنزل الذكي والاتصال الداخلي والتحكم بالدخول وشواحن المركبات الكهربائية.",
+      },
+      {
+        title: "التصميم والتنسيق مع الاستشاري",
+        desc: "مخططات تنفيذية للمسارات والكهرباء والشبكة، وتنسيق مبكر مع المقاول والاستشاري قبل إغلاق الجدران.",
+      },
+      {
+        title: "التوريد والتركيب ضمن جدول المشروع",
+        desc: "توريد الأجهزة وتركيبها على مراحل تتبع تقدّم البناء: التمديدات أولاً، ثم التركيب النهائي دون تعطيل بقية الأعمال.",
+      },
+      {
+        title: "الاختبار والتشغيل وتسليم الوحدات",
+        desc: "اختبارات قبول لكل وحدة، تشغيل تجريبي، وتدريب فريق الإدارة والملّاك على استخدام الأنظمة.",
+      },
+      {
+        title: "الضمان والدعم بعد التسليم",
+        desc: "ضمان على المكونات وخطة صيانة واتفاقية مستوى خدمة (SLA)، مع فريق فني داخل المملكة.",
+      },
+    ],
+  };
+}
+
+// The "التقنيات الذكية التي ندعمها" strip. IoT first — the protocols and radios
+// the smart-home, building, intercom, access, CCTV and EV-charging work actually
+// runs on — then the business systems the platform integrates with, which is
+// what the v2 list held on its own.
+function INTEGRATION_CHIPS() {
+  return [
+    "Matter 1.5",
+    "KNX",
+    "Zigbee 3.0",
+    "Z-Wave",
+    "Thread 1.4",
+    "Wi-Fi 7",
+    "بلوتوث LE 5.4",
+    "PoE IEEE 802.3bt",
+    "BACnet/IP",
+    "Modbus TCP",
+    "DALI-2",
+    "ONVIF",
+    "RTSP 2.0",
+    "SIP",
+    "OSDP",
+    "OCPP 2.0.1",
+    "MQTT 5.0",
+    "CoAP 1.0",
+    "LoRaWAN 1.1",
+    "NB-IoT",
+    "LTE-M",
+    "WPA3",
+    "TLS 1.3",
+    "REST API",
+    "Webhooks",
+    "ERP",
+    "CRM",
+    "Power BI",
+    "GIS",
+    "WhatsApp",
+    "SMS",
+    "Email",
+  ];
+}
+
+// The v2 integrations block. Ten business systems under a heading that promises
+// smart technologies, with MQTT the only nod to IoT.
+const RETIRED_INTEGRATIONS_V2 = {
+  heading: "التكاملات",
+  subheading: "ربط سلس مع الأنظمة وأدوات العمل—مع واجهات API جاهزة للتوسع.",
+  chips: ["ERP", "CRM", "Email", "SMS", "WhatsApp", "Webhooks", "Power BI", "GIS", "MQTT", "REST API"],
+};
+
+function isRetiredIntegrationsBoilerplate(p) {
+  if (!p || typeof p !== "object") return false;
+  const chips = Array.isArray(p.chips) ? p.chips : [];
+  if (asString(p.heading) !== RETIRED_INTEGRATIONS_V2.heading) return false;
+  if (asString(p.subheading) !== RETIRED_INTEGRATIONS_V2.subheading) return false;
+  if (chips.length !== RETIRED_INTEGRATIONS_V2.chips.length) return false;
+  return chips.every((c, i) => asString(c) === RETIRED_INTEGRATIONS_V2.chips[i]);
+}
+
+// The v2 wording. It described a sensor-monitoring consultancy rather than what
+// أتكس sells, and it shipped identical to every database row — nobody ever
+// edited it, because the section did not read stored content at all (the view
+// rendered its own copy of this array). Rows still carrying it verbatim are
+// moved forward to PROCESS_DEFAULT(); a row an admin has since edited is left
+// alone.
+const RETIRED_PROCESS_V2 = {
+  heading: "كيف نعمل",
+  subheading: "خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.",
+  steps: [
+    { title: "تحليل حالة الاستخدام", desc: "تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل." },
+    { title: "اختيار الأجهزة والاتصال", desc: "ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة." },
+    { title: "التركيب والتهيئة", desc: "تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول." },
+    { title: "لوحات وتقارير", desc: "لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات." },
+    { title: "تحسين مستمر", desc: "تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق." },
+  ],
+};
+
+function isRetiredProcessBoilerplate(p) {
+  if (!p || typeof p !== "object") return false;
+  const steps = Array.isArray(p.steps) ? p.steps : [];
+  if (steps.length !== RETIRED_PROCESS_V2.steps.length) return false;
+  if (asString(p.heading) !== RETIRED_PROCESS_V2.heading) return false;
+  if (asString(p.subheading) !== RETIRED_PROCESS_V2.subheading) return false;
+  return steps.every((s, i) => {
+    const was = RETIRED_PROCESS_V2.steps[i];
+    return asString(s?.title) === was.title && asString(s?.desc) === was.desc;
+  });
+}
+
+// Single fields whose default wording changed in v4, kept verbatim as they read
+// in v3. Same intent as the two retired-block predicates above, at field
+// granularity: these live beside fields an admin may well have edited (hero
+// title and desc are edited in production), so the whole block cannot be
+// discarded — only the individual value, and only while it is still untouched.
+//
+// Every one of them was a field the admin panel offered but no template
+// rendered, so a stored value here is by definition a default nobody could have
+// seen take effect.
+const RETIRED_FIELDS_V3 = {
+  topbarCtaText: "اطلب عرضاً",
+  topbarCtaHref: "#contact",
+  heroKicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
+  heroCtaPrimary: "اطلب عرضاً",
+  heroCtaSecondary: "استعرض المنصة",
+  solutionsHeading: "حلول ATEX",
+};
+
+// Returns the stored value, unless it is empty or still the retired default —
+// in which case the new default wins.
+function forwardField(stored, retired, fallback) {
+  const s = asString(stored);
+  if (!s) return fallback;
+  if (s === retired) return fallback;
+  return s;
+}
+
 function getDefaultHomeContent() {
   return {
     version: HOME_SCHEMA_VERSION,
@@ -28,17 +175,17 @@ function getDefaultHomeContent() {
       supportText: "الدعم والمبيعات:",
       phone: "+966580102121",
       tagline: "حلول إنترنت الأشياء للشركات داخل المملكة",
-      ctaText: "اطلب عرضاً",
-      ctaHref: "#contact",
+      ctaText: "بوابة العملاء",
+      ctaHref: "https://portal.atex-ksa.com",
     },
 
     hero: {
-      kicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
+      kicker: "IoT Solutions — المملكة العربية السعودية",
       title: "ذكاء متكامل… تحكم بلا حدود",
       desc:
         "نحوّل المنازل والفنادق والمباني إلى منظومة متصلة تُظهر لك ما يحدث الآن وتُمكّنك من التحكم بكل التفاصيل بسهولة.\nمن الأجهزة والاتصال إلى المنصة, لتشغيل الإضاءة والتكييف والطاقة والمشاهد، إدارة الغرف والوصول الذكي، ورفع الكفاءة وتقليل التكاليف مع تجربة ضيوف وسكان أكثر رفاهية.",
-      ctaPrimary: "اطلب عرضاً",
-      ctaSecondary: "استعرض المنصة",
+      ctaPrimary: "ابدأ مشروعك الآن",
+      ctaSecondary: "استكشف الحلول",
     },
 
     heroVideo: {
@@ -48,7 +195,7 @@ function getDefaultHomeContent() {
     },
 
     solutions: {
-      heading: "حلول ATEX",
+      heading: "حلول نقدمها",
       subheading: "حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.",
       cards: [
         {
@@ -111,22 +258,12 @@ function getDefaultHomeContent() {
       ],
     },
 
-    process: {
-      heading: "كيف نعمل",
-      subheading: "خطوات واضحة من الفكرة إلى التشغيل ثم التحسين المستمر.",
-      steps: [
-        { title: "تحليل حالة الاستخدام", desc: "تعريف الهدف، المؤشرات، نطاق الأجهزة، ومتطلبات التكامل." },
-        { title: "اختيار الأجهزة والاتصال", desc: "ترشيح الحساسات/الأجهزة والبروتوكولات المناسبة للبيئة." },
-        { title: "التركيب والتهيئة", desc: "تركيب ميداني، إعداد تنبيهات أولية، واختبارات قبول." },
-        { title: "لوحات وتقارير", desc: "لوحات تشغيلية وتقارير دورية للمديرين وفرق العمليات." },
-        { title: "تحسين مستمر", desc: "تحسين القواعد، تقليل الإنذارات الخاطئة، وتوسيع النطاق." },
-      ],
-    },
+    process: PROCESS_DEFAULT(),
 
     integrations: {
-      heading: "التكاملات",
-      subheading: "ربط سلس مع الأنظمة وأدوات العمل—مع واجهات API جاهزة للتوسع.",
-      chips: ["ERP", "CRM", "Email", "SMS", "WhatsApp", "Webhooks", "Power BI", "GIS", "MQTT", "REST API"],
+      heading: "التقنيات الذكية التي ندعمها",
+      subheading: "منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.",
+      chips: INTEGRATION_CHIPS(),
     },
 
     faq: {
@@ -217,16 +354,16 @@ function normalizeHomeContent(input) {
     out.topbar.supportText = asString(src.topbar.supportText) || out.topbar.supportText;
     out.topbar.phone = asString(src.topbar.phone) || out.topbar.phone;
     out.topbar.tagline = asString(src.topbar.tagline) || out.topbar.tagline;
-    out.topbar.ctaText = asString(src.topbar.ctaText) || out.topbar.ctaText;
-    out.topbar.ctaHref = asString(src.topbar.ctaHref) || out.topbar.ctaHref;
+    out.topbar.ctaText = forwardField(src.topbar.ctaText, RETIRED_FIELDS_V3.topbarCtaText, out.topbar.ctaText);
+    out.topbar.ctaHref = forwardField(src.topbar.ctaHref, RETIRED_FIELDS_V3.topbarCtaHref, out.topbar.ctaHref);
   }
 
   if (src.hero && typeof src.hero === "object") {
-    out.hero.kicker = asString(src.hero.kicker) || out.hero.kicker;
+    out.hero.kicker = forwardField(src.hero.kicker, RETIRED_FIELDS_V3.heroKicker, out.hero.kicker);
     out.hero.title = asString(src.hero.title) || out.hero.title;
     out.hero.desc = asString(src.hero.desc) || out.hero.desc;
-    out.hero.ctaPrimary = asString(src.hero.ctaPrimary) || out.hero.ctaPrimary;
-    out.hero.ctaSecondary = asString(src.hero.ctaSecondary) || out.hero.ctaSecondary;
+    out.hero.ctaPrimary = forwardField(src.hero.ctaPrimary, RETIRED_FIELDS_V3.heroCtaPrimary, out.hero.ctaPrimary);
+    out.hero.ctaSecondary = forwardField(src.hero.ctaSecondary, RETIRED_FIELDS_V3.heroCtaSecondary, out.hero.ctaSecondary);
   }
 
   if (src.heroVideo && typeof src.heroVideo === "object") {
@@ -237,7 +374,7 @@ function normalizeHomeContent(input) {
   }
 
   if (src.solutions && typeof src.solutions === "object") {
-    out.solutions.heading = asString(src.solutions.heading) || out.solutions.heading;
+    out.solutions.heading = forwardField(src.solutions.heading, RETIRED_FIELDS_V3.solutionsHeading, out.solutions.heading);
     out.solutions.subheading = asString(src.solutions.subheading) || out.solutions.subheading;
     if (Array.isArray(src.solutions.cards)) {
       out.solutions.cards = src.solutions.cards
@@ -285,12 +422,20 @@ function normalizeHomeContent(input) {
     }
   }
 
-  if (src.process && typeof src.process === "object") {
+  if (src.process && typeof src.process === "object" && !isRetiredProcessBoilerplate(src.process)) {
     out.process.heading = asString(src.process.heading) || out.process.heading;
     out.process.subheading = asString(src.process.subheading) || out.process.subheading;
+    // Steps were previously dropped here, so anything an admin saved was reset
+    // to the defaults on the next normalise pass.
+    if (Array.isArray(src.process.steps)) {
+      out.process.steps = src.process.steps
+        .filter((s) => s && typeof s === "object")
+        .map((s) => ({ title: asString(s.title) || "", desc: asString(s.desc) || "" }))
+        .filter((s) => s.title || s.desc);
+    }
   }
 
-  if (src.integrations && typeof src.integrations === "object") {
+  if (src.integrations && typeof src.integrations === "object" && !isRetiredIntegrationsBoilerplate(src.integrations)) {
     out.integrations.heading = asString(src.integrations.heading) || out.integrations.heading;
     out.integrations.subheading = asString(src.integrations.subheading) || out.integrations.subheading;
     if (Array.isArray(src.integrations.chips)) {

@@ -1,0 +1,22 @@
+<section class="section recJourney" aria-labelledby="recJourneyTitle">
+  <div class="container">
+    <div class="section__head">
+      <p class="solutionsPage__sectionKicker"><%= page.journey.kicker %></p>
+      <h2 id="recJourneyTitle"><%= page.journey.title %></h2>
+    </div>
+
+    <ol class="recJourney__steps">
+      <% page.journey.steps.forEach(function (step) { %>
+        <li class="recJourney__step">
+          <span class="recJourney__num" aria-hidden="true"><%= step.n %></span>
+          <h3 class="recJourney__stepTitle"><%= step.title %></h3>
+          <%# body is {before, em, after} from withEmphasis() — plain text in
+              three escaped pieces, so the data module never has to carry HTML. %>
+          <p class="recJourney__stepBody">
+            <%= step.body.before %><% if (step.body.em) { %><strong><bdi><%= step.body.em %></bdi></strong><% } %><%= step.body.after %>
+          </p>
+        </li>
+      <% }) %>
+    </ol>
+  </div>
+</section>

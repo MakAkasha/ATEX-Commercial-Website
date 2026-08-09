@@ -1,0 +1,34 @@
+<section class="section recRoi recBand--warm" aria-labelledby="recRoiTitle">
+  <div class="container">
+    <div class="section__head">
+      <p class="solutionsPage__sectionKicker"><%= page.roi.kicker %></p>
+      <h2 id="recRoiTitle"><%= page.roi.title %></h2>
+    </div>
+
+    <ul class="recRoi__grid">
+      <% page.roi.cards.forEach(function (card) { %>
+        <li class="recRoi__card">
+          <span class="recRoi__icon" aria-hidden="true"><%- icon(card.icon) %></span>
+          <h3 class="recRoi__cardTitle"><%= card.title %></h3>
+          <p class="recRoi__cardBody">
+            <%= card.body.before %><% if (card.body.em) { %><strong><bdi><%= card.body.em %></bdi></strong><% } %><%= card.body.after %>
+          </p>
+        </li>
+      <% }) %>
+    </ul>
+
+    <%# CTA repeat. A long landing page that only offers its action in the hero
+        and the mobile sticky bar loses the visitor who scrolled to read first. %>
+    <p class="recRoi__cta">
+      <a
+        class="btn btn--primary"
+        data-rec-wa
+        href="https://wa.me/<%= page.wa.number %>?text=<%= encodeURIComponent(page.primaryCta.waText) %>"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <%- icon('whatsapp') %><%= page.primaryCta.label %>
+      </a>
+    </p>
+  </div>
+</section>

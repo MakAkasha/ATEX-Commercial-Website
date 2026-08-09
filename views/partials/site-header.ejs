@@ -2,9 +2,14 @@
 <div class="scrollProgress" id="scrollProgress" aria-hidden="true"></div>
 <!-- Top bar -->
 <% const __homeContent = (typeof content !== 'undefined') ? content : null; %>
-<% const __topbarPhone = '+966580102121'; %>
+<%# topbar.phone, topbar.ctaText and topbar.ctaHref are admin-editable and were
+    hardcoded here, so editing them saved and changed nothing. The sales number
+    has no schema field and stays fixed. %>
+<% const __topbarPhone = (__homeContent?.topbar?.phone || '+966580102121'); %>
 <% const __topbarSales = '0509330008'; %>
-<% const __topbarWhatsapp = 'https://wa.me/966580102121'; %>
+<% const __topbarWhatsapp = 'https://wa.me/' + String(__topbarPhone).replace(/\D/g, ''); %>
+<% const __portalText = (__homeContent?.topbar?.ctaText || 'بوابة العملاء'); %>
+<% const __portalHref = (__homeContent?.topbar?.ctaHref || 'https://portal.atex-ksa.com'); %>
 <div class="topbar">
   <div class="container topbar__inner">
     <div class="topbar__item">
@@ -20,8 +25,8 @@
     </div>
     <div class="topbar__item">
       <span class="topbar__tagline"><%= (__homeContent?.topbar?.tagline || 'حلول إنترنت الأشياء') %></span>
-      <a class="topbar__textLink" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" aria-label="بوابة العملاء — الشريط العلوي، يفتح في تبويب جديد">
-        <span>بوابة العملاء</span>
+      <a class="topbar__textLink" href="<%= __portalHref %>" target="_blank" rel="noopener noreferrer" aria-label="<%= __portalText %> — الشريط العلوي، يفتح في تبويب جديد">
+        <span><%= __portalText %></span>
         <span class="topbar__extIcon" aria-hidden="true">↗</span>
       </a>
     </div>
@@ -53,9 +58,9 @@
         <a class="nav__link" data-route href="/solutions">الأنظمة والحلول</a>
         <a class="nav__link" data-route href="/blog">المدونة</a>
         <a class="nav__link" data-route href="/contact-us">تواصل معنا</a>
-        <a class="btn btn--primary btn--small" href="https://portal.atex-ksa.com" target="_blank" rel="noopener noreferrer" dir="rtl" aria-label="بوابة العملاء — القائمة الرئيسية، يفتح في تبويب جديد">
+        <a class="btn btn--primary btn--small" href="<%= __portalHref %>" target="_blank" rel="noopener noreferrer" dir="rtl" aria-label="<%= __portalText %> — القائمة الرئيسية، يفتح في تبويب جديد">
           <span class="nav__extIcon" aria-hidden="true">↗</span>
-          <span>بوابة العملاء</span>
+          <span><%= __portalText %></span>
         </a>
       </div>
     </nav>

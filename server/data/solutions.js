@@ -181,6 +181,14 @@ const solutions = [
     useCases: ["فلل ومجمّعات سكنية", "منازل فاخرة وقصور", "شقق ضيافة وسكن تنفيذي"],
     primaryImage: "/assets/solutions/smart-home.jpg",
     supportImages: ["/assets/solutions/security-Systems.jpg", "/assets/solutions/smart-ligting.jpg"],
+    // Inbound link to the developer campaign landing page. That page carries no
+    // nav entry by design, which would otherwise leave it an orphan — findable
+    // in the sitemap but with no crawlable path to it from anywhere on the site.
+    relatedLanding: {
+      href: "/rec/smart-home",
+      label: "منظومة المنزل الذكي للمطورين العقاريين",
+      text: "تبني مشروعاً سكنياً؟ اطلع على منظومة اتكس المخصصة للمطورين العقاريين، بما فيها العائد على الوحدة وخطة التنفيذ.",
+    },
   },
   {
     slug: "smart-office",
