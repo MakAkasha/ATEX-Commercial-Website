@@ -2268,9 +2268,9 @@ body.nav-open .nav__toggleLines::after {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-2);
   margin: 0;
-  padding: var(--s-5);
+  padding: var(--s-4) var(--s-5);
   border: 0;
   border-inline-start: calc(3px * var(--font-scale)) solid var(--primary-50);
   border-radius: var(--radius);
@@ -2321,7 +2321,9 @@ body.nav-open .nav__toggleLines::after {
 
 .quoteCard__quote {
   margin: 0;
-  line-height: 1.85;
+  /* 1.85 is the site's Arabic body leading; these quotes run 3-5 lines inside a
+     card, where that much air makes the block look loose rather than readable. */
+  line-height: 1.7;
   font-weight: 700;
   font-size: clamp(calc(17px * var(--font-scale)), 1.6vw, calc(20px * var(--font-scale)));
   color: var(--navy);
@@ -2345,7 +2347,7 @@ body.nav-open .nav__toggleLines::after {
   gap: var(--s-3);
   margin: 0;
   margin-top: auto;
-  padding-top: var(--s-4);
+  padding-top: var(--s-3);
   border-top: calc(1px * var(--font-scale)) solid var(--navy-10);
 }
 
