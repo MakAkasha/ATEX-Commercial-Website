@@ -510,8 +510,11 @@
                     <% if (t.name) { %>
                       <span class="quoteCard__name"><%= t.name %></span>
                     <% } %>
-                    <% if (t.role || t.company) { %>
-                      <span class="quoteCard__role"><%= [t.role, t.company].filter(Boolean).join(' — ') %></span>
+                    <% if (t.role) { %>
+                      <span class="quoteCard__role"><%= t.role %></span>
+                    <% } %>
+                    <% if (t.company) { %>
+                      <span class="quoteCard__company"><%= t.company %></span>
                     <% } %>
                     <% if (t.project) { %>
                       <span class="quoteCard__project"><%= t.project %></span>

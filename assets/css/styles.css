@@ -2415,6 +2415,16 @@ body.nav-open .nav__toggleLines::after {
   unicode-bidi: isolate;
 }
 
+/* The company is the credential a reader recognises in a B2B reference, so it
+   gets its own line under the job title and a weight between the two: heavier
+   than the role it qualifies, lighter than the person's name above it. */
+.quoteCard__company {
+  font-size: max(12px, calc(15px * var(--font-scale)));
+  font-weight: 700;
+  color: var(--navy);
+  unicode-bidi: isolate;
+}
+
 .quoteCard__role,
 .quoteCard__project {
   font-size: max(12px, calc(15px * var(--font-scale)));
