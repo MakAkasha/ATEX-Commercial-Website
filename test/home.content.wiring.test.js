@@ -133,8 +133,18 @@ describe("schema v4 — retired defaults move forward, admin edits do not", () =
     assert.equal(getDefaultHomeContent().version, 4);
   });
 
+  it("does not let production's placeholder phone number reach the header", () => {
+    // The live row holds "+966 11 000 0000" from an early schema. It was never
+    // visible because the header printed the real number instead of reading the
+    // field, so wiring the field up would have published the placeholder and
+    // pointed the WhatsApp link at it.
+    const out = normalizeHomeContent({ topbar: { phone: "+966 11 000 0000" } });
+    assert.equal(out.topbar.phone, getDefaultHomeContent().topbar.phone);
+    assert.equal(out.topbar.phone, "+966580102121");
+  });
+
   const retired = {
-    topbar: { ctaText: "اطلب عرضاً", ctaHref: "#contact" },
+    topbar: { phone: "+966 11 000 0000", ctaText: "اطلب عرضاً", ctaHref: "#contact" },
     hero: {
       kicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
       ctaPrimary: "اطلب عرضاً",
@@ -146,6 +156,7 @@ describe("schema v4 — retired defaults move forward, admin edits do not", () =
   it("replaces a stored value that is still the retired v3 default", () => {
     const out = normalizeHomeContent(retired);
     const defaults = getDefaultHomeContent();
+    assert.equal(out.topbar.phone, defaults.topbar.phone);
     assert.equal(out.topbar.ctaText, defaults.topbar.ctaText);
     assert.equal(out.topbar.ctaHref, defaults.topbar.ctaHref);
     assert.equal(out.hero.kicker, defaults.hero.kicker);
