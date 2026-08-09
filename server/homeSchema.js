@@ -1,4 +1,4 @@
-const HOME_SCHEMA_VERSION = 3;
+const HOME_SCHEMA_VERSION = 4;
 
 // NOTE ON `iconClass` (solutions.cards / why.cards)
 //
@@ -140,6 +140,33 @@ function isRetiredProcessBoilerplate(p) {
   });
 }
 
+// Single fields whose default wording changed in v4, kept verbatim as they read
+// in v3. Same intent as the two retired-block predicates above, at field
+// granularity: these live beside fields an admin may well have edited (hero
+// title and desc are edited in production), so the whole block cannot be
+// discarded — only the individual value, and only while it is still untouched.
+//
+// Every one of them was a field the admin panel offered but no template
+// rendered, so a stored value here is by definition a default nobody could have
+// seen take effect.
+const RETIRED_FIELDS_V3 = {
+  topbarCtaText: "اطلب عرضاً",
+  topbarCtaHref: "#contact",
+  heroKicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
+  heroCtaPrimary: "اطلب عرضاً",
+  heroCtaSecondary: "استعرض المنصة",
+  solutionsHeading: "حلول ATEX",
+};
+
+// Returns the stored value, unless it is empty or still the retired default —
+// in which case the new default wins.
+function forwardField(stored, retired, fallback) {
+  const s = asString(stored);
+  if (!s) return fallback;
+  if (s === retired) return fallback;
+  return s;
+}
+
 function getDefaultHomeContent() {
   return {
     version: HOME_SCHEMA_VERSION,
@@ -148,17 +175,17 @@ function getDefaultHomeContent() {
       supportText: "الدعم والمبيعات:",
       phone: "+966580102121",
       tagline: "حلول إنترنت الأشياء للشركات داخل المملكة",
-      ctaText: "اطلب عرضاً",
-      ctaHref: "#contact",
+      ctaText: "بوابة العملاء",
+      ctaHref: "https://portal.atex-ksa.com",
     },
 
     hero: {
-      kicker: "بيانات لحظية • تنبيهات ذكية • قرارات أسرع",
+      kicker: "IoT Solutions — المملكة العربية السعودية",
       title: "ذكاء متكامل… تحكم بلا حدود",
       desc:
         "نحوّل المنازل والفنادق والمباني إلى منظومة متصلة تُظهر لك ما يحدث الآن وتُمكّنك من التحكم بكل التفاصيل بسهولة.\nمن الأجهزة والاتصال إلى المنصة, لتشغيل الإضاءة والتكييف والطاقة والمشاهد، إدارة الغرف والوصول الذكي، ورفع الكفاءة وتقليل التكاليف مع تجربة ضيوف وسكان أكثر رفاهية.",
-      ctaPrimary: "اطلب عرضاً",
-      ctaSecondary: "استعرض المنصة",
+      ctaPrimary: "ابدأ مشروعك الآن",
+      ctaSecondary: "استكشف الحلول",
     },
 
     heroVideo: {
@@ -168,7 +195,7 @@ function getDefaultHomeContent() {
     },
 
     solutions: {
-      heading: "حلول ATEX",
+      heading: "حلول نقدمها",
       subheading: "حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.",
       cards: [
         {
@@ -327,16 +354,16 @@ function normalizeHomeContent(input) {
     out.topbar.supportText = asString(src.topbar.supportText) || out.topbar.supportText;
     out.topbar.phone = asString(src.topbar.phone) || out.topbar.phone;
     out.topbar.tagline = asString(src.topbar.tagline) || out.topbar.tagline;
-    out.topbar.ctaText = asString(src.topbar.ctaText) || out.topbar.ctaText;
-    out.topbar.ctaHref = asString(src.topbar.ctaHref) || out.topbar.ctaHref;
+    out.topbar.ctaText = forwardField(src.topbar.ctaText, RETIRED_FIELDS_V3.topbarCtaText, out.topbar.ctaText);
+    out.topbar.ctaHref = forwardField(src.topbar.ctaHref, RETIRED_FIELDS_V3.topbarCtaHref, out.topbar.ctaHref);
   }
 
   if (src.hero && typeof src.hero === "object") {
-    out.hero.kicker = asString(src.hero.kicker) || out.hero.kicker;
+    out.hero.kicker = forwardField(src.hero.kicker, RETIRED_FIELDS_V3.heroKicker, out.hero.kicker);
     out.hero.title = asString(src.hero.title) || out.hero.title;
     out.hero.desc = asString(src.hero.desc) || out.hero.desc;
-    out.hero.ctaPrimary = asString(src.hero.ctaPrimary) || out.hero.ctaPrimary;
-    out.hero.ctaSecondary = asString(src.hero.ctaSecondary) || out.hero.ctaSecondary;
+    out.hero.ctaPrimary = forwardField(src.hero.ctaPrimary, RETIRED_FIELDS_V3.heroCtaPrimary, out.hero.ctaPrimary);
+    out.hero.ctaSecondary = forwardField(src.hero.ctaSecondary, RETIRED_FIELDS_V3.heroCtaSecondary, out.hero.ctaSecondary);
   }
 
   if (src.heroVideo && typeof src.heroVideo === "object") {
@@ -347,7 +374,7 @@ function normalizeHomeContent(input) {
   }
 
   if (src.solutions && typeof src.solutions === "object") {
-    out.solutions.heading = asString(src.solutions.heading) || out.solutions.heading;
+    out.solutions.heading = forwardField(src.solutions.heading, RETIRED_FIELDS_V3.solutionsHeading, out.solutions.heading);
     out.solutions.subheading = asString(src.solutions.subheading) || out.solutions.subheading;
     if (Array.isArray(src.solutions.cards)) {
       out.solutions.cards = src.solutions.cards

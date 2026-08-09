@@ -58,7 +58,11 @@
         </div>
         <div class="container heroVideo__inner">
           <div class="heroVideo__content">
-            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span>IoT Solutions — المملكة العربية السعودية</p>
+            <%# hero.kicker / hero.ctaPrimary / hero.ctaSecondary belong to this
+                hero, not to the #atex-overview section below, which borrows only
+                hero.title and hero.desc. All three were admin-editable and
+                hardcoded here, so an edit saved and changed nothing. %>
+            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span><%= content?.hero?.kicker || 'IoT Solutions — المملكة العربية السعودية' %></p>
             <h1 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
               <span class="heroVideo__titleStatic">حلول إنترنت الأشياء</span>
               <span class="heroVideo__cycleWrap" aria-hidden="true">
@@ -70,8 +74,8 @@
             </h1>
             <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
             <div class="heroVideo__actions">
-              <a class="btn btn--primary" href="/contact-us">ابدأ مشروعك الآن <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
-              <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions">استكشف الحلول</a>
+              <a class="btn btn--primary" href="/contact-us"><%= content?.hero?.ctaPrimary || 'ابدأ مشروعك الآن' %> <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
+              <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions"><%= content?.hero?.ctaSecondary || 'استكشف الحلول' %></a>
             </div>
           </div>
         </div>
@@ -154,7 +158,7 @@
       <section class="section" id="solutions">
         <div class="container">
           <div class="section__head">
-            <h2>حلول نقدمها</h2>
+            <h2><%= content?.solutions?.heading || 'حلول نقدمها' %></h2>
             <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
           </div>
 

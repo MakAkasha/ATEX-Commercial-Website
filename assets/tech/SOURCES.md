@@ -24,11 +24,15 @@ one can be read as a claim that ATEX is a certified member of that programme.
 | `z-wave.svg` | Z-Wave logo.svg | Silicon Labs (was Sigma Designs) | yes — Z-Wave certification |
 | `zigbee.svg` | Zigbee logo.svg | Connectivity Standards Alliance | yes — CSA membership |
 
-**Before this goes to production**, confirm which of the certification
-programmes ATEX actually holds, and delete the files for the ones it does not.
-Removing a file is enough: `integrationLogo()` in `views/home.ejs` falls back to
-the technology's name as text when no mark is matched, so nothing breaks and the
-chip simply reads as before.
+**Confirmed by Okasha, 2026-08-09:** ATEX holds all seven of the certification
+and membership programmes marked above — Wi-Fi CERTIFIED, Zigbee (CSA), Thread
+Group, Z-Wave, KNX, BACnet (BTL) and LoRaWAN — so all twelve marks stay. He was
+asked specifically because displaying one of these reads as a claim of
+certified membership.
+
+If that ever changes, removing a file is enough: `integrationLogo()` in
+`views/home.ejs` falls back to the technology's name as text when no mark is
+matched, so nothing breaks and the chip simply reads as before.
 
 Technologies with no published mark — Matter, ONVIF, DALI-2, OCPP, CoAP, WPA3,
 TLS, PoE, SIP, RTSP, OSDP, NB-IoT, LTE-M — and the categories that are not
