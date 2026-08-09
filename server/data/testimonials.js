@@ -18,7 +18,9 @@
  *   name    person's name — leave "" to stay anonymous
  *   role    job title / position
  *   company company name
- *   sector  short tag shown as a pill (e.g. الضيافة)
+ *   sector  short tag shown as a pill (e.g. الضيافة). Left empty on the
+ *           current entries: every one is a real-estate developer, so the
+ *           pill repeated the same word six times and said nothing.
  *   rating  1..5 stars (defaults to 5)
  *   logo    optional company logo, e.g. "/assets/partners/sadana.webp".
  *           Preferred over `photo`: these are B2B references, and the client
@@ -37,7 +39,7 @@ const TESTIMONIALS = [
     name: "السيد/ عبدالله حسن جيب الله",
     role: "مدير المشتريات",
     company: "شركة كفاءات العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/kafaat.webp",
     photo: "",
@@ -49,7 +51,7 @@ const TESTIMONIALS = [
     name: "السيد/ عبدالله الصيعري",
     role: "مدير المشتريات",
     company: "شركة سدنة العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/sadana.webp",
     photo: "",
@@ -61,7 +63,7 @@ const TESTIMONIALS = [
     name: "السيد/ خالد السلمي",
     role: "قسم المشتريات",
     company: "شركة إشراق العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/ishraq.webp",
     photo: "",
@@ -73,7 +75,7 @@ const TESTIMONIALS = [
     name: "المهندس/ وليد",
     role: "مدير المشاريع",
     company: "شركة درة العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/durrah.webp",
     photo: "",
@@ -85,7 +87,7 @@ const TESTIMONIALS = [
     name: "المهندس/ بركات",
     role: "مدير المشاريع",
     company: "شركة التوباز العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/al-topaz.webp",
     photo: "",
@@ -97,7 +99,7 @@ const TESTIMONIALS = [
     name: "المهندس/ خالد ديان",
     role: "مدير المشتريات",
     company: "شركة سين العقارية",
-    sector: "العقارات",
+    sector: "",
     rating: 5,
     logo: "/assets/partners/seen.webp",
     photo: "",
