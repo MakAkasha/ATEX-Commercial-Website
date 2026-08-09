@@ -430,7 +430,8 @@
 
       <!-- Social proof -->
       <% var quotes = Array.isArray(locals.testimonials) ? locals.testimonials : []; %>
-      <% if (quotes.length) { %>
+      <% var clientLogos = Array.isArray(locals.partners) ? locals.partners : []; %>
+      <% if (quotes.length || clientLogos.length) { %>
       <section class="section socialProof" id="social-proof">
         <div class="container">
           <div class="section__head">
@@ -438,6 +439,33 @@
             <p>آراء من فرق المشاريع التي عملت مع أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
           </div>
 
+          <%# Client logos. .socialProof__logos and .socialProof__logo have been in
+              styles.css since the section was designed; this is the markup that
+              finally uses them. The data-marquee-* attributes are the contract
+              initMarquee() reads (assets/js/main.js) — the class names alone
+              only carry CSS, and a missing attribute makes it silently no-op.
+
+              width/height are load-bearing: initMarquee measures this row to
+              work out its loop distance, and these images are lazy, so without
+              an intrinsic size they measure as zero-width and the strip loops
+              over nothing. Every card is 300x300. %>
+          <% if (clientLogos.length) { %>
+            <div class="marquee socialProof__logos" data-marquee aria-label="عملاؤنا من المطورين العقاريين">
+              <div class="marquee__viewport" data-marquee-viewport>
+                <div class="marquee__runner" data-marquee-runner>
+                  <div class="marquee__content" data-marquee-content>
+                    <% clientLogos.forEach(function (logo) { %>
+                      <span class="socialProof__logo">
+                        <img src="<%= logo.image %>" alt="<%= logo.name %>" width="300" height="300" loading="lazy" decoding="async" />
+                      </span>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (quotes.length) { %>
           <div class="grid grid--cards quotesGrid">
             <% quotes.forEach(function(t){ %>
               <figure class="quoteCard">
@@ -482,6 +510,7 @@
               </figure>
             <% }) %>
           </div>
+          <% } %>
         </div>
       </section>
       <% } %>

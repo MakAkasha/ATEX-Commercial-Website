@@ -3,7 +3,11 @@
  *
  * HOW TO ADD A REAL TESTIMONIAL
  * -----------------------------
- * Edit an entry below and replace every bracketed placeholder with real text.
+ * Copy an entry below and fill every field with real text. The six here are
+ * real, signed-off quotes from ATEX's development clients (the same set the
+ * /rec campaign pages use). Never leave a square bracket in a field: that is
+ * the placeholder marker, and it is what keeps an unfinished entry off the
+ * live site.
  * An entry is only published once NONE of its fields contain square brackets.
  * Entries that still hold a placeholder are skipped, and the whole social-proof
  * section is hidden when fewer than MIN_VISIBLE entries are publishable — so a
@@ -25,61 +29,67 @@ const MIN_VISIBLE = 2;
 
 const TESTIMONIALS = [
   {
-    quote: '"تنفيذ احترافي وسرعة استجابة ممتازة"',
-    name: "",
-    role: "مدير مشروع – قطاع الضيافة",
-    company: "",
-    sector: "الضيافة",
-    rating: 5,
-    photo: "",
-    project: "",
-  },
-  {
-    quote: '"تحسن واضح في كفاءة التشغيل بعد التكامل"',
-    name: "",
-    role: "مدير تشغيل – قطاع العقارات",
-    company: "",
+    quote:
+      "التزام استثنائي بالمواعيد، سرعة في التنفيذ، واستجابة فورية في خدمات ما بعد البيع، مما جعل التعامل أكثر احترافية.",
+    name: "السيد/ عبدالله حسن جيب الله",
+    role: "مدير المشتريات",
+    company: "شركة كفاءات العقارية",
     sector: "العقارات",
     rating: 5,
     photo: "",
     project: "",
   },
   {
-    quote: '"فريق داعم وخطة تنفيذ واضحة من البداية"',
-    name: "",
-    role: "مالك مشروع – قطاع سكني",
-    company: "",
-    sector: "السكني",
+    quote:
+      "تنوع كبير في المنتجات، مع استشارات فنية واضحة وتوصيات تناسب كل مشروع، مما ساعدنا على اختيار الحل الأمثل بثقة واطمئنان.",
+    name: "السيد/ عبدالله الصيعري",
+    role: "مدير المشتريات",
+    company: "شركة سدنة العقارية",
+    sector: "العقارات",
     rating: 5,
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "الحلول الذكية وفرت لنا منظومة متكاملة للأمان والتحكم والراحة، وربطت بين أنظمة المشروع بسهولة جعلت إدارة الوحدات السكنية أكثر سلاسة.",
+    name: "السيد/ خالد السلمي",
+    role: "قسم المشتريات",
+    company: "شركة إشراق العقارية",
+    sector: "العقارات",
     rating: 5,
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "متابعة دقيقة لكل مراحل المشروع، من دراسة الاحتياج والتصميم إلى الإشراف على التنفيذ والتسليم، مع حضور فعال في مرحلة التشغيل والدعم المستمر.",
+    name: "المهندس/ وليد",
+    role: "مدير المشاريع",
+    company: "شركة درة العقارية",
+    sector: "العقارات",
     rating: 5,
     photo: "",
     project: "",
   },
   {
-    quote: "[نص الشهادة]",
-    name: "[اسم العميل]",
-    role: "[المسمى الوظيفي]",
-    company: "[اسم الشركة]",
-    sector: "[القطاع]",
+    quote:
+      "قدموا حلولا مناسبة لتوجهات عملائنا من حيث التقنيات والميزانية، مع اقتراح بدائل ذكية تجعل المشروع أكثر تميزا وقيمة مضافة للمستخدم النهائي.",
+    name: "المهندس/ بركات",
+    role: "مدير المشاريع",
+    company: "شركة التوباز العقارية",
+    sector: "العقارات",
+    rating: 5,
+    photo: "",
+    project: "",
+  },
+  {
+    quote:
+      "مرونة عالية في تكييف الحلول مع متطلبات كل مشروع، وسرعة في التعديل والاستجابة، مما عزز الثقة وساهم في استمرارية التعاون بين الجانبين.",
+    name: "المهندس/ خالد ديان",
+    role: "مدير المشتريات",
+    company: "شركة سين العقارية",
+    sector: "العقارات",
     rating: 5,
     photo: "",
     project: "",

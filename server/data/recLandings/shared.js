@@ -3,7 +3,8 @@
 /**
  * Content both /rec landing pages show.
  *
- * The partner logos are the same seven either way. The testimonials are the
+ * The client logos come from server/data/partners.js, which the homepage also
+ * reads. The testimonials are the
  * same six by owner decision: they are real quotes from property-development
  * clients, and the villa page frames them as project references rather than
  * homeowner quotes (see `proof.lede` in smart-villa.js). If ATEX ever supplies
@@ -17,37 +18,12 @@ const WHATSAPP_NUMBER = "966509330008";
 /** For the `tel:` fallback next to the WhatsApp CTA. Matches site-footer.ejs. */
 const SALES_PHONE = "0509330008";
 
-/**
- * Client logo strip.
- *
- * Rendered from the client-supplied SVGs to WebP, flattened onto white. The
- * source artwork places each mark on a card at ~50% opacity, so anything other
- * than a white backing turns the card grey and tints the logo — baking the
- * white in makes the strip correct no matter what the section sits on. The
- * matching `.recProof__logo` rule in assets/css/rec-landing.css keeps a white
- * tile underneath for the same reason.
- */
-const PARTNER_LOGOS = [
-  { name: "شعار رسوخ العمرانية", image: "/assets/partners/rusookh.webp" },
-  { name: "شعار درة العقارية", image: "/assets/partners/durrah.webp" },
-  { name: "شعار سدنة العقارية", image: "/assets/partners/sadana.webp" },
-  { name: "شعار كيان الماسية", image: "/assets/partners/kayan-almasiya.webp" },
-  { name: "شعار كفاءات العقارية", image: "/assets/partners/kafaat.webp" },
-  { name: "شعار سين العقارية", image: "/assets/partners/seen.webp" },
-  { name: "شعار جوار الأولى", image: "/assets/partners/jiwar-aloula.webp" },
-  { name: "شعار إشراق العقارية", image: "/assets/partners/ishraq.webp" },
-  { name: "شعار سداسيات العقارية", image: "/assets/partners/sodasyat.webp" },
-  { name: "شعار التوباز العقارية", image: "/assets/partners/al-topaz.webp" },
-  { name: "شعار الشاطري العقارية", image: "/assets/partners/al-shatri.webp" },
-  { name: "شعار فجر العقارية", image: "/assets/partners/fajr.webp" },
-  { name: "شعار مساكن التمليك العقارية", image: "/assets/partners/masakin-altamleek.webp" },
-  { name: "شعار جسر", image: "/assets/partners/jisr.webp" },
-  { name: "شعار منصات للتطوير العقاري", image: "/assets/partners/manassat.webp" },
-  { name: "شعار أحمد آل مبارك العقارية", image: "/assets/partners/ahmed-al-mubarak.webp" },
-  { name: "شعار منازل العز للتطوير العقاري", image: "/assets/partners/manazel-al-ezz.webp" },
-  { name: "شعار معاد المطورة للتجارة والتطوير العقاري", image: "/assets/partners/maad.webp" },
-  { name: "شعار رواسخ العقارية", image: "/assets/partners/rwasekh.webp" },
-];
+/* The client logos now live in server/data/partners.js — the homepage shows the
+   same set, so neither page owns them. Re-exported here so the landing-page
+   records keep reading one name. */
+const { getPartners } = require("../partners");
+
+const PARTNER_LOGOS = getPartners();
 
 const TESTIMONIALS = [
   {

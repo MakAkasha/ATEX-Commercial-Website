@@ -10,6 +10,7 @@ const { loadAnalyticsSettings, loadPageSeoSettings } = require("./settings");
 const { getSolutions, getIndustries, getRecLandings } = require("../data/contentRegistry");
 const { CATEGORIES, getCatalog } = require("../data/productsPage");
 const { getTestimonials } = require("../data/testimonials");
+const { getPartners } = require("../data/partners");
 const { getBlogRedirectTarget } = require("../data/blogRedirects");
 const { safeJsonParse } = require("../utils/safe");
 const { extractFaqFromHtml } = require("../utils/articleFaq");
@@ -151,6 +152,7 @@ router.get("/", (req, res) => {
   const db = getDb();
   // Empty until at least MIN_VISIBLE entries are free of bracketed placeholders.
   const testimonials = getTestimonials();
+  const partners = getPartners();
   const pageSolutions = solutions;
   const pageIndustries = industries;
   const latestPosts = db
@@ -221,6 +223,7 @@ router.get("/", (req, res) => {
     pageSolutions,
     pageIndustries,
     testimonials,
+    partners,
     latestPosts,
     ...baseRenderData(req),
     structuredData,
