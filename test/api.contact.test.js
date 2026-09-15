@@ -17,6 +17,7 @@
 
 const assert = require("node:assert/strict");
 const { describe, it, before, after } = require("node:test");
+const Database = require("better-sqlite3");
 
 const { startServer } = require("./helpers/server");
 
@@ -111,6 +112,67 @@ describe("POST /api/contact validation", () => {
     assert.equal(res.status, 200);
     const body = await res.json();
     assert.equal(body.ok, true);
+  });
+
+  it("stores the ad click ID and UTM parameters on the submission row", async () => {
+    const whatsapp = "+966500000008";
+    const res = await srv.post(
+      "/api/contact",
+      {
+        name: "شركة الاختبار المحدودة",
+        whatsapp,
+        message: "نرغب في الحصول على عرض سعر لنظام فندق ذكي.",
+        attribution: {
+          gclid: "TEST123",
+          utm_source: "google",
+          utm_medium: "cpc",
+          utm_campaign: "hotel",
+          landing_path: "/contact-us",
+          referrer: "https://www.google.com/",
+          // Rejected: a click ID is an opaque token, never free text.
+          fbclid: "bad value <script>",
+        },
+      },
+      sameOrigin(srv)
+    );
+    assert.equal(res.status, 200);
+
+    const db = new Database(srv.dbPath, { readonly: true });
+    try {
+      const row = db
+        .prepare("SELECT * FROM contact_submissions WHERE email = ?")
+        .get(whatsapp);
+      assert.equal(row.gclid, "TEST123");
+      assert.equal(row.utm_source, "google");
+      assert.equal(row.utm_medium, "cpc");
+      assert.equal(row.utm_campaign, "hotel");
+      assert.equal(row.landing_path, "/contact-us");
+      assert.equal(row.referrer, "https://www.google.com/");
+      assert.equal(row.fbclid, "");
+      assert.equal(row.wbraid, "");
+    } finally {
+      db.close();
+    }
+  });
+
+  it("a submission with no attribution stores empty strings, not null", async () => {
+    const whatsapp = "+966500000009";
+    const res = await srv.post(
+      "/api/contact",
+      { name: "شركة الاختبار", whatsapp, message: "رسالة اختبار طويلة بما يكفي." },
+      sameOrigin(srv)
+    );
+    assert.equal(res.status, 200);
+
+    const db = new Database(srv.dbPath, { readonly: true });
+    try {
+      const row = db.prepare("SELECT * FROM contact_submissions WHERE email = ?").get(whatsapp);
+      assert.equal(row.gclid, "");
+      assert.equal(row.utm_campaign, "");
+      assert.equal(row.referrer, "");
+    } finally {
+      db.close();
+    }
   });
 });
 

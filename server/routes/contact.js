@@ -26,6 +26,42 @@ function normalizeText(value, maxLen) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLen);
 }
 
+// Lead attribution, in the order the columns were added in server/db.js.
+// Click IDs are opaque advertising tokens; UTM values are campaign labels the
+// marketer chose. Neither is personal data, and neither is ever echoed back to
+// the browser or written into a URL this app generates.
+const ATTRIBUTION_FIELDS = [
+  "gclid",
+  "wbraid",
+  "gbraid",
+  "fbclid",
+  "ttclid",
+  "msclkid",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "landing_path",
+  "referrer",
+];
+
+/**
+ * A rejected value is stored as '' rather than 400-ing the submission: a lead
+ * is worth more than a well-formed tracking token, and a malformed one is
+ * simply unusable for an offline conversion upload anyway.
+ */
+function normalizeAttribution(raw) {
+  const source = raw && typeof raw === "object" ? raw : {};
+  return ATTRIBUTION_FIELDS.map((field) => {
+    const value = String(source[field] || "").replace(/\s+/g, "").trim().slice(0, 300);
+    if (!value) return "";
+    if (field === "referrer") return /^https?:\/\/[^\s]+$/i.test(value) ? value : "";
+    if (field === "landing_path") return /^\/[\w\-./]*$/.test(value) ? value : "";
+    return /^[\w.\-~%]+$/.test(value) ? value : "";
+  });
+}
+
 async function forwardContactEmail(payload) {
   if (!config.contactEmailForwardEnabled || !config.contactEmailTo) {
     return { attempted: false, ok: false };
@@ -50,6 +86,7 @@ async function forwardContactEmail(payload) {
         ip: payload.ip,
         user_agent: payload.userAgent,
         source: payload.source,
+        campaign: payload.campaign,
       }),
     });
 
@@ -103,9 +140,12 @@ router.post("/", contactLimiter, async (req, res) => {
     message,
   ].join("\n");
 
+  const attribution = normalizeAttribution(req.body?.attribution);
+
   db.prepare(
-    "INSERT INTO contact_submissions (name, email, message, ip, user_agent) VALUES (?, ?, ?, ?, ?)"
-  ).run(name, whatsapp, normalizedMessage, ip, userAgent);
+    `INSERT INTO contact_submissions (name, email, message, ip, user_agent, ${ATTRIBUTION_FIELDS.join(", ")})
+     VALUES (?, ?, ?, ?, ?, ${ATTRIBUTION_FIELDS.map(() => "?").join(", ")})`
+  ).run(name, whatsapp, normalizedMessage, ip, userAgent, ...attribution);
 
   const forward = await forwardContactEmail({
     name,
@@ -117,6 +157,11 @@ router.post("/", contactLimiter, async (req, res) => {
     ip,
     userAgent,
     source: String(req.headers.host || "").trim() || "atex.sa",
+    // The team reads the forwarded email, not the database, so the campaign
+    // has to travel with it or nobody ever sees where a lead came from.
+    campaign: ATTRIBUTION_FIELDS.map((field, i) => (attribution[i] ? `${field}=${attribution[i]}` : ""))
+      .filter(Boolean)
+      .join(" | ") || "direct",
   });
 
   if (forward.attempted && !forward.ok) {

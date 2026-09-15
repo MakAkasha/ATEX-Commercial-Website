@@ -331,6 +331,209 @@ function initFaq() {
   });
 }
 
+/* ------------------------------------------------------------------
+   Lead attribution — ad click IDs + UTM, captured once per visitor.
+
+   Storage is localStorage rather than a cookie on purpose: the value is
+   only ever read by this file at submit time, the server never needs it
+   on an ordinary request, and a cookie would be re-sent on every asset
+   request for 90 days for no benefit. Every access is wrapped, because
+   the accessor itself throws in a locked-down/private browser context —
+   in that case the in-memory copy still covers the current page-view.
+
+   90 days matches Google's offline-conversion import window: a click ID
+   older than that can no longer be uploaded, so keeping it is pointless.
+   ------------------------------------------------------------------ */
+const ATTRIBUTION_KEY = "atex_attribution";
+const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+const CLICK_ID_KEYS = ["gclid", "wbraid", "gbraid", "fbclid", "ttclid", "msclkid"];
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+
+let attributionMemory = null;
+
+function readAttribution() {
+  if (attributionMemory) return attributionMemory;
+  try {
+    const raw = window.localStorage.getItem(ATTRIBUTION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    if (!parsed.ts || Date.now() - Number(parsed.ts) > ATTRIBUTION_TTL_MS) return null;
+    attributionMemory = parsed;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeAttribution(record) {
+  attributionMemory = record;
+  try {
+    window.localStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(record));
+  } catch {
+    // Storage blocked or full: the in-memory copy still serves this page-view.
+  }
+}
+
+function initLeadAttribution() {
+  const params = new URLSearchParams(window.location.search);
+  const fresh = {};
+  CLICK_ID_KEYS.concat(UTM_KEYS).forEach((key) => {
+    const value = String(params.get(key) || "").trim().slice(0, 200);
+    if (value) fresh[key] = value;
+  });
+
+  const stored = readAttribution();
+  const storedHasClickId = !!stored && CLICK_ID_KEYS.some((key) => stored[key]);
+  const freshHasClickId = CLICK_ID_KEYS.some((key) => fresh[key]);
+
+  // First touch wins. An internal page view carries no parameters, so it can
+  // never blank an existing record; the single exception is a stored record
+  // with no click ID being upgraded by a real paid click arriving later.
+  if (stored && (storedHasClickId || !freshHasClickId)) {
+    attributionMemory = stored;
+    return;
+  }
+
+  writeAttribution({
+    ...fresh,
+    landing_path: String(window.location.pathname || "").slice(0, 200),
+    referrer: String(document.referrer || "").slice(0, 300),
+    ts: Date.now(),
+  });
+}
+
+/** The stored record minus its bookkeeping timestamp, for the form POST. */
+function getAttributionPayload() {
+  const stored = readAttribution();
+  if (!stored) return null;
+  const payload = {};
+  CLICK_ID_KEYS.concat(UTM_KEYS, ["landing_path", "referrer"]).forEach((key) => {
+    if (stored[key]) payload[key] = stored[key];
+  });
+  return Object.keys(payload).length ? payload : null;
+}
+
+/* ------------------------------------------------------------------
+   Contact-link measurement + WhatsApp source tagging.
+   ------------------------------------------------------------------ */
+
+/** ATEX's own published numbers, in wa.me form (digits, no +). */
+const CONTACT_NUMBERS = {
+  966509330008: "sales",
+  966580102121: "service",
+};
+
+/** 0509330008 / +966509330008 / 966509330008 all normalise to 966509330008. */
+function normalizeContactNumber(value) {
+  const digits = String(value || "").replace(/\D/g, "").replace(/^0+/, "");
+  if (!digits) return "";
+  return digits.startsWith("966") ? digits : "966" + digits;
+}
+
+function contactDept(number) {
+  return CONTACT_NUMBERS[normalizeContactNumber(number)] || "other";
+}
+
+/** Uppercase alphanumeric token, for the WhatsApp reference code. */
+function codeToken(value) {
+  return String(value || "").replace(/[^A-Za-z0-9]+/g, "").toUpperCase().slice(0, 12);
+}
+
+/**
+ * `ATX-<page>-<campaign>` — the whole point is that a customer reads it as a
+ * product reference and leaves it in the message, so sales never has to ask
+ * "where did you find us" and never has to type a code themselves.
+ */
+function buildWhatsappCode() {
+  const attribution = readAttribution() || {};
+  const segments = String(window.location.pathname || "").split("/").filter(Boolean);
+  const page = codeToken(segments[segments.length - 1]) || "HOME";
+  const source =
+    codeToken(attribution.utm_campaign) ||
+    codeToken(attribution.utm_source) ||
+    (attribution.gclid || attribution.wbraid || attribution.gbraid ? "GADS" : "") ||
+    (attribution.fbclid ? "META" : "") ||
+    (attribution.ttclid ? "TTOK" : "") ||
+    (attribution.msclkid ? "MSFT" : "") ||
+    "WEB";
+  return `ATX-${page}-${source}`;
+}
+
+/**
+ * Builds a wa.me URL whose `text=` pre-fills the customer's composer with a
+ * natural Arabic greeting and the reference code on its own last line.
+ * Returns "" when there is no number to send to (the blog share link).
+ */
+function buildWhatsappUrl(number, baseText) {
+  const digits = String(number || "").replace(/\D/g, "");
+  if (digits.length < 6) return "";
+  const greeting = String(baseText || "").trim() || "مرحباً، أرغب بالاستفسار عن حلول أتكس.";
+  const text = `${greeting}\n[${buildWhatsappCode()}]`;
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
+/** Rewrites every wa.me link on the page to carry the tagged `text=`. */
+function initWhatsappTagging() {
+  qsa('a[href*="wa.me/"]').forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    const match = href.match(/wa\.me\/(\d{6,})/);
+    if (!match) return;
+    if (href.includes("%5BATX-")) return;
+
+    let existingText = "";
+    try {
+      existingText = new URL(href, window.location.origin).searchParams.get("text") || "";
+    } catch {
+      existingText = "";
+    }
+
+    const tagged = buildWhatsappUrl(match[1], existingText);
+    if (tagged) link.setAttribute("href", tagged);
+  });
+}
+
+/** One push per contact click, to the dataLayer and to gtag when present. */
+function pushContactEvent(name, params) {
+  try {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: name, ...params });
+    if (typeof window.gtag === "function") {
+      window.gtag("event", name, params);
+    }
+  } catch {
+    // Analytics must never block a contact click.
+  }
+}
+
+function initContactLinkTracking() {
+  document.addEventListener("click", (e) => {
+    const link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!link) return;
+    const href = link.getAttribute("href") || "";
+
+    if (/^tel:/i.test(href)) {
+      const number = href.slice(4);
+      pushContactEvent("contact_phone", {
+        contact_dept: contactDept(number),
+        contact_number: normalizeContactNumber(number),
+        page_path: window.location.pathname,
+      });
+      return;
+    }
+
+    const waMatch = href.match(/wa\.me\/(\d{6,})/);
+    if (waMatch) {
+      pushContactEvent("contact_whatsapp", {
+        contact_dept: contactDept(waMatch[1]),
+        contact_number: normalizeContactNumber(waMatch[1]),
+        page_path: window.location.pathname,
+        wa_code: buildWhatsappCode(),
+      });
+    }
+  });
+}
+
 function initContactForm() {
   const form = qs("#contactForm");
   if (!form) return;
@@ -472,6 +675,9 @@ function initContactForm() {
       commercialRegister: commercialRegister.slice(0, 80),
       whatsapp: whatsapp.slice(0, 20),
       message: message.slice(0, 3000),
+      // Ad click IDs + UTM captured on first landing. Null when the visitor
+      // arrived with no parameters and no stored record.
+      attribution: getAttributionPayload(),
     };
   };
 
@@ -1140,6 +1346,11 @@ function initHeroWordCycle() {
 }
 
 async function bootstrap() {
+  // Must run before anything reads the record: the form payload and the
+  // WhatsApp link rewrite both depend on it.
+  initLeadAttribution();
+  initWhatsappTagging();
+  initContactLinkTracking();
   initHeroVideoLazyLoad();
   initScrollProgress();
   initPlatformClock();
