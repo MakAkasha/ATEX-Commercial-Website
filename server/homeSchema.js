@@ -325,7 +325,7 @@ function getDefaultHomeContent() {
     contact: {
       heading: "جاهز لبدء مشروع إنترنت الأشياء؟",
       subheading: "أرسل لنا حالة الاستخدام وسنقترح بنية (أجهزة + اتصال + منصة + تكامل) مع خطة تنفيذ واضحة.",
-      email: "contact@atex.sa",
+      email: "info@atex.sa",
       phone: "+966580102121",
       address: "جدة، المملكة العربية السعودية",
       backToTopText: "العودة للأعلى",
