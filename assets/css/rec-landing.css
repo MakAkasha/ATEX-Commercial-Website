@@ -1419,3 +1419,15 @@
 .recPage--hotels .recHero__lede {
   text-wrap: pretty;
 }
+
+/* The hotel H1 is a long noun phrase; at 34em it broke three ways on a desktop
+   where there was room for two. Widen the copy column from the tablet breakpoint
+   up only — the phone fold is unchanged. */
+@media (min-width: 768px) {
+  .recPage--hotels .recHero__copy {
+    max-inline-size: 42em;
+  }
+  .recPage--hotels .recHero__lede {
+    max-inline-size: 34em;
+  }
+}
