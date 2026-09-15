@@ -34,7 +34,7 @@
  */
 
 const { withEmphasis } = require("./emphasis");
-const { HERO_VIDEO, PARTNER_LOGOS, SALES_PHONE, TESTIMONIALS, WHATSAPP_NUMBER } = require("./shared");
+const { PARTNER_LOGOS, SALES_PHONE, TESTIMONIALS, WHATSAPP_NUMBER } = require("./shared");
 
 const title = "نظام إدارة غرف الفنادق GRMS في جدة";
 
@@ -72,7 +72,10 @@ module.exports = {
       { value: "+40%", label: "تحسين في كفاءة التشغيل" },
       { value: "24/7", label: "دعم فني محلي من جدة" },
     ],
-    video: { ...HERO_VIDEO, caption: "منظومة اتكس أثناء التشغيل" },
+    // A still, not the shared hero footage: the video is 2.2-2.9MB and this
+    // page's audience arrives on cellular. The poster carries the frame on its
+    // own, so the sources list is left empty and nothing is ever fetched.
+    video: { poster: "/assets/hero-video/hotel-room.webp", sources: [] },
   },
 
   /**
@@ -141,8 +144,8 @@ module.exports = {
       category: "hvac",
       tag: "HVAC Control",
       title: "التحكم بالتكييف داخل الغرفة",
-      image: "/assets/hero/ac.webp",
-      imageAlt: "التحكم بوحدة التكييف في غرفة الفندق",
+      image: "/assets/solutions/smart-hotel.webp",
+      imageAlt: "لوحة التحكم بالمناخ داخل غرفة الفندق",
       desc: "تحكم بوحدة المناولة داخل الغرفة: سرعات المروحة وصمام الماء البارد ونطاق الضبط.",
       bullets: [
         "نطاق ميت مبرمج يمنع تذبذب الصمام وتآكل المحرك وشكاوى الضجيج.",
