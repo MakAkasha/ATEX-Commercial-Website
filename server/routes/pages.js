@@ -170,7 +170,16 @@ router.get("/", (req, res) => {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        // LocalBusiness is a subtype of Organization and keeps the same @id, so
+        // the WebSite/WebPage references below still resolve and the page emits
+        // exactly one company node rather than two competing ones.
+        //
+        // Every value here is already published in views/partials/site-footer.ejs.
+        // Deliberately absent, because nothing on the site publishes them:
+        // aggregateRating, review, priceRange, foundingDate, awards,
+        // certifications and openingHours. The LinkedIn company page is omitted
+        // from sameAs because its public vanity URL could not be resolved.
+        "@type": "LocalBusiness",
         "@id": `${siteUrl}#organization`,
         "name": "ATEX",
         "alternateName": "اتكس",
@@ -179,12 +188,25 @@ router.get("/", (req, res) => {
           "@type": "ImageObject",
           "url": absoluteUrl("/assets/ATEX-logo.svg")
         },
+        "image": absoluteUrl("/assets/ATEX-logo.svg"),
         "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "address": {
           "@type": "PostalAddress",
-          "addressCountry": "SA",
-          "addressLocality": "جدة"
+          "streetAddress": "مليباري سنتر للأعمال، طريق ساري، الفيصلية",
+          "addressLocality": "جدة",
+          "postalCode": "23442",
+          "addressCountry": "SA"
         },
+        "vatID": "314231577900003",
+        "identifier": {
+          "@type": "PropertyValue",
+          "name": "الرقم الوطني الموحد",
+          "value": "7051668007"
+        },
+        "sameAs": [
+          "https://www.instagram.com/atex_iot",
+          "https://www.tiktok.com/@atex_iot"
+        ],
         "contactPoint": {
           "@type": "ContactPoint",
           "telephone": "+966580102121",

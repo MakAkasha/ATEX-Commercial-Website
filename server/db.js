@@ -173,6 +173,34 @@ function migrate() {
     }
   });
 
+  // Additive columns: lead attribution. The contact form used to discard the
+  // ad click ID and every UTM parameter, so a paid click could never be tied
+  // back to the lead it produced. Each column holds an opaque advertising
+  // token or a campaign label — never anything the visitor typed.
+  // '' means "not supplied", which is what every row predating this migration
+  // gets and what an organic visit stores, so nothing downstream has to
+  // distinguish "missing" from "empty".
+  const contactCols = db.prepare("PRAGMA table_info(contact_submissions)").all();
+  [
+    "gclid",
+    "wbraid",
+    "gbraid",
+    "fbclid",
+    "ttclid",
+    "msclkid",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_term",
+    "utm_content",
+    "landing_path",
+    "referrer",
+  ].forEach((col) => {
+    if (!contactCols.some((c) => c.name === col)) {
+      db.exec(`ALTER TABLE contact_submissions ADD COLUMN ${col} TEXT NOT NULL DEFAULT ''`);
+    }
+  });
+
   // Ensure a default home content exists (id=1)
   const row = db.prepare("SELECT content_json FROM home_content WHERE id = 1").get();
   if (!row) {
