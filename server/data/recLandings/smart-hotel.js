@@ -129,8 +129,8 @@ module.exports = {
       category: "occupancy",
       tag: "Occupancy Logic",
       title: "بطاقة الغرفة ومنطق الإشغال",
-      image: "/assets/hero/rooms.webp",
-      imageAlt: "حامل بطاقة الغرفة ومنطق الإشغال في الفندق",
+      image: "/assets/products/banners/keycard.webp",
+      imageAlt: "قارئ بطاقة الغرفة على قفل الباب في الفندق",
       desc: "حامل البطاقة وحساس الحضور وتماس الباب يقررون معاً متى تكون الغرفة مشغولة فعلاً.",
       bullets: [
         "سحب البطاقة يرفع درجة الحرارة إلى وضع التوفير بدل إطفاء التكييف فجأة.",
