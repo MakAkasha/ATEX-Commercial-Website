@@ -3,11 +3,12 @@
 /**
  * The /rec campaign landing pages.
  *
- * These two URLs are printed on physical brochures and QR codes that are
- * already in the field, so the slugs are fixed contract, not a naming choice:
+ * The first two URLs are printed on physical brochures and QR codes that are
+ * already in the field, so those slugs are fixed contract, not a naming choice:
  *
  *   /rec/smart-home   real-estate developers
  *   /rec/smart-villa  villa owners
+ *   /rec/smart-hotel  hotel engineering directors, owners and MEP consultants
  *
  * Both 404'd from the ground-up site rebuild until this module existed, which
  * means every scan since then hit a dead end. That history is the reason for
@@ -18,7 +19,7 @@
  * update rather than letting an admin build a page that never renders.
  */
 
-const landings = [require("./smart-home"), require("./smart-villa")];
+const landings = [require("./smart-home"), require("./smart-villa"), require("./smart-hotel")];
 
 const bySlug = new Map(landings.map((page) => [page.slug, page]));
 
