@@ -1,0 +1,325 @@
+<title>أتكس — موزاييك</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* ATEX · OPTION 1 — «موزاييك»
+   Real project photography from the repo, laid out as an asymmetric mosaic.
+   Palette locked to the Ops portal: brand #f07f00, alabaster #f5f1e9, ink #1c1917. */
+:root{
+  --brand:#f07f00; --brand-soft:#f79f3d; --brand-ink:#a34d00; --on-brand:#1c1917;
+  --paper:#f2ece1; --paper-2:#e7dfd1; --card:#fffdf9; --ink:#1c1917;
+  --t1:#4a423a; --t2:#6d6459; --rule:rgba(28,25,23,.12);
+  --hero:2rem; --section:1.375rem; --sub:1.0625rem; --body:.9375rem; --meta:.8125rem; --cap:.75rem;
+  --ar:"Cairo",system-ui,sans-serif; --kufi:"Noto Kufi Arabic","Cairo",sans-serif; --mono:"IBM Plex Mono",monospace;
+}
+*{box-sizing:border-box}
+body{direction:rtl;text-align:right;margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--ar);font-size:var(--body);line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-family:var(--kufi);text-wrap:balance}
+p{margin:0} ul{margin:0;padding:0;list-style:none} figure{margin:0}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:20px}
+
+.btn{font-family:var(--ar);font-size:var(--meta);font-weight:700;cursor:pointer;border:0;
+  padding:12px 22px;border-radius:2px;background:var(--brand);color:var(--on-brand);transition:background .15s}
+.btn:hover{background:var(--brand-soft)}
+.btn.line{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.line:hover{background:var(--ink);color:var(--paper)}
+
+/* header */
+header{border-bottom:1.5px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:30}
+.nav{display:flex;align-items:center;gap:30px;padding-block:14px}
+.nav img{height:22px;width:auto}
+.nav nav ul{display:flex;gap:22px;font-size:var(--meta);font-weight:600}
+.nav nav a{text-decoration:none;color:var(--t1)}
+.nav nav a:hover{color:var(--brand-ink)}
+.grow{margin-inline-start:auto}
+@media(max-width:900px){.nav nav{display:none}}
+
+/* ── HERO MOSAIC ───────────────────────────────────── */
+.mosaic{
+  display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:78px;gap:10px;
+  padding-block:22px 10px;
+}
+.tile{position:relative;overflow:hidden;background:var(--paper-2)}
+.tile img{width:100%;height:100%;object-fit:cover}
+.tile figcaption{
+  position:absolute;inset-inline:10px;bottom:9px;color:#fff;font-size:var(--cap);font-weight:600;
+  text-shadow:0 1px 8px rgba(0,0,0,.7);display:flex;align-items:center;gap:7px;
+}
+.tile figcaption em{font-family:var(--mono);font-style:normal;opacity:.8;margin-inline-start:auto;direction:ltr}
+
+.t-title{grid-column:span 7;grid-row:span 4;display:flex;flex-direction:column;justify-content:center;padding-inline-end:14px}
+.t-title .eyebrow{font-family:var(--mono);font-size:var(--cap);letter-spacing:.16em;color:var(--brand-ink);direction:ltr;text-align:right}
+.t-title h1{font-weight:800;font-size:clamp(2rem,1rem+4vw,4.1rem);line-height:1.22;margin-block:14px 16px;letter-spacing:-.02em}
+.t-title h1 mark{background:var(--brand);color:var(--on-brand);padding:0 .12em}
+.t-title p{color:var(--t1);max-width:44ch;font-size:var(--sub)}
+.t-title .row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+
+.t-a{grid-column:span 5;grid-row:span 4}
+.t-b{grid-column:span 4;grid-row:span 3}
+.t-c{grid-column:span 3;grid-row:span 3}
+.t-d{grid-column:span 5;grid-row:span 3}
+.t-stat{
+  grid-column:span 3;grid-row:span 3;background:var(--brand);color:var(--on-brand);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:16px;
+}
+.t-stat b{font-family:var(--mono);font-size:2.6rem;line-height:1;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.t-stat span{font-size:var(--meta);font-weight:600;margin-top:6px}
+.t-stat small{font-size:var(--cap);opacity:.72;margin-top:2px}
+@media(max-width:1000px){
+  .mosaic{grid-auto-rows:68px}
+  .t-title{grid-column:span 12;grid-row:span 4;padding-block:10px 16px}
+  .t-a{grid-column:span 7;grid-row:span 4}
+  .t-stat{grid-column:span 5;grid-row:span 4}
+  .t-b{grid-column:span 6}.t-c{grid-column:span 6}.t-d{grid-column:span 12}
+}
+
+/* ── protocol strip ────────────────────────────────── */
+.proto{
+  border-block:1.5px solid var(--ink);margin-top:28px;padding-block:18px;
+  display:flex;align-items:center;gap:26px;flex-wrap:wrap;
+}
+.proto .lab{font-family:var(--mono);font-size:var(--cap);letter-spacing:.14em;color:var(--t2);direction:ltr}
+.proto ul{display:flex;align-items:center;gap:30px;flex-wrap:wrap;flex:1}
+.proto img{height:24px;width:auto;opacity:.78;filter:grayscale(1)}
+.proto li:hover img{opacity:1;filter:none}
+
+/* ── sections ──────────────────────────────────────── */
+section{padding-block:56px}
+.sec-h{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:10px;border-bottom:1.5px solid var(--ink);padding-bottom:10px}
+.sec-h h2{font-weight:800;font-size:clamp(1.4rem,1.1rem+1vw,2rem)}
+.sec-h .ref{font-family:var(--mono);font-size:var(--cap);color:var(--t2);direction:ltr;margin-inline-start:auto;letter-spacing:.1em}
+.sec-lede{color:var(--t1);max-width:60ch;margin-block:18px 26px}
+
+/* ── systems grid, photo-led ───────────────────────── */
+.sys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sysc{background:var(--card);border:1px solid var(--rule);text-decoration:none;color:inherit;display:grid;transition:transform .16s,box-shadow .16s}
+.sysc:hover{transform:translateY(-3px);box-shadow:0 18px 40px -26px rgba(28,25,23,.7)}
+.sysc .ph{aspect-ratio:16/10;overflow:hidden;background:var(--paper-2)}
+.sysc .ph img{width:100%;height:100%;object-fit:cover}
+.sysc .body{padding:15px 16px 18px;display:grid;gap:6px}
+.sysc .n{font-family:var(--mono);font-size:var(--cap);color:var(--brand-ink);direction:ltr;text-align:right}
+.sysc h3{font-family:var(--ar);font-weight:700;font-size:var(--sub)}
+.sysc p{font-size:var(--meta);color:var(--t2);line-height:1.65}
+@media(max-width:900px){.sys{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.sys{grid-template-columns:1fr}}
+
+.more-line{display:flex;flex-wrap:wrap;gap:0 26px;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule)}
+.more-line a{font-size:var(--meta);color:var(--t1);text-decoration:none;padding-block:7px}
+.more-line a:hover{color:var(--brand-ink)}
+
+/* ── sectors: wide photo rows ──────────────────────── */
+.rows{display:grid;gap:12px}
+.rowc{display:grid;grid-template-columns:260px 1fr auto;gap:22px;align-items:center;
+  background:var(--card);border:1px solid var(--rule);padding:12px;text-decoration:none;color:inherit}
+.rowc:hover{border-color:var(--brand)}
+.rowc .ph{aspect-ratio:16/9;overflow:hidden}
+.rowc .ph img{width:100%;height:100%;object-fit:cover}
+.rowc h3{font-family:var(--ar);font-weight:700;font-size:var(--sub);margin-bottom:5px}
+.rowc p{font-size:var(--meta);color:var(--t2);max-width:60ch}
+.rowc .go{font-family:var(--mono);font-size:var(--cap);color:var(--brand-ink);direction:ltr;padding-inline:10px}
+@media(max-width:760px){.rowc{grid-template-columns:1fr}.rowc .go{display:none}}
+
+/* ── partners ──────────────────────────────────────── */
+.logos{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.logos div{background:#fff;border:1px solid var(--rule);aspect-ratio:1;display:grid;place-items:center;padding:12px}
+.logos img{width:100%;height:100%;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .15s,opacity .15s}
+.logos div:hover img{filter:none;opacity:1}
+@media(max-width:900px){.logos{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){.logos{grid-template-columns:repeat(3,1fr)}}
+
+/* ── CTA ───────────────────────────────────────────── */
+.cta{background:var(--ink);color:var(--paper);display:grid;grid-template-columns:1.2fr .8fr;gap:0;overflow:hidden}
+.cta-copy{padding:44px 36px}
+.cta-copy h2{font-weight:800;font-size:clamp(1.5rem,1.1rem+1.4vw,2.2rem);margin-bottom:12px}
+.cta-copy p{color:#c9bfb2;max-width:44ch}
+.cta-copy .row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.cta .btn.line{border-color:var(--paper);color:var(--paper)}
+.cta .btn.line:hover{background:var(--paper);color:var(--ink)}
+.cta-ph{position:relative}
+.cta-ph img{width:100%;height:100%;object-fit:cover;filter:saturate(.8)}
+.cta-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(270deg,transparent,rgba(28,25,23,.9))}
+@media(max-width:820px){.cta{grid-template-columns:1fr}.cta-ph{height:200px}}
+
+footer{border-top:1.5px solid var(--ink);margin-top:56px;padding-block:34px 50px;font-size:var(--meta);color:var(--t2)}
+.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:26px}
+.foot h4{font-family:var(--mono);font-size:var(--cap);letter-spacing:.1em;color:var(--t2);margin:0 0 12px;font-weight:500;direction:ltr;text-align:right}
+.foot ul{display:grid;gap:9px}
+.foot a{color:var(--t1);text-decoration:none}
+.foot a:hover{color:var(--brand-ink)}
+.foot-note{margin-top:26px;padding-top:16px;border-top:1px solid var(--rule);font-size:var(--cap);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.foot-note code{font-family:var(--mono);direction:ltr}
+@media(max-width:760px){.foot{grid-template-columns:1fr 1fr}}
+</style>
+
+<header>
+  <div class="wrap nav">
+    <img src="ATEX-logo.svg" alt="أتكس">
+    <nav><ul>
+      <li><a href="#systems">الأنظمة</a></li>
+      <li><a href="#sectors">القطاعات</a></li>
+      <li><a href="#partners">عملاؤنا</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul></nav>
+    <div class="grow"></div>
+    <button class="btn line" type="button">بوابة العملاء</button>
+    <button class="btn" type="button">اطلب دراسة</button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- HERO MOSAIC -->
+    <div class="mosaic">
+      <div class="t-title">
+        <div class="eyebrow">ATEX · JEDDAH · SAUDI ARABIA</div>
+        <h1>مبانٍ تعمل<br><mark>وحدها.</mark></h1>
+        <p>أتمتة مبانٍ وأنظمة تيار خفيف — نصمّمها وننفّذها ونصونها. من فيلا واحدة إلى مدينة.</p>
+        <div class="row">
+          <button class="btn" type="button">اطلب دراسة للمشروع</button>
+          <button class="btn line" type="button">شاهد الأنظمة</button>
+        </div>
+      </div>
+
+      <figure class="tile t-a">
+        <img src="solutions/smart-building-1280.webp" alt="مبنى ذكي" fetchpriority="high">
+        <figcaption>إدارة المباني — BMS<em>01</em></figcaption>
+      </figure>
+
+      <figure class="tile t-b">
+        <img src="solutions/cards/smart-hotel.webp" alt="غرفة فندقية بلوحة تحكّم">
+        <figcaption>الفنادق الذكية<em>02</em></figcaption>
+      </figure>
+
+      <div class="t-stat">
+        <b>12</b>
+        <span>نظاماً ننفّذه</span>
+        <small>من الإضاءة إلى شواحن المركبات</small>
+      </div>
+
+      <figure class="tile t-c">
+        <img src="solutions/cards/smart-ligting.webp" alt="تحكّم بالإضاءة">
+        <figcaption>الإضاءة<em>03</em></figcaption>
+      </figure>
+
+      <figure class="tile t-d">
+        <img src="solutions/residential-1280.webp" alt="فلل سكنية">
+        <figcaption>المنازل الذكية<em>04</em></figcaption>
+      </figure>
+    </div>
+
+    <!-- PROTOCOLS -->
+    <div class="proto">
+      <span class="lab">PROTOCOLS WE BUILD ON</span>
+      <ul>
+        <li><img src="tech/knx.svg" alt="KNX"></li>
+        <li><img src="tech/bacnet.svg" alt="BACnet"></li>
+        <li><img src="tech/dali-2.png" alt="DALI-2"></li>
+        <li><img src="tech/modbus.svg" alt="Modbus"></li>
+        <li><img src="tech/zigbee.svg" alt="Zigbee"></li>
+        <li><img src="tech/matter.png" alt="Matter"></li>
+        <li><img src="tech/onvif.png" alt="ONVIF"></li>
+        <li><img src="tech/poe-ieee.png" alt="PoE IEEE"></li>
+      </ul>
+    </div>
+
+    <!-- SYSTEMS -->
+    <section id="systems">
+      <div class="sec-h"><h2>الأنظمة</h2><span class="ref">12 SYSTEMS</span></div>
+      <p class="sec-lede">ستة أنظمة رئيسية، وبقيتها تحتها. كل نظام له صفحة فيها النطاق والبروتوكول والضمان.</p>
+      <div class="sys">
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/smart-home.webp" alt="منزل ذكي"></div>
+          <div class="body"><span class="n">01</span><h3>المنازل الذكية</h3><p>إضاءة وستائر وتكييف وصوت من تطبيق واحد، ومشاهد تُشغَّل بزر.</p></div></a>
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/smart-hotel.webp" alt="فندق ذكي"></div>
+          <div class="body"><span class="n">02</span><h3>الفنادق الذكية</h3><p>تحكّم بالغرفة، ربط بنظام الحجوزات، وتوفير طاقة في الغرف الشاغرة.</p></div></a>
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/smart-building.webp" alt="إدارة مبانٍ"></div>
+          <div class="body"><span class="n">03</span><h3>إدارة المباني — BMS</h3><p>تحكّم مركزي بالتكييف والإضاءة والمضخّات مع إنذارات وتقارير.</p></div></a>
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/security-Systems.webp" alt="أنظمة أمنية"></div>
+          <div class="body"><span class="n">04</span><h3>الأنظمة الأمنية</h3><p>مراقبة وتحكّم بالدخول وإنذار على شبكة واحدة بتسجيل مركزي.</p></div></a>
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/smart-led-screen.webp" alt="شاشات LED"></div>
+          <div class="body"><span class="n">05</span><h3>شاشات LED</h3><p>شاشات داخلية وخارجية بمعالج وهيكل وتركيب واعتماد أحمال.</p></div></a>
+        <a class="sysc" href="#"><div class="ph"><img src="solutions/cards/ev-charging.webp" alt="شواحن مركبات"></div>
+          <div class="body"><span class="n">06</span><h3>شواحن المركبات</h3><p>شواحن AC و DC بإدارة حِمل ومتابعة استهلاك لكل موقف.</p></div></a>
+      </div>
+      <div class="more-line">
+        <a href="#">المكاتب الذكية</a><a href="#">مواقف السيارات الذكية</a><a href="#">إضاءة الواجهات</a>
+        <a href="#">التحكّم بالإضاءة الداخلية</a><a href="#">تقنية المعلومات والاتصالات</a><a href="#">المكنسة المركزية</a>
+      </div>
+    </section>
+
+    <!-- SECTORS -->
+    <section id="sectors">
+      <div class="sec-h"><h2>القطاعات</h2><span class="ref">SEGMENTS</span></div>
+      <p class="sec-lede">النظام نفسه يتغيّر تشغيله باختلاف المبنى. هذه الفروق نبني عليها التصميم.</p>
+      <div class="rows">
+        <a class="rowc" href="#"><div class="ph"><img src="solutions/cards/residential.webp" alt="سكني"></div>
+          <div><h3>سكني</h3><p>فلل وشقق وأبراج. الأولوية للراحة وبساطة الاستخدام اليومي، وألّا تظهر التقنية في التشطيب.</p></div><span class="go">←</span></a>
+        <a class="rowc" href="#"><div class="ph"><img src="solutions/cards/commence.webp" alt="تجاري"></div>
+          <div><h3>تجاري وضيافة</h3><p>مكاتب ومجمّعات وفنادق. الأولوية للتشغيل المستمر وخفض فاتورة الطاقة.</p></div><span class="go">←</span></a>
+        <a class="rowc" href="#"><div class="ph"><img src="solutions/cards/governmental.webp" alt="حكومي"></div>
+          <div><h3>حكومي</h3><p>مبانٍ ومرافق. الأولوية للمواصفة والتوثيق والاعتماد ومطابقة كراسة الشروط.</p></div><span class="go">←</span></a>
+        <a class="rowc" href="#"><div class="ph"><img src="solutions/cards/industrial.webp" alt="صناعي"></div>
+          <div><h3>صناعي</h3><p>مصانع ومستودعات. الأولوية للسلامة والمراقبة والإنذار المبكر.</p></div><span class="go">←</span></a>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section id="partners">
+      <div class="sec-h"><h2>عملاء وشركاء</h2><span class="ref">SELECTED CLIENTS</span></div>
+      <p class="sec-lede">جهات نفّذنا لها أو نورّد لها اليوم.</p>
+      <div class="logos">
+        <div><img src="partners/durrah.webp" alt="درة العقارية"></div>
+        <div><img src="partners/maad.webp" alt="معاد"></div>
+        <div><img src="partners/ishraq.webp" alt="إشراق"></div>
+        <div><img src="partners/manassat.webp" alt="منصّات"></div>
+        <div><img src="partners/sadana.webp" alt="سدانة"></div>
+        <div><img src="partners/kafaat.webp" alt="كفاءات"></div>
+        <div><img src="partners/al-topaz.webp" alt="التوباز"></div>
+        <div><img src="partners/jisr.webp" alt="جسر"></div>
+        <div><img src="partners/fajr.webp" alt="فجر"></div>
+        <div><img src="partners/rusookh.webp" alt="رسوخ"></div>
+        <div><img src="partners/seen.webp" alt="سين"></div>
+        <div><img src="partners/jiwar-aloula.webp" alt="جوار الأولى"></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="contact" style="padding-bottom:0">
+      <div class="cta">
+        <div class="cta-copy">
+          <h2>عندك مخطط أو مبنى قائم؟</h2>
+          <p>أرسل المخطط أو صف المبنى، ويصلك تقدير أولي بالنطاق والكميات قبل أي زيارة موقع.</p>
+          <div class="row">
+            <button class="btn" type="button">أرسل المخطط</button>
+            <button class="btn line" type="button">واتساب</button>
+          </div>
+        </div>
+        <div class="cta-ph"><img src="solutions/smart-cities-1280.webp" alt="مدينة ذكية"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <img src="ATEX-logo.svg" alt="أتكس" style="height:22px;margin-bottom:14px">
+          <p style="max-width:32ch;color:var(--t1)">أتكس التجارية — حلول تقنية ذكية للمباني في المملكة العربية السعودية.</p>
+        </div>
+        <div><h4>SYSTEMS</h4><ul><li><a href="#">المنازل الذكية</a></li><li><a href="#">الفنادق الذكية</a></li><li><a href="#">إدارة المباني</a></li><li><a href="#">الأنظمة الأمنية</a></li></ul></div>
+        <div><h4>COMPANY</h4><ul><li><a href="#">من نحن</a></li><li><a href="#">المشاريع</a></li><li><a href="#">المدوّنة</a></li></ul></div>
+        <div><h4>CONTACT</h4><ul><li><a href="#">جدة، السعودية</a></li><li><a href="#">واتساب</a></li><li><a href="#">بوابة العملاء</a></li></ul></div>
+      </div>
+      <div class="foot-note">
+        <span>مسوّدة تصميم — الخيار الأول «موزاييك». الصور وشعارات العملاء من مكتبة الموقع الحالية.</span>
+        <code>atex.sa · option 1</code>
+      </div>
+    </div>
+  </footer>
+</main>

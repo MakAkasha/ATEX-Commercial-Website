@@ -233,6 +233,14 @@ const solutions = [
     useCases: ["الفنادق الحضرية", "المنتجعات", "الشقق الفندقية"],
     primaryImage: "/assets/solutions/smart-hotel.jpg",
     supportImages: ["/assets/solutions/security-Systems.jpg", "/assets/solutions/smart-led-screen.jpg"],
+    // Inbound link to the hotel campaign landing page, which carries no nav
+    // entry by design. Written for the reader who holds the technical veto —
+    // the engineering director — not for the owner.
+    relatedLanding: {
+      href: "/rec/smart-hotel",
+      label: "نظام إدارة غرف الفنادق GRMS على KNX",
+      text: "تدير فندقاً قائماً أو تكتب مواصفة له؟ اطلع على الصفحة الفنية لنظام GRMS: التكامل مع PMS و BMS، خطة التنفيذ في فندق يعمل، وما تستلمه عند التسليم.",
+    },
   },
   {
     slug: "smart-parking",
