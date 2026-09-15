@@ -5,7 +5,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 const { migrate, getDb } = require("./db");
-const { getConfig } = require("./config");
+const { getConfig, SITE_ORIGIN, PRODUCTION_ORIGIN } = require("./config");
 const { requireAdminPage } = require("./auth");
 const { createCsrfGuard } = require("./middleware/csrf");
 const SqliteStore = require("./sessionStore");
@@ -131,6 +131,42 @@ app.use(
   })
 );
 
+// Host / trailing-slash canonicalisation.
+//
+// Mounted after helmet, the request log and the rate limiter (so a redirect
+// still carries security headers, is logged and is rate-limited) but before the
+// body parsers and the session middleware, so a redirected request never parses
+// a body or mints a session cookie.
+//
+// Only runs when this process is actually serving the production origin, and
+// never for a localhost Host header, so `npm start` on port 5173 is untouched.
+// GET/HEAD only: a 301 on a POST would strand the API and the contact form.
+// /healthz and /readyz are exempt so probes never follow a redirect.
+const CANONICAL_HOST = new URL(SITE_ORIGIN).host;
+const canonicaliseHost = SITE_ORIGIN === PRODUCTION_ORIGIN;
+
+app.use((req, res, next) => {
+  if (!canonicaliseHost) return next();
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+
+  const host = String(req.get("host") || "").toLowerCase();
+  if (!host || host.startsWith("localhost") || host.startsWith("127.0.0.1") || host.startsWith("[::1]")) return next();
+
+  const pathname = req.path;
+  if (pathname === "/healthz" || pathname === "/readyz" || pathname.startsWith("/api/")) return next();
+
+  // Only the www variant is redirected. Redirecting every non-canonical Host
+  // would loop if the reverse proxy ever forwarded an internal hostname.
+  const isWww = host === `www.${CANONICAL_HOST}`;
+  const hasTrailingSlash = pathname.length > 1 && pathname.endsWith("/");
+  if (!isWww && !hasTrailingSlash) return next();
+
+  const cleanPath = hasTrailingSlash ? pathname.replace(/\/+$/, "") || "/" : pathname;
+  const qIndex = req.originalUrl.indexOf("?");
+  const query = qIndex === -1 ? "" : req.originalUrl.slice(qIndex);
+  return res.redirect(301, `${SITE_ORIGIN}${cleanPath}${query}`);
+});
+
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -187,12 +223,11 @@ const loadSitemapData = memoize(() => {
 // Sitemap.xml generator
 app.get("/sitemap.xml", (req, res) => {
   try {
-    const proto = req.get("x-forwarded-proto") || req.protocol;
-    const baseUrl = `${proto}://${req.get("host")}`;
+    const baseUrl = SITE_ORIGIN;
     const { solutionSlugs, industrySlugs, recLandingSlugs, posts } = loadSitemapData();
 
     const staticUrls = [
-      { loc: baseUrl, priority: "1.0", changefreq: "daily" },
+      { loc: `${baseUrl}/`, priority: "1.0", changefreq: "daily" },
       { loc: `${baseUrl}/solutions`, priority: "0.9", changefreq: "weekly" },
       { loc: `${baseUrl}/products`, priority: "0.8", changefreq: "weekly" },
       { loc: `${baseUrl}/contact-us`, priority: "0.8", changefreq: "monthly" },
@@ -272,8 +307,7 @@ const toRfc822 = (ts) => {
 // Blog RSS 2.0 feed
 app.get("/blog/rss.xml", (req, res) => {
   try {
-    const proto = req.get("x-forwarded-proto") || req.protocol;
-    const baseUrl = `${proto}://${req.get("host")}`;
+    const baseUrl = SITE_ORIGIN;
     const posts = loadRssPosts();
     const buildDate = posts.length ? toRfc822(posts[0].updated_at || posts[0].created_at) : new Date().toUTCString();
 
@@ -313,8 +347,6 @@ ${items}
 
 // robots.txt
 app.get("/robots.txt", (req, res) => {
-  const host = req.get("host") || "atex.sa";
-  const proto = req.protocol || "https";
   res.type("text/plain").send(
     [
       "User-agent: *",
@@ -337,9 +369,9 @@ app.get("/robots.txt", (req, res) => {
       "User-agent: Amazonbot",
       "Allow: /",
       "",
-      `Sitemap: ${proto}://${host}/sitemap.xml`,
-      `# Blog RSS feed: ${proto}://${host}/blog/rss.xml`,
-      `# LLM-readable site summary: ${proto}://${host}/llms.txt`,
+      `Sitemap: ${SITE_ORIGIN}/sitemap.xml`,
+      `# Blog RSS feed: ${SITE_ORIGIN}/blog/rss.xml`,
+      `# LLM-readable site summary: ${SITE_ORIGIN}/llms.txt`,
       "",
     ].join("\n")
   );
@@ -354,7 +386,7 @@ app.get("/llms.txt", (req, res) => {
     const db = getDb();
     const solutions = getSolutions();
     const industries = getIndustries();
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const baseUrl = SITE_ORIGIN;
 
     let blogSection = "";
     try {

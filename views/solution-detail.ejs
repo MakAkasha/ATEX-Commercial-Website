@@ -19,7 +19,7 @@
               <strong><%= solution.title %></strong>
             </nav>
             <span class="solutionsPage__eyebrow">أتكس · الحلول</span>
-            <h1 class="solutionsPage__title"><%= solution.title %></h1>
+            <h1 class="solutionsPage__title"><%= solution.h1 || solution.title %></h1>
             <p class="solutionsPage__desc"><%= solution.summary %></p>
 
             <div class="solutionsPage__heroActions">
@@ -58,7 +58,7 @@
           <article class="solutionsPage__detail" aria-labelledby="solution-detail-title">
             <div class="solutionsPage__detailBody">
               <div class="solutionsPage__detailHeader">
-                <p class="solutionsPage__detailKicker" dir="ltr">Solution Detail</p>
+                <p class="solutionsPage__detailKicker">تفاصيل الحل</p>
                 <h3 id="solution-detail-title"><%= solution.title %></h3>
                 <div class="solutionsPage__useCases">
                   <% (solution.useCases || []).slice(0, 3).forEach(function(u){ %>

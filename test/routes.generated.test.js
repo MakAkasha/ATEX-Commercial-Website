@@ -17,6 +17,7 @@ const { describe, it, before, after } = require("node:test");
 
 const { startServer } = require("./helpers/server");
 const { getSolutions, getIndustries, getRecLandings } = require("../server/data/contentRegistry");
+const { SITE_ORIGIN } = require("../server/config");
 
 const SOLUTION_SLUGS = getSolutions().map((s) => s.slug);
 const INDUSTRY_SLUGS = getIndustries().map((i) => i.slug);
@@ -48,7 +49,7 @@ describe("generated endpoints", () => {
       const body = await (await srv.get("/robots.txt")).text();
       assert.ok(body.includes("Sitemap:"), "robots.txt must advertise a Sitemap:");
       assert.ok(body.includes("Disallow: /admin"), "robots.txt must Disallow: /admin");
-      assert.ok(body.includes(`Sitemap: ${srv.origin}/sitemap.xml`), "Sitemap: must be an absolute URL");
+      assert.ok(body.includes(`Sitemap: ${SITE_ORIGIN}/sitemap.xml`), "Sitemap: must be an absolute URL");
     });
   });
 
@@ -77,18 +78,18 @@ describe("generated endpoints", () => {
 
     it("lists /blog, /solutions and every solution and industry slug", async () => {
       const body = await (await srv.get("/sitemap.xml")).text();
-      assert.ok(body.includes(`<loc>${srv.origin}/blog</loc>`), "sitemap must list /blog");
-      assert.ok(body.includes(`<loc>${srv.origin}/solutions</loc>`), "sitemap must list /solutions");
+      assert.ok(body.includes(`<loc>${SITE_ORIGIN}/blog</loc>`), "sitemap must list /blog");
+      assert.ok(body.includes(`<loc>${SITE_ORIGIN}/solutions</loc>`), "sitemap must list /solutions");
 
       for (const slug of SOLUTION_SLUGS) {
         assert.ok(
-          body.includes(`<loc>${srv.origin}/solutions/${slug}</loc>`),
+          body.includes(`<loc>${SITE_ORIGIN}/solutions/${slug}</loc>`),
           `sitemap missing solution slug: ${slug}`
         );
       }
       for (const slug of INDUSTRY_SLUGS) {
         assert.ok(
-          body.includes(`<loc>${srv.origin}/industries/${slug}</loc>`),
+          body.includes(`<loc>${SITE_ORIGIN}/industries/${slug}</loc>`),
           `sitemap missing industry slug: ${slug}`
         );
       }
@@ -110,7 +111,7 @@ describe("generated endpoints", () => {
       assert.ok(body.includes("</channel>"), "must close </channel>");
       assert.ok(body.includes("<atom:link"), "must contain <atom:link");
       assert.ok(
-        body.includes(`href="${srv.origin}/blog/rss.xml"`),
+        body.includes(`href="${SITE_ORIGIN}/blog/rss.xml"`),
         "the atom:link must point back at the feed URL"
       );
     });

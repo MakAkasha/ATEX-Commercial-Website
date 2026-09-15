@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 
 const { requireAdminPage, isAdminSession } = require("../auth");
+const { SITE_ORIGIN } = require("../config");
 const { getDb } = require("../db");
 const { normalizeHomeContent } = require("../homeSchema");
 const { sanitizePageHtml, sanitizeCssCode } = require("./customPages");
@@ -89,16 +90,17 @@ function applyPageSeo(route, defaults) {
   return result;
 }
 
-function absoluteUrl(req, pathname = "/") {
-  const proto = req.get("x-forwarded-proto") || req.protocol;
-  const origin = `${proto}://${req.get("host")}`;
-  return new URL(pathname, origin).toString();
+// Always the configured origin, never the request's Host. Deriving it from the
+// request made www.atex.sa (and any other host pointed at this app) serve a
+// full, self-canonicalising duplicate of the site.
+function absoluteUrl(pathname = "/") {
+  return new URL(pathname, SITE_ORIGIN).toString();
 }
 
 function withMeta(req, meta) {
   return {
     ...meta,
-    canonical: meta?.canonical || absoluteUrl(req, req.originalUrl || "/"),
+    canonical: meta?.canonical || absoluteUrl(req.originalUrl || "/"),
   };
 }
 
@@ -161,7 +163,7 @@ router.get("/", (req, res) => {
     )
     .all();
   
-  const siteUrl = absoluteUrl(req, "/");
+  const siteUrl = absoluteUrl("/");
   
   // JSON-LD Structured Data for Homepage
   const structuredData = {
@@ -175,7 +177,7 @@ router.get("/", (req, res) => {
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
-          "url": absoluteUrl(req, "/assets/ATEX-logo.svg")
+          "url": absoluteUrl("/assets/ATEX-logo.svg")
         },
         "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "address": {
@@ -232,7 +234,7 @@ router.get("/", (req, res) => {
       title: "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
       description:
         "أتكس مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+      ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
       }),
       // No hero poster to preload any more: the hero is video over black, so
       // there is no image to be the LCP element.
@@ -285,8 +287,8 @@ router.get("/blog", (req, res) => {
     .all();
   const posts = rawPosts.map(processPost);
 
-  const siteUrl = absoluteUrl(req, "/");
-  const blogUrl = absoluteUrl(req, "/blog");
+  const siteUrl = absoluteUrl("/");
+  const blogUrl = absoluteUrl("/blog");
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -306,7 +308,7 @@ router.get("/blog", (req, res) => {
         "publisher": {
           "@type": "Organization",
           "name": "ATEX",
-          "logo": { "@type": "ImageObject", "url": absoluteUrl(req, "/assets/ATEX-logo.svg") },
+          "logo": { "@type": "ImageObject", "url": absoluteUrl("/assets/ATEX-logo.svg") },
         },
       },
     ],
@@ -320,7 +322,7 @@ router.get("/blog", (req, res) => {
     meta: withMeta(req, applyPageSeo("/blog", {
       title: "أتكس | المدونة — حلول إنترنت الأشياء في السعودية",
       description: "مدونة أتكس: مقالات وأفضل الممارسات في حلول إنترنت الأشياء، المنازل الذكية، المباني الذكية، وإدارة الطاقة داخل المملكة العربية السعودية.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+      ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
     })),
   });
 });
@@ -362,10 +364,10 @@ router.get("/blog/:slug", (req, res) => {
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
 
-  const siteUrl = absoluteUrl(req, "/");
-  const postUrl = absoluteUrl(req, `/blog/${post.slug}`);
+  const siteUrl = absoluteUrl("/");
+  const postUrl = absoluteUrl(`/blog/${post.slug}`);
   const coverImageSrc = post.cover_image && !post.cover_image.startsWith("data:") ? post.cover_image : null;
-  const coverImage = coverImageSrc ? absoluteUrl(req, coverImageSrc) : absoluteUrl(req, "/assets/solutions/smart-building.webp");
+  const coverImage = coverImageSrc ? absoluteUrl(coverImageSrc) : absoluteUrl("/assets/solutions/smart-building.webp");
 
   const postSection = (post.tags && post.tags.length) ? post.tags[0] : "حلول إنترنت الأشياء";
   const postKeywords = (post.tags && post.tags.length) ? post.tags.join("، ") : "";
@@ -396,7 +398,7 @@ router.get("/blog/:slug", (req, res) => {
         "@type": "BreadcrumbList",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
-          { "@type": "ListItem", "position": 2, "name": "المدونة", "item": absoluteUrl(req, "/blog") },
+          { "@type": "ListItem", "position": 2, "name": "المدونة", "item": absoluteUrl("/blog") },
           { "@type": "ListItem", "position": 3, "name": post.title, "item": postUrl },
         ],
       },
@@ -416,9 +418,9 @@ router.get("/blog/:slug", (req, res) => {
         "publisher": {
           "@type": "Organization",
           "name": "أتكس",
-          "logo": { "@type": "ImageObject", "url": absoluteUrl(req, "/assets/ATEX-logo.svg") },
+          "logo": { "@type": "ImageObject", "url": absoluteUrl("/assets/ATEX-logo.svg") },
         },
-        "isPartOf": { "@type": "Blog", "url": absoluteUrl(req, "/blog") },
+        "isPartOf": { "@type": "Blog", "url": absoluteUrl("/blog") },
         ...(post.tags.length ? { "keywords": post.tags.join(", ") } : {}),
         ...(wordCount > 0 ? { "wordCount": wordCount } : {}),
       },
@@ -472,8 +474,8 @@ router.get("/blog/:slug", (req, res) => {
 router.get("/solutions", (req, res) => {
   const solutions = getSolutions();
   const content = loadHomeContent();
-  const siteUrl = absoluteUrl(req, "/");
-  const pageUrl = absoluteUrl(req, "/solutions");
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl("/solutions");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -495,9 +497,9 @@ router.get("/solutions", (req, res) => {
           "@type": "ListItem",
           "position": idx + 1,
           "name": s.title,
-          "url": absoluteUrl(req, `/solutions/${s.slug}`),
+          "url": absoluteUrl(`/solutions/${s.slug}`),
           "description": s.summary,
-          "image": absoluteUrl(req, s.primaryImage),
+          "image": absoluteUrl(s.primaryImage),
         })),
       },
     ],
@@ -512,7 +514,7 @@ router.get("/solutions", (req, res) => {
       title: "أتكس | الأنظمة والحلول",
       description:
         "صفحة الأنظمة والحلول من أتكس: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+      ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
     })),
   });
 });
@@ -541,9 +543,9 @@ router.get("/solutions/:slug", (req, res) => {
     .slice(0, 3);
   const relatedIndustries = industries.filter((i) => (solution.industrySlugs || []).includes(i.slug)).slice(0, 3);
 
-  const siteUrl = absoluteUrl(req, "/");
-  const pageUrl = absoluteUrl(req, `/solutions/${solution.slug}`);
-  const solutionImage = absoluteUrl(req, solution.primaryImage);
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl(`/solutions/${solution.slug}`);
+  const solutionImage = absoluteUrl(solution.primaryImage);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -552,7 +554,7 @@ router.get("/solutions/:slug", (req, res) => {
         "@type": "BreadcrumbList",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
-          { "@type": "ListItem", "position": 2, "name": "الأنظمة والحلول", "item": absoluteUrl(req, "/solutions") },
+          { "@type": "ListItem", "position": 2, "name": "الأنظمة والحلول", "item": absoluteUrl("/solutions") },
           { "@type": "ListItem", "position": 3, "name": solution.title, "item": pageUrl },
         ],
       },
@@ -606,10 +608,10 @@ router.get("/solutions/:slug", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, {
-      title: `أتكس | ${solution.title}`,
-      description: solution.summary,
-      ogTitle: solution.title,
-      ogDescription: solution.summary,
+      title: solution.seoTitle || `أتكس | ${solution.title}`,
+      description: solution.seoDescription || solution.summary,
+      ogTitle: solution.seoTitle || solution.title,
+      ogDescription: solution.seoDescription || solution.summary,
       ogImage: solutionImage,
     }),
   });
@@ -638,9 +640,9 @@ router.get("/industries/:slug", (req, res) => {
     })
     .slice(0, 3);
 
-  const siteUrl = absoluteUrl(req, "/");
-  const pageUrl = absoluteUrl(req, `/industries/${industry.slug}`);
-  const industryImage = absoluteUrl(req, industry.image);
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl(`/industries/${industry.slug}`);
+  const industryImage = absoluteUrl(industry.image);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -672,7 +674,7 @@ router.get("/industries/:slug", (req, res) => {
             "@type": "ListItem",
             "position": idx + 1,
             "name": s.title,
-            "url": absoluteUrl(req, `/solutions/${s.slug}`),
+            "url": absoluteUrl(`/solutions/${s.slug}`),
           })),
         },
       },
@@ -713,8 +715,8 @@ router.get("/products", (req, res) => {
   const db = getDb();
   const products = getCatalog(db);
 
-  const siteUrl = absoluteUrl(req, "/");
-  const pageUrl = absoluteUrl(req, "/products");
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl("/products");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -736,7 +738,7 @@ router.get("/products", (req, res) => {
           "@type": "ListItem",
           "position": idx + 1,
           "name": p.title,
-          "image": absoluteUrl(req, p.image),
+          "image": absoluteUrl(p.image),
         })),
       },
     ],
@@ -752,7 +754,7 @@ router.get("/products", (req, res) => {
       title: "أتكس | المنتجات — الأنظمة الذكية",
       description:
         "تشكيلة منتجات أتكس للأنظمة الذكية: الأقفال الذكية، أنظمة الإنتركوم وعائلة بابكوم، مفاتيح التحكم الذكية، شاشات التحكم، ولوحات الجرس داخل المملكة العربية السعودية.",
-      ogImage: absoluteUrl(req, "/assets/solutions/smart-building.webp"),
+      ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
     })),
   });
 });
@@ -760,8 +762,8 @@ router.get("/products", (req, res) => {
 // Contact us page
 router.get("/contact-us", (req, res) => {
   const content = loadHomeContent();
-  const siteUrl = absoluteUrl(req, "/");
-  const pageUrl = absoluteUrl(req, "/contact-us");
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl("/contact-us");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -831,12 +833,12 @@ router.get("/contact-us", (req, res) => {
  */
 const RENDER_LANDING = (page) => (req, res) => {
   const content = loadHomeContent();
-  const siteUrl = absoluteUrl(req, "/");
+  const siteUrl = absoluteUrl("/");
   // Built from the record's own slug, never req.originalUrl: QR traffic arrives
   // with ?utm_source=..., and withMeta() would otherwise mint a distinct
   // canonical (and og:url, and twitter:url) for every scan.
-  const pageUrl = absoluteUrl(req, `/rec/${page.slug}`);
-  const ogImage = absoluteUrl(req, page.ogImage);
+  const pageUrl = absoluteUrl(`/rec/${page.slug}`);
+  const ogImage = absoluteUrl(page.ogImage);
 
   const structuredData = {
     "@context": "https://schema.org",

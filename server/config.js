@@ -1,3 +1,11 @@
+// The one origin this site publishes itself under. Every canonical URL, OG URL,
+// JSON-LD @id, sitemap entry, RSS link and robots/llms.txt line is built from
+// it, so `atex.sa` and `www.atex.sa` can never serve two self-canonicalising
+// copies of the same page. Overridable for staging; the trailing slash is
+// stripped so callers can always concatenate an absolute path onto it.
+const PRODUCTION_ORIGIN = "https://atex.sa";
+const SITE_ORIGIN = (String(process.env.SITE_ORIGIN || "").trim() || PRODUCTION_ORIGIN).replace(/\/+$/, "");
+
 function parseBool(value, fallback = false) {
   if (typeof value === "boolean") return value;
   const s = String(value || "").trim().toLowerCase();
@@ -109,4 +117,6 @@ function getConfig() {
 
 module.exports = {
   getConfig,
+  SITE_ORIGIN,
+  PRODUCTION_ORIGIN,
 };

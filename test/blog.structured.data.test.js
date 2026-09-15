@@ -11,6 +11,7 @@ const assert = require("node:assert/strict");
 const { describe, it, before, after } = require("node:test");
 
 const { startServer } = require("./helpers/server");
+const { SITE_ORIGIN } = require("../server/config");
 
 const ADMIN_USERNAME = "test-admin";
 const ADMIN_PASSWORD = "test-admin-password-9f2c";
@@ -119,7 +120,7 @@ describe("blog post structured data", () => {
     assert.ok(posting, `expected a BlogPosting node, got ${graph.map((n) => n["@type"]).join(", ")}`);
     assert.ok(!nodeOfType(graph, "Article"), "the plain Article node should have been replaced");
 
-    const postUrl = `${srv.origin}/blog/ld-faq-post`;
+    const postUrl = `${SITE_ORIGIN}/blog/ld-faq-post`;
     assert.equal(posting["@id"], `${postUrl}#article`);
     assert.deepEqual(posting.mainEntityOfPage, { "@type": "WebPage", "@id": postUrl });
 
@@ -154,7 +155,7 @@ describe("blog post structured data", () => {
   it("links the FAQPage node to the BlogPosting it was extracted from", async () => {
     const res = await srv.get("/blog/ld-faq-post");
     const graph = readGraph(await res.text());
-    const postUrl = `${srv.origin}/blog/ld-faq-post`;
+    const postUrl = `${SITE_ORIGIN}/blog/ld-faq-post`;
 
     const faq = nodeOfType(graph, "FAQPage");
     assert.equal(faq["@id"], `${postUrl}#faq`, "FAQPage node has no stable @id");
