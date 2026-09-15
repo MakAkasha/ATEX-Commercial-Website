@@ -56,7 +56,10 @@ describe("/rec campaign landing pages", () => {
         .replace(/<[^>]+>/g, "")
         .replace(/\s+/g, " ")
         .trim();
-      assert.equal(h1Text, page.hero.h1, "expected the hero H1 copy");
+      // Normalise the expected side too: the hotel H1 binds its Latin tokens
+      // with non-breaking spaces, and \s already collapsed those out of the
+      // rendered text above.
+      assert.equal(h1Text, page.hero.h1.replace(/\s+/g, " "), "expected the hero H1 copy");
       assert.ok(
         body.includes(`<span class="recHero__mark">${page.hero.h1Highlight}</span>`),
         "expected the highlighted promise word to be marked up"

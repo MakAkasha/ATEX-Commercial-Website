@@ -57,9 +57,12 @@ module.exports = {
 
   hero: {
     badge: "للإدارة الهندسية والاستشاريين",
-    h1: "نظام إدارة غرف الفنادق GRMS بمعيار مفتوح",
+    // Non-breaking spaces bind the Latin tokens to the Arabic word they belong
+    // to. Without them the wrap strands "GRMS" at the head of line two, which
+    // reads as a new clause rather than the end of the noun phrase.
+    h1: "نظام إدارة غرف الفنادق GRMS بمعيار مفتوح",
     h1Highlight: "بمعيار مفتوح",
-    lede: "أتمتة الفنادق على KNX لفنادق 40-120 غرفة في جدة: منطق الإشغال، الإضاءة، التكييف، وتكامل PMS. الغرفة تعمل كاملة بدون إنترنت.",
+    lede: "أتمتة الفنادق على KNX لفنادق 40-120 غرفة في جدة: منطق الإشغال، الإضاءة، التكييف، وتكامل PMS. الغرفة تعمل كاملة بدون إنترنت.",
     chips: [
       "بطاقة الغرفة ومنطق الإشغال",
       "منظم الحرارة الذكي لكل غرفة",

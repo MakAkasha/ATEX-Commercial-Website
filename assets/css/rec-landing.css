@@ -1386,3 +1386,36 @@
     padding-inline: var(--s-7);
   }
 }
+
+/* The hotel hero sits on a photograph, not the shared footage. A still frame is
+   a calmer surface than video, so the paper can thin out and let the room show
+   through — the shot is the argument on this page. Alphas stay above the 0.55
+   the navy needs to clear AA, measured against the darkest corner of the image.
+   Scoped to --hotels so the two pages still running the video keep the veil
+   that was tuned against their frames. */
+.recPage--hotels .recHero__veil {
+  background:
+    radial-gradient(72% 60% at 12% 4%, rgba(255, 153, 51, 0.16), transparent 72%),
+    linear-gradient(
+      180deg,
+      rgba(251, 247, 241, 0.34) 0px,
+      rgba(251, 247, 241, 0.46) 18px,
+      rgba(251, 247, 241, 0.66) 40px,
+      rgba(251, 247, 241, 0.74) 150px,
+      rgba(251, 247, 241, 0.78) 100%
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recPage--hotels .recHero__veil {
+    background:
+      radial-gradient(72% 60% at 12% 4%, rgba(255, 153, 51, 0.16), transparent 72%),
+      linear-gradient(180deg, rgba(251, 247, 241, 0.66) 0%, rgba(251, 247, 241, 0.78) 100%);
+  }
+}
+
+/* text-wrap: pretty leaves the lede's last line with company; balance would
+   even the lines but fights the 3-line clamp above. */
+.recPage--hotels .recHero__lede {
+  text-wrap: pretty;
+}
