@@ -493,6 +493,19 @@ function initWhatsappTagging() {
   });
 }
 
+// Google Ads matches conversions on a label, never on an event name, so each
+// lead event also sends its conversion label (actions created 2026-09-16).
+const ADS_CONVERSION_LABELS = {
+  generate_lead: "AW-18298692550/P479COHzx_kcEMbHv5VE",
+  contact_whatsapp: "AW-18298692550/_bFACOTzx_kcEMbHv5VE",
+  contact_phone: "AW-18298692550/OPkuCOfzx_kcEMbHv5VE",
+};
+
+function sendAdsConversion(name) {
+  const sendTo = ADS_CONVERSION_LABELS[name];
+  if (sendTo) window.gtag("event", "conversion", { send_to: sendTo });
+}
+
 /** One push per contact click, to the dataLayer and to gtag when present. */
 function pushContactEvent(name, params) {
   try {
@@ -500,6 +513,7 @@ function pushContactEvent(name, params) {
     window.dataLayer.push({ event: name, ...params });
     if (typeof window.gtag === "function") {
       window.gtag("event", name, params);
+      sendAdsConversion(name);
     }
   } catch {
     // Analytics must never block a contact click.
@@ -741,6 +755,7 @@ function initContactForm() {
         window.dataLayer.push({ event: "contact_form_submit", form_id: "contactForm" });
         if (typeof window.gtag === "function") {
           window.gtag("event", "generate_lead", { form_id: "contactForm" });
+          sendAdsConversion("generate_lead");
         }
       } catch {
         // Analytics must never block the success flow.
