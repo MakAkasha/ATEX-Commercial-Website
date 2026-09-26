@@ -54,10 +54,10 @@
         <div class="products-page__grid products-page__grid--collapsed" id="catalogGrid">
           <% items.forEach((p) => {
                const model = String(p.slug || '').toUpperCase();
-               const altText = model ? (p.title + ' — الطراز ' + model) : p.title;
+               const altText = model ? (p.title + '، الطراز ' + model) : p.title;
           %>
             <article class="products-page__card">
-              <div class="products-page__flip" role="button" tabindex="0" aria-pressed="false" aria-label="<%= p.title %> — اضغط لعرض التفاصيل">
+              <div class="products-page__flip" role="button" tabindex="0" aria-pressed="false" aria-label="<%= p.title %>، اضغط لعرض التفاصيل">
                 <div class="products-page__flipInner">
                   <div class="products-page__flipFace products-page__flipFace--front">
                     <%# Catalog images are square: the referenced /assets/products/items/*.webp
@@ -107,10 +107,10 @@
 
       <%- include('partials/final-cta', {
         heading: 'هل تبحث عن نظام ذكي متكامل لمشروعك؟',
-        subheading: 'أرسل لنا نوع المشروع والكمية المطلوبة، وسيقترح فريق أتكس التشكيلة المناسبة من الأقفال والإنتركوم والمفاتيح والشاشات مع خطة تنفيذ واضحة.',
+        subheading: 'أرسل لنا نوع المشروع والكمية المطلوبة، وسيقترح فريق أتكس التشكيلة المناسبة من الأقفال والإنتركوم والمفاتيح والشاشات مع خطة التنفيذ.',
         mainAction: '<a class="btn btn--primary" href="/contact-us">اطلب عرض سعر</a>',
         cardHeading: 'لم تجد المنتج المناسب؟',
-        cardDesc: 'تواصل معنا مباشرة وسنساعدك في اختيار الحل الأنسب لمشروعك خلال وقت قصير.'
+        cardDesc: 'تواصل معنا مباشرة ونساعدك في اختيار المنتج المناسب لمشروعك. نرد عليك في نفس يوم العمل.'
       }) %>
     </main>
 

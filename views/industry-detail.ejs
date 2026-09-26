@@ -50,15 +50,6 @@
               <div class="solutionsPage__detailHeader">
                 <p class="solutionsPage__detailKicker">تفاصيل القطاع</p>
                 <h3 id="industry-detail-title"><%= industry.title %></h3>
-                <div class="solutionsPage__useCases">
-                  <% (industry.benefits || []).forEach(function(item){ %>
-                    <span><%= item %></span>
-                  <% }) %>
-                </div>
-              </div>
-
-              <div class="solutionsPage__detailIntro">
-                <p class="solutionsPage__detailSummary"><%= industry.intro %></p>
               </div>
 
               <div class="solutionsPage__detailMeta">

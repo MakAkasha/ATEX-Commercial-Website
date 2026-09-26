@@ -579,7 +579,7 @@ function initContactForm() {
 
   const showSuccessPanel = () => {
     const st = document.getElementById("contactFormStatus");
-    if (st) st.textContent = "تم استلام طلبك بنجاح. سيتواصل معك فريقنا خلال يوم عمل واحد.";
+    if (st) st.textContent = "استلمنا طلبك. يرد عليك فريقنا في نفس يوم العمل.";
     if (!successPanel) return;
     if (formHead) formHead.hidden = true;
     form.hidden = true;
@@ -767,7 +767,7 @@ function initContactForm() {
       }
       clearInputState();
       resetWizard();
-      setNote("سنقوم بالتواصل معك في أقرب وقت ممكن.", "info");
+      setNote("نرد عليك في نفس يوم العمل.", "info");
       showSuccessPanel();
     } catch {
       setNote("تعذر الاتصال بالخادم حالياً. يرجى المحاولة لاحقاً.", "error");
@@ -786,7 +786,7 @@ function initContactForm() {
       const s = document.getElementById(el.id + "-error");
       if (s) s.textContent = "";
       if (note?.classList.contains("is-error")) {
-        setNote("سنقوم بالتواصل معك في أقرب وقت ممكن.", "info");
+        setNote("نرد عليك في نفس يوم العمل.", "info");
       }
     });
   });

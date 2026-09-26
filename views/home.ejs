@@ -66,7 +66,7 @@
                 hero, not to the #atex-overview section below, which borrows only
                 hero.title and hero.desc. All three were admin-editable and
                 hardcoded here, so an edit saved and changed nothing. %>
-            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span><%= content?.hero?.kicker || 'IoT Solutions — المملكة العربية السعودية' %></p>
+            <p class="heroVideo__kicker"><span class="heroVideo__kickerDot" aria-hidden="true"></span><%= content?.hero?.kicker || 'IoT Solutions · المملكة العربية السعودية' %></p>
             <h1 class="heroVideo__title" aria-label="حلول إنترنت الأشياء للمنازل والفنادق والمكاتب والمباني الذكية">
               <span class="heroVideo__titleStatic">حلول إنترنت الأشياء</span>
               <span class="heroVideo__cycleWrap" aria-hidden="true">
@@ -76,7 +76,7 @@
                 <span class="heroVideo__cycleWord">للمباني الذكية</span>
               </span>
             </h1>
-            <p class="heroVideo__desc">من الأجهزة والاتصال إلى التحليلات ولوحات المتابعة في تجربة موحدة وسريعة.</p>
+            <p class="heroVideo__desc">نصمم الأنظمة ونركّبها ونشغّلها لك، من التمديدات حتى لوحة المتابعة.</p>
             <div class="heroVideo__actions">
               <a class="btn btn--primary" href="/contact-us"><%= content?.hero?.ctaPrimary || 'ابدأ مشروعك الآن' %> <span class="heroVideo__btnArrow" aria-hidden="true">←</span></a>
               <a class="btn btn--ghost heroVideo__ghostBtn" href="/solutions"><%= content?.hero?.ctaSecondary || 'استكشف الحلول' %></a>
@@ -89,8 +89,8 @@
       <section class="trustStrip" aria-label="مؤشرات الثقة">
         <div class="container trustStrip__inner">
           <article class="trustStrip__item" data-tilt>
-            <strong>24/7</strong>
-            <span>متابعة وتشغيل ودعم مستمر</span>
+            <strong>نفس اليوم</strong>
+            <span>نرد عليك في نفس يوم العمل</span>
           </article>
 
           <article class="trustStrip__item" data-tilt>
@@ -99,19 +99,19 @@
           </article>
 
           <article class="trustStrip__item" data-tilt>
-            <strong>100%</strong>
-            <span>التزام واضح بجودة مستوى الخدمة</span>
+            <strong dir="ltr">19</strong>
+            <span>شركة تطوير عقاري من عملائنا</span>
           </article>
         </div>
       </section>
 
       <!-- ATEX Overview -->
-      <section class="hero" id="atex-overview" aria-label="اتكس Overview">
+      <section class="hero" id="atex-overview" aria-label="نبذة عن أتكس">
         <div class="container hero__inner">
           <div class="hero__copy">
-            <h2 class="hero__title"><%= content?.hero?.title || "ذكاء متكامل… تحكم بلا حدود" %></h2>
+            <h2 class="hero__title"><%= content?.hero?.title || "نصمم أنظمة المباني الذكية ونركّبها في المملكة" %></h2>
             <p class="hero__desc">
-              <%= content?.hero?.desc || "نحوّل المنازل والفنادق والمباني إلى منظومة متصلة تُظهر لك ما يحدث الآن وتُمكّنك من التحكم بكل التفاصيل بسهولة.\nمن الأجهزة والاتصال إلى المنصة, لتشغيل الإضاءة والتكييف والطاقة والمشاهد، إدارة الغرف والوصول الذكي، ورفع الكفاءة وتقليل التكاليف مع تجربة ضيوف وسكان أكثر رفاهية." %>
+              <%= content?.hero?.desc || "نركّب أنظمة التحكم بالإضاءة والتكييف والطاقة والدخول في المنازل والفنادق والمباني، ونربطها بتطبيق ولوحة متابعة تدير منها وحداتك.\nنعمل مع المطورين العقاريين والشركات من مرحلة المخططات حتى التسليم والصيانة." %>
             </p>
 
             <div class="hero__trust" aria-label="مزايا سريعة">
@@ -163,7 +163,7 @@
         <div class="container">
           <div class="section__head">
             <h2><%= content?.solutions?.heading || 'حلول نقدمها' %></h2>
-            <p><%= content?.solutions?.subheading || 'حالات استخدام جاهزة قابلة للتوسع في مشاريع الشركات داخل السعودية.' %></p>
+            <p><%= content?.solutions?.subheading || 'أنظمة نركّبها في مشاريع المطورين العقاريين والشركات في المملكة.' %></p>
           </div>
 
           <%- include('partials/solutions-grid', { items: __pageSolutions }) %>
@@ -173,14 +173,14 @@
       <!-- Platform section -->
       <section class="section" id="platform">
         <div class="container">
-          <div class="platformSection" role="region" aria-label="وصف منصة اتكس">
+          <div class="platformSection" role="region" aria-label="وصف منصة أتكس">
             <div class="platformSection__bg" aria-hidden="true"></div>
             <div class="platformSection__content">
-              <div class="platformSection__kicker"><%= content?.platform?.kicker || 'من جهاز إلى لوحة متابعة خلال وقت قياسي' %></div>
+              <div class="platformSection__kicker"><%= content?.platform?.kicker || 'من الجهاز إلى لوحة المتابعة' %></div>
               <h2 class="platformSection__title"><%= content?.platform?.title || 'منصة واحدة للأجهزة والاتصال والبيانات' %></h2>
-              <p class="platformSection__desc"><%= content?.platform?.desc || 'نوفّر طبقة إدارة أجهزة، قواعد تنبيهات، لوحات، وتقارير—مع إمكانيات تكامل عبر واجهات برمجية.' %></p>
+              <p class="platformSection__desc"><%= content?.platform?.desc || 'نوفّر إدارة الأجهزة وقواعد التنبيه ولوحات المتابعة والتقارير، ونربطها بأنظمتك عبر REST API وWebhooks.' %></p>
               <ul class="platformSection__points" aria-label="مزايا المنصة">
-                <li><%- icon('bolt') %> مراقبة لحظية + تنبيهات فورية</li>
+                <li><%- icon('bolt') %> مراقبة لحظية وتنبيهات</li>
                 <li><%- icon('code-branch') %> تكاملات API مع أنظمة المؤسسة</li>
                 <li><%- icon('table-columns') %> لوحات قابلة للتخصيص لكل فريق</li>
               </ul>
@@ -204,7 +204,7 @@
                 <% }) %>
               </div>
               <div class="platformSection__chartWrap" aria-hidden="true">
-                <div class="platformSection__chartLabel">استهلاك الطاقة — آخر 7 أيام</div>
+                <div class="platformSection__chartLabel">استهلاك الطاقة: آخر 7 أيام</div>
                 <div class="platformSection__miniTrend">
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                 </div>
@@ -223,7 +223,7 @@
         <div class="container">
           <div class="section__head">
             <h2>القطاعات التي نخدمها في المملكة</h2>
-            <p>نصمم حلولًا قابلة للتوسع حسب طبيعة كل قطاع لضمان تشغيل ذكي، كفاءة أعلى، وتجربة أفضل.</p>
+            <p>نختار الأنظمة حسب القطاع: إدارة الغرف في الفنادق، والاتصال الداخلي والتحكم بالدخول في المشاريع السكنية.</p>
           </div>
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
@@ -247,14 +247,14 @@
         <div class="container">
           <div class="section__head">
             <h2><%= String(content?.why?.heading || 'لماذا أتكس؟').replace(/ATEX/gi, 'أتكس') %></h2>
-            <p><%= content?.why?.subheading || 'مزايا تنفيذية واضحة تساعد المطورين وفرق التشغيل على اتخاذ قرار استثماري أسرع وأدق.' %></p>
+            <p><%= content?.why?.subheading || 'نتولى التصميم والتركيب والصيانة بفريق داخل المملكة، ونربط الأنظمة الجديدة بما لديك من BMS وأنظمة أمن.' %></p>
           </div>
 
           <% const whyDefaultKeyPoints = [
-            { title: 'عائد استثماري قابل للقياس', brief: 'نربط الحلول بمؤشرات تشغيل ووفورات واضحة في الطاقة والصيانة.' },
+            { title: 'عائد استثماري قابل للقياس', brief: 'نحدد مع فريقك مؤشرات الطاقة والصيانة قبل التركيب، ونقيسها بعد التشغيل.' },
             { title: 'تنفيذ وتسليم من جهة واحدة', brief: 'نغطي التصميم، التوريد، التنفيذ، الاختبارات، والتشغيل المبدئي.' },
-            { title: 'تكامل جاهز مع الأنظمة الحالية', brief: 'ربط مرن مع BMS وأنظمة الأمن والتحكم بالوصول دون تعقيد تشغيلي.' },
-            { title: 'دعم تشغيلي محلي طويل المدى', brief: 'فرق فنية داخل المملكة مع SLA واضحة وخطة صيانة مستمرة.' }
+            { title: 'تكامل مع أنظمة المبنى الحالية', brief: 'نربط الأنظمة الجديدة بـ BMS وكاميرات المراقبة والتحكم بالدخول الموجودة في المبنى.' },
+            { title: 'دعم وصيانة بعد التسليم', brief: 'فريق فني داخل المملكة، واتفاقية مستوى خدمة (SLA)، وخطة صيانة دورية.' }
           ]; %>
           <% const whyContentCards = Array.isArray(content?.why?.cards) ? content.why.cards : []; %>
           <% const whyLegacyTitles = ['أمان مؤسسي', 'تكاملات سريعة', 'نتائج أسرع']; %>
@@ -284,7 +284,7 @@
         <div class="container">
           <div class="section__head section__head--start">
             <h2><%= content?.process?.heading || 'كيف نعمل' %></h2>
-            <p><%= content?.process?.subheading || 'من مخططات المشروع إلى التسليم والضمان — خطوات واضحة تناسب جدول المطوّر.' %></p>
+            <p><%= content?.process?.subheading || 'من مخططات المشروع إلى التسليم والضمان، بخطوات تتبع جدول المطوّر.' %></p>
           </div>
 
           <%# Fallback only — the real source is process.steps in server/homeSchema.js,
@@ -320,7 +320,7 @@
         <div class="container">
           <div class="section__head section__head--start">
             <h2><%= content?.integrations?.heading || 'التقنيات الذكية التي ندعمها' %></h2>
-            <p><%= content?.integrations?.subheading || 'منصات وتقنيات الاتصال والتكامل والتحليلات المستخدمة في حلول إنترنت الأشياء.' %></p>
+            <p><%= content?.integrations?.subheading || 'البروتوكولات والمعايير التي نركّب عليها أنظمتنا ونربطها بأنظمتك.' %></p>
           </div>
 
           <%# Fallback only — the real source is integrations.chips in
@@ -430,18 +430,18 @@
         <div class="container">
           <div class="section__head">
             <h2><%= content?.faq?.heading || 'أسئلة شائعة' %></h2>
-            <p><%= content?.faq?.subheading || 'إجابات مختصرة لأسئلة المطورين العقاريين قبل اعتماد الحل.' %></p>
+            <p><%= content?.faq?.subheading || 'أسئلة يطرحها المطورون العقاريون والشركات قبل اعتماد النظام.' %></p>
           </div>
 
           <% const faqDefaults = [
-            { q: 'كيف نقيس العائد الاستثماري (ROI) قبل التعميم؟', a: 'نبدأ بنطاق واضح للمشروع ونحدد مؤشرات قابلة للقياس مثل خفض استهلاك الطاقة وتقليل الأعطال وسرعة الاستجابة التشغيلية، ثم نعرض نتائج دورية تساعدكم في قرار التوسع.' },
-            { q: 'ما متطلبات الموقع والجدول الزمني للتنفيذ؟', a: 'نعتمد خطة تنفيذ مرتبطة بمرحلة المشروع، تشمل الجاهزية الكهربائية والشبكية ونقاط التركيب، مع جدول زمني واضح للتوريد والتركيب والاختبار والتسليم.' },
-            { q: 'ما الضمان ومستوى الدعم بعد التسليم؟', a: 'نقدم ضماناً على المكونات وخطة دعم ما بعد البيع تشمل الصيانة الوقائية والتصحيحية مع اتفاقية مستوى خدمة (SLA) حسب احتياج المشروع.' },
-            { q: 'هل يمكن التكامل مع الأنظمة الحالية مثل BMS وCCTV والتحكم بالوصول؟', a: 'نعم، الحل مصمم للتكامل التدريجي مع الأنظمة القائمة لتقليل إعادة العمل وضمان استمرارية التشغيل دون تعطيل.' },
-            { q: 'هل يمكن التوسع على عدة مبانٍ أو مراحل تطوير؟', a: 'بكل تأكيد، التصميم قابل للتوسع من مبنى واحد إلى محفظة مشاريع كاملة مع حوكمة مركزية وصلاحيات تشغيل مناسبة لكل موقع.' },
-            { q: 'كيف تتم إدارة خصوصية البيانات وصلاحيات الوصول؟', a: 'يتم تطبيق سياسات وصول حسب الأدوار مع سجلات تدقيق واضحة، بما يضمن حماية البيانات وإتاحة المعلومات للجهات المخولة فقط.' },
-            { q: 'كيف يتم تسليم التشغيل لفريق إدارة المرافق (FM)؟', a: 'نوفر خطة Handover تشمل التوثيق، التدريب العملي، وإجراءات التشغيل القياسية لضمان انتقال سلس للفريق التشغيلي.' },
-            { q: 'ماذا يحدث عند انقطاع الشبكة أو ضعف الاتصال؟', a: 'يستمر النظام في تشغيل الوظائف الأساسية محلياً وفق تصميم المشروع، مع مزامنة البيانات والتنبيهات تلقائياً عند عودة الاتصال.' }
+            { q: 'كيف نقيس العائد الاستثماري (ROI) قبل التعميم؟', a: 'نحدد معكم في البداية مؤشرات تقيسونها: استهلاك الطاقة، وعدد الأعطال، ووقت معالجة البلاغات. ثم نرسل لكم تقارير دورية بالنتائج تبنون عليها قرار التوسع.' },
+            { q: 'ما متطلبات الموقع والجدول الزمني للتنفيذ؟', a: 'نربط خطة التنفيذ بمرحلة المشروع: الجاهزية الكهربائية والشبكية ونقاط التركيب، ثم جدول زمني للتوريد والتركيب والاختبار والتسليم.' },
+            { q: 'ما الضمان ومستوى الدعم بعد التسليم؟', a: 'نقدم ضماناً على المكونات وخطة دعم بعد البيع تشمل الصيانة الوقائية والتصحيحية، مع اتفاقية مستوى خدمة (SLA) حسب احتياج المشروع.' },
+            { q: 'هل يمكن التكامل مع الأنظمة الحالية مثل BMS وCCTV والتحكم بالوصول؟', a: 'نعم. نربط النظام بالأنظمة القائمة على مراحل، فلا تعيد تركيب ما يعمل، ونرتب الربط بحيث يستمر تشغيل المبنى أثناءه.' },
+            { q: 'هل يمكن التوسع على عدة مبانٍ أو مراحل تطوير؟', a: 'نعم. تبدأ بمبنى واحد وتضيف المباني والمراحل لاحقاً، وتدير صلاحيات كل موقع من لوحة مركزية.' },
+            { q: 'كيف تحمون خصوصية البيانات وصلاحيات الوصول؟', a: 'نضبط صلاحيات الوصول حسب دور كل مستخدم، ونحتفظ بسجل تدقيق لعمليات الدخول، فلا يرى البيانات إلا من تخوّله.' },
+            { q: 'كيف تسلّمون التشغيل لفريق إدارة المرافق (FM)؟', a: 'نسلّم فريقكم خطة Handover تشمل التوثيق والتدريب العملي وإجراءات التشغيل القياسية.' },
+            { q: 'ماذا يحدث عند انقطاع الشبكة أو ضعف الاتصال؟', a: 'يشغّل النظام الوظائف الأساسية محلياً وفق تصميم المشروع، ثم يزامن البيانات والتنبيهات عند عودة الاتصال.' }
           ]; %>
           <% const faqLegacyQuestions = [
             'هل يمكن تنفيذ الحل داخل السعودية؟',
@@ -474,7 +474,7 @@
           <div class="container">
             <div class="section__head">
               <h2><%= content?.blogTeaser?.heading || 'المدونة' %></h2>
-              <p><%= content?.blogTeaser?.subheading || 'آخر المقالات وأفضل الممارسات في إنترنت الأشياء.' %></p>
+              <p><%= content?.blogTeaser?.subheading || 'مقالات عملية عن المنازل والفنادق والمباني الذكية في المملكة.' %></p>
             </div>
 
             <% if ((latestPosts || []).length) { %>
@@ -518,8 +518,8 @@
       <section class="section socialProof" id="social-proof">
         <div class="container">
           <div class="section__head">
-            <h2>موثوقية مثبتة في السوق</h2>
-            <p>آراء من فرق المشاريع التي عملت مع أتكس في تنفيذ مشاريع ذكية بمعايير تشغيل عالية.</p>
+            <h2>مطورون عقاريون عملنا معهم</h2>
+            <p>آراء فرق المشاريع التي ركّبت معها أتكس أنظمة ذكية.</p>
           </div>
 
           <%# Client logos. .socialProof__logos and .socialProof__logo have been in
@@ -613,7 +613,7 @@
       <% } %>
 
       <!-- Final CTA -->
-      <%- include('partials/final-cta', { id: 'contact', badge: 'يتم الرد في أقل من 24 ساعة' }) %>
+      <%- include('partials/final-cta', { id: 'contact', badge: 'نرد عليك في نفس يوم العمل' }) %>
     </main>
 
     <%- include('partials/site-footer') %>

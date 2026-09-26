@@ -253,9 +253,9 @@ router.get("/", (req, res) => {
     structuredData,
     meta: withMeta(req, {
       ...applyPageSeo("/", {
-      title: "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
+      title: "أتكس | أنظمة المنازل والفنادق والمباني الذكية في السعودية",
       description:
-        "أتكس مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia.",
+        "أتكس في جدة تصمم أنظمة المنازل والفنادق والمباني الذكية وتركّبها للمطورين العقاريين والشركات، من الإضاءة والتكييف حتى الأمن وشواحن السيارات الكهربائية.",
       ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
       }),
       // No hero poster to preload any more: the hero is video over black, so
@@ -831,8 +831,8 @@ router.get("/contact-us", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/contact-us", {
-      title: "ATEX | تواصل معنا",
-      description: "تواصل مع فريق أتكس للحصول على استشارة وحلول تقنية تناسب مشروعك.",
+      title: "أتكس | تواصل معنا",
+      description: "تواصل مع أتكس في جدة بشأن مشروع منزل أو فندق أو مبنى ذكي. أرسل التفاصيل عبر النموذج أو واتساب، ونرد عليك في نفس يوم العمل.",
     })),
   });
 });
