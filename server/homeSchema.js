@@ -312,7 +312,7 @@ function getDefaultHomeContent() {
 
     blogTeaser: {
       heading: "المدونة",
-      subheading: "آخر المقالات وأفضل الممارسات في إنترنت الأشياء.",
+      subheading: "مقالات عملية عن المنازل والفنادق والمباني الذكية في المملكة.",
       ctaText: "فتح المدونة",
       ctaHref: "/blog",
     },
@@ -323,7 +323,7 @@ function getDefaultHomeContent() {
     },
 
     contact: {
-      heading: "جاهز لبدء مشروع إنترنت الأشياء؟",
+      heading: "لديك مشروع سكني أو فندقي أو تجاري؟",
       subheading: "أرسل لنا نوع المبنى وما تريد التحكم فيه، ونقترح عليك الأجهزة وطريقة الاتصال والربط مع خطة للتنفيذ.",
       email: "info@atex.sa",
       phone: "+966580102121",
