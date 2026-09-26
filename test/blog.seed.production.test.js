@@ -46,7 +46,9 @@ const { buildPosts, looksLikeHtmlBody, parseFrontmatter } = require("../tools/im
 const SEED_DIR = path.join(REPO_ROOT, "content-src", "blog-seed");
 
 /**
- * Taken from the production database on 2026-08-04, read-only:
+ * Originally taken from the production database on 2026-08-04, read-only.
+ * Re-pinned 2026-09-26 (owner-approved) after the stop-slop copy rewrite of
+ * posts 21-23; live rows match again once that rewrite is imported. Check with:
  *   sqlite3 -readonly server/data.sqlite \
  *     "SELECT hex(content_html) FROM posts WHERE id = 21;" | tr -d '\n' | sha256sum
  * `sha256` here is over the UTF-8 bytes of content_html; `bytes` is its UTF-8
@@ -58,8 +60,8 @@ const PRODUCTION_BACKFILLS = [
     file: "blog_post_no6.md",
     postId: 21,
     slug: "hotel-automation-guest-experience",
-    sha256: "ee91deb4b103f17e9bb1a4fa35ff2d528c7eaa18604ec1b8e1da5a269c9e97cc",
-    bytes: 44734,
+    sha256: "dfec3bc80a6a372401dc20d74f6233d72d81ee7f6a035422798c5b29db7dd23f",
+    bytes: 36767,
     cover_image: "/uploads/images/2026/05/1779002111863-62d1c9880fc4.png",
     tags: ["أنظمة الفنادق"],
     endsWithNewline: false,
@@ -68,8 +70,8 @@ const PRODUCTION_BACKFILLS = [
     file: "blog_post_no7.md",
     postId: 22,
     slug: "dali-smart-lighting-control",
-    sha256: "212278088b97650d24afff3dc79cd3462662e2f9e0539c35b51d7df596d335e1",
-    bytes: 11237,
+    sha256: "57b9cdbad5b8ce68479aa8771f1bfcaef7d5eb5880cc20577805289c7fcf4789",
+    bytes: 11727,
     cover_image: "/uploads/blog/dali-cover.jpg",
     tags: ["الإضاءة الذكية", "DALI", "KNX", "أتمتة المباني", "توفير الطاقة", "المباني الذكية", "جدة"],
     endsWithNewline: true,
@@ -78,8 +80,8 @@ const PRODUCTION_BACKFILLS = [
     file: "blog_post_no8.md",
     postId: 23,
     slug: "ev-chargers-real-estate-projects",
-    sha256: "dc6065bceb8c3aaab07826a4baeaa62c0b27d6f48204513d036fd98414275c92",
-    bytes: 11824,
+    sha256: "060a8ed9b5d6ecc1fd9ad6efb5a64d282a9aaa57b9fefc5d2e409ec8784ccb51",
+    bytes: 10826,
     cover_image: "/uploads/blog/ev-cover.webp?v=2",
     tags: [
       "شواحن السيارات الكهربائية",

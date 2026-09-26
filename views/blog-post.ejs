@@ -37,7 +37,7 @@
 
         <article class="subpage__panel blogPostLayout">
           <header class="blogPostLayout__intro">
-            <p class="subpage__desc"><%= post.excerpt || 'قراءة عملية من فريق أتكس تربط التقنية بالتشغيل اليومي واحتياجات المشاريع في السوق السعودي.' %></p>
+            <p class="subpage__desc"><%= post.excerpt || 'مقال من فريق أتكس عن أنظمة المباني الذكية في السعودية.' %></p>
           </header>
           <% if (post.cover_image) { %>
             <%# The LCP element: eager, high priority, and preloaded from
@@ -67,7 +67,7 @@
                 <%- icon('share-nodes') %>
                 <span>مشاركة</span>
               </button>
-              <a class="blogShare__btn blogShare__btn--wa" href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' — ' + (meta?.canonical || '')) %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة عبر واتساب">
+              <a class="blogShare__btn blogShare__btn--wa" href="https://wa.me/?text=<%= encodeURIComponent(post.title + ': ' + (meta?.canonical || '')) %>" target="_blank" rel="noopener noreferrer" aria-label="مشاركة عبر واتساب">
                 <%- icon('whatsapp') %>
                 <span>واتساب</span>
               </a>
@@ -83,7 +83,7 @@
           </div>
 
           <footer class="blogPostFooter">
-            <div class="blogPostFooter__note">تم إعداد هذا المحتوى لمساعدة فرق التشغيل والهندسة على اتخاذ قرارات أكثر دقة.</div>
+            <div class="blogPostFooter__note">كتبنا هذا المقال لفرق التشغيل والهندسة التي تخطط لمشروع مبنى ذكي.</div>
             <div class="subpage__back">
               <a class="btn btn--ghost btn--small" href="/blog">رجوع للمدونة</a>
             </div>
@@ -130,10 +130,10 @@
 
       <%- include('partials/final-cta', {
         heading: 'هل واجهت تحديات مشابهة في مشروعك؟',
-        subheading: 'دعنا نحول هذه الأفكار إلى واقع. تحدث مع خبرائنا لتصميم حل ذكي متكامل لمنشأتك.',
+        subheading: 'أرسل لنا مخططك ونقترح الأنظمة المناسبة له.',
         mainAction: '<a class="btn btn--primary" href="/contact-us">احجز استشارتك المجانية</a>',
-        cardHeading: 'دعم فني متخصص',
-        cardDesc: 'المهندسون لدينا جاهزون لتحليل متطلباتك وتقديم مقترح تقني شامل.'
+        cardHeading: 'تحدّث مع مهندس من فريقنا عن مشروعك',
+        cardDesc: 'نراجع متطلباتك ونرسل لك مقترحاً بالأنظمة المناسبة. نرد عليك في نفس يوم العمل.'
       }) %>
     </main>
     <%- include('partials/site-footer') %>
