@@ -73,7 +73,7 @@ module.exports = {
     stats: [
       { value: "0", label: "اعتماد على الإنترنت في تشغيل الغرفة" },
       { value: "+40%", label: "تحسين في كفاءة التشغيل في مشاريع نفذتها أتكس" },
-      { value: "نفس اليوم", label: "فريق دعم فني في جدة يرد عليك في نفس يوم العمل" },
+      { value: "24h", label: "فريق دعم فني في جدة يرد عليك في نفس يوم العمل" },
     ],
     // A still, not the shared hero footage: the video is 2.2-2.9MB and this
     // page's audience arrives on cellular. The poster carries the frame on its
