@@ -47,7 +47,8 @@ const SEED_DIR = path.join(REPO_ROOT, "content-src", "blog-seed");
 
 /**
  * Originally taken from the production database on 2026-08-04, read-only.
- * Re-pinned 2026-09-26 (owner-approved) after the stop-slop copy rewrite of
+ * Re-pinned 2026-10-06 (owner-approved) for the facade-article link added to
+ * posts 12 and 22. Earlier: 2026-09-26 after the stop-slop copy rewrite of
  * posts 21-23; live rows match again once that rewrite is imported. Check with:
  *   sqlite3 -readonly server/data.sqlite \
  *     "SELECT hex(content_html) FROM posts WHERE id = 21;" | tr -d '\n' | sha256sum
@@ -70,8 +71,8 @@ const PRODUCTION_BACKFILLS = [
     file: "blog_post_no7.md",
     postId: 22,
     slug: "dali-smart-lighting-control",
-    sha256: "e6db9767bba8816dc277dac9ac9dde497d0dc402381bc5dfc2903a479b255524",
-    bytes: 11744,
+    sha256: "2bd77742fe92de6a9b5a0897c7fef71a40e4319c5a4defd902724b6019ad3332",
+    bytes: 12076,
     cover_image: "/uploads/blog/dali-cover.jpg",
     tags: ["الإضاءة الذكية", "DALI", "KNX", "أتمتة المباني", "توفير الطاقة", "المباني الذكية", "جدة"],
     endsWithNewline: true,
@@ -187,8 +188,8 @@ const SYNCED_FROM_PRODUCTION = [
     file: "blog_post_no2.md",
     postId: 12,
     slug: "smart-building-systems-saudi-arabia",
-    sha256: "24ab3564704b70986b4edbe46a297b94eef270fc735431ceee03c0cba6ffa489",
-    bytes: 47939,
+    sha256: "8b50182addb2071455149a790994de32b9311b0ff42c1658b67916f7755522e9",
+    bytes: 48306,
     cover_image: "/uploads/images/2026/04/1776930541795-07db990896cff.webp",
   },
   {
