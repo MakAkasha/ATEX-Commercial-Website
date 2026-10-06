@@ -55,8 +55,8 @@ const steps = [
   },
   { name: 'lint', cmd: 'npm run lint', kind: 'blocking' },
   { name: 'tests', cmd: 'npm test', kind: 'blocking' },
-  // CI does not build. It costs 0.6s here, and a broken `vite build` is a broken deploy,
-  // so there is no reason for this to be the one thing nobody checks before pushing.
+  // CI builds too (ci.yml). It costs 0.6s here, and a broken `vite build` is a broken deploy,
+  // so it is checked before pushing as well.
   { name: 'build', cmd: 'npm run build', kind: 'blocking' },
 ];
 
