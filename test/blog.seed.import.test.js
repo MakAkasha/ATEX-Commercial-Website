@@ -216,7 +216,7 @@ describe("import-blog-seeds --only", () => {
   it("imports only the named slugs and reports what it left alone", () => {
     const res = runTool(["--db", dbPath, "--only", NEW_SLUG]);
     assert.equal(res.status, 0);
-    assert.match(res.stdout, /importing 1, leaving 7 untouched/);
+    assert.match(res.stdout, /importing 1, leaving 8 untouched/);
     assert.match(res.stdout, new RegExp(`WOULD CREATE ${NEW_SLUG}`));
     assert.doesNotMatch(res.stdout, new RegExp(DRIFTED_SLUG));
   });

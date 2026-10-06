@@ -404,6 +404,7 @@ function buildPosts() {
     "blog_post_no6.md",
     "blog_post_no7.md",
     "blog_post_no8.md",
+    "blog_post_no9.md",
   ].map((f) => path.join(SEED_DIR, f));
   const posts = [];
   let skipped = 0;
