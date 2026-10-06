@@ -52,12 +52,12 @@ jobs:
       - name: Build
         run: npm run build
 
-  # Report only. The tree has known advisories today (see the job log), so making
-  # this blocking would fail every unrelated PR. Flip continue-on-error to false
-  # once `npm audit` is clean.
+  # Report only. The tree has known advisories today, so a failing audit must not
+  # turn this check red and block unrelated PRs. The step passes either way; the
+  # findings are printed in the log and in the run summary. To make it blocking,
+  # drop `continue-on-error` and `|| true` once `npm audit` is clean.
   audit:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -66,5 +66,13 @@ jobs:
           node-version: 24.x
           cache: npm
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+      - name: Audit production dependencies (report only)
+        continue-on-error: true
+        run: |
+          npm audit --omit=dev --audit-level=high | tee audit.txt || true
+          {
+            echo '### npm audit (production, report only)'
+            echo '```'
+            tail -n 40 audit.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
