@@ -304,7 +304,7 @@ comment at the top of the sprite file itself.
 
 ## Scripts
 
-- `npm run dev` — run with nodemon
+- `npm run dev` — run with `node --watch` (restarts on file changes)
 - `npm start` — run production server
 - `npm run backup:db` — write one verified SQLite snapshot to `server/backups/`
 - `npm run create-admin -- <u> <p>` — create admin account
