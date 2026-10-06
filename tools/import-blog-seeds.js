@@ -60,29 +60,9 @@ Options:
   -h, --help          Show this help and exit.
 ${cli.COMMON_HELP_FOOTER}`;
 
-const IMAGE_MAP = {
-  smart_home_system_saudi_arabia_guide: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-home-featured.jpg",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-home-controls.jpg",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-home-lock.jpg",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-home-security.jpg",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-home-thermostat.jpg",
-  },
-  smart_building_systems_saudi_arabia: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-building-featured.jpg",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-building-dashboard.jpg",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-building-access.jpg",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-building-security.jpg",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-building-hvac.jpg",
-  },
-  smart_hotel_systems_saudi_arabia: {
-    REPLACE_WITH_FEATURED_IMAGE_URL: "/uploads/images/2026/03/blog/smart-hotel-featured.jpg",
-    REPLACE_WITH_SECTION_IMAGE_1_URL: "/uploads/images/2026/03/blog/smart-hotel-panel.jpg",
-    REPLACE_WITH_SECTION_IMAGE_2_URL: "/uploads/images/2026/03/blog/smart-hotel-lock.jpg",
-    REPLACE_WITH_SECTION_IMAGE_3_URL: "/uploads/images/2026/03/blog/smart-hotel-security.jpg",
-    REPLACE_WITH_SECTION_IMAGE_4_URL: "/uploads/images/2026/03/blog/smart-hotel-room-control.jpg",
-  },
-};
+// The three launch posts once mapped image placeholders here. Their seed files
+// now hold the live bodies and cover images verbatim, so nothing is left to map.
+const IMAGE_MAP = {};
 
 const INTERNAL_GUIDANCE_HEADINGS = [
   "image plan",

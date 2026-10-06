@@ -167,3 +167,48 @@ describe("admin-authored posts backfilled from production", () => {
     });
   }
 });
+
+/**
+ * Posts 11-13 were seeded first and then edited in the admin panel. Their seed
+ * files were re-synced from the live rows on 2026-10-06, so — like the backfills
+ * above — they must reproduce production byte for byte. Unlike those, these
+ * rows carry hand-written SEO copy, so only the body and cover are pinned here.
+ */
+const SYNCED_FROM_PRODUCTION = [
+  {
+    file: "blog_post_no1.md",
+    postId: 11,
+    slug: "smart-home-system-saudi-arabia-guide",
+    sha256: "2b6a87c4aaad7e82d05c2835b818effe4a20632ed1b52de6504d427b91d85d15",
+    bytes: 30224,
+    cover_image: "/uploads/images/2026/04/1776930416319-81fb8e225c1e8.jpg",
+  },
+  {
+    file: "blog_post_no2.md",
+    postId: 12,
+    slug: "smart-building-systems-saudi-arabia",
+    sha256: "24ab3564704b70986b4edbe46a297b94eef270fc735431ceee03c0cba6ffa489",
+    bytes: 47939,
+    cover_image: "/uploads/images/2026/04/1776930541795-07db990896cff.webp",
+  },
+  {
+    file: "blog_post_no3.md",
+    postId: 13,
+    slug: "smart-hotel-systems-saudi-arabia",
+    sha256: "c9b4eb740f7d1d220251d72fb84a9d74187829e67ab87b08cab2cb52665dfc43",
+    bytes: 293861,
+    cover_image: "/uploads/images/2026/04/1776930888780-0968336e7ef7f.jpg",
+  },
+];
+
+describe("seed files synced from production edits", () => {
+  for (const expected of SYNCED_FROM_PRODUCTION) {
+    it(`${expected.file} reproduces live post ${expected.postId} byte for byte`, () => {
+      const post = bySlug.get(expected.slug);
+      assert.ok(post, `${expected.file} produced no post for slug ${expected.slug}`);
+      assert.equal(Buffer.byteLength(post.content_html, "utf8"), expected.bytes);
+      assert.equal(sha256(post.content_html), expected.sha256);
+      assert.equal(post.cover_image, expected.cover_image);
+    });
+  }
+});
