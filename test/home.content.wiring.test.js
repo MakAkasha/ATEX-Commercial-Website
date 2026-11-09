@@ -117,12 +117,12 @@ describe("topbar — stored content reaches the header", () => {
     const html = renderHeader({ topbar: { ctaText: "بوابة الشركاء", ctaHref: "https://example.com/portal" } });
     assert.equal(html.match(/بوابة الشركاء/g).length, 4, "label appears as text and aria-label, twice over");
     assert.equal(html.match(/https:\/\/example\.com\/portal/g).length, 2);
-    assert.doesNotMatch(html, /portal\.atex-ksa\.com/);
+    assert.doesNotMatch(html, /portal.atex.sa/);
   });
 
   it("falls back to the shipped portal link", () => {
     const html = renderHeader({});
-    assert.match(html, /portal\.atex-ksa\.com/);
+    assert.match(html, /portal.atex.sa/);
     assert.match(html, /بوابة العملاء/);
   });
 });
