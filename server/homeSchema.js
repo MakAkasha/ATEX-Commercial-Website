@@ -181,7 +181,7 @@ function getDefaultHomeContent() {
       phone: "+966580102121",
       tagline: "حلول إنترنت الأشياء للمطورين العقاريين والشركات في المملكة",
       ctaText: "بوابة العملاء",
-      ctaHref: "https://portal.atex-ksa.com",
+      ctaHref: "https://portal.atex.sa",
     },
 
     hero: {
