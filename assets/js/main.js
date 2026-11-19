@@ -1317,6 +1317,39 @@ function initHeroVideoLazyLoad() {
   }
 }
 
+// Homepage cards hand their photo URL over as data-bg-src instead of an
+// inline --solution-bg / --industry-bg, so the browser does not fetch every
+// card photo on arrival. Each grid gets its photos once it nears the viewport;
+// the whole grid at once, because the sector row scrolls sideways and a
+// per-card observer would leave off-screen cards blank mid-swipe.
+function initLazyCardBackgrounds() {
+  const cards = qsa("[data-bg-src]");
+  if (!cards.length) return;
+
+  const apply = (card) => {
+    card.style.setProperty(card.dataset.bgVar, `url('${card.dataset.bgSrc}')`);
+    card.removeAttribute("data-bg-src");
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    cards.forEach(apply);
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        qsa("[data-bg-src]", entry.target).forEach(apply);
+      });
+    },
+    { rootMargin: "600px 0px" }
+  );
+
+  new Set(cards.map((card) => card.parentElement)).forEach((grid) => observer.observe(grid));
+}
+
 function initPlatformClock() {
   const el = qs("#platformClock");
   if (!el) return;
@@ -1367,6 +1400,7 @@ async function bootstrap() {
   initWhatsappTagging();
   initContactLinkTracking();
   initHeroVideoLazyLoad();
+  initLazyCardBackgrounds();
   initScrollProgress();
   initPlatformClock();
   initHeroWordCycle();

@@ -234,6 +234,7 @@ app.get("/sitemap.xml", (req, res) => {
       { loc: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
       { loc: `${baseUrl}/blog`, priority: "0.9", changefreq: "daily" },
+      { loc: `${baseUrl}/industries`, priority: "0.8", changefreq: "monthly" },
       // Campaign landing pages. They carry no nav link by design, so the
       // sitemap plus one contextual inbound link each (from the smart-home
       // solution and the residential industry pages) is their whole discovery

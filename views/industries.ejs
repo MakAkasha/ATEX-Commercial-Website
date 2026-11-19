@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <%- include('partials/head', { meta }) %>
+    <%- include('partials/structured-data') %>
+  </head>
+  <body>
+    <%- include('partials/site-header', { content }) %>
+
+    <% const industryItems = Array.isArray(pageIndustries) ? pageIndustries : []; %>
+
+    <main class="solutionsPage" id="main-content" tabindex="-1" aria-label="المحتوى الرئيسي">
+      <section class="section solutionsPage__hero" aria-label="مقدمة القطاعات">
+        <div class="container solutionsPage__heroInner">
+          <div class="solutionsPage__heroCopy">
+            <nav class="breadcrumbs" aria-label="مسار الصفحة">
+              <a href="/">الرئيسية</a>
+              <span>/</span>
+              <strong>القطاعات</strong>
+            </nav>
+            <span class="solutionsPage__eyebrow">أتكس · القطاعات</span>
+            <h1 class="solutionsPage__title">الأنظمة الذكية حسب قطاع مشروعك</h1>
+            <p class="solutionsPage__desc">
+              نختار الأنظمة حسب القطاع: إدارة الغرف في الفنادق، والاتصال الداخلي والتحكم بالدخول في المشاريع السكنية،
+              وأنظمة إدارة المباني في المنشآت التجارية والصحية. افتح صفحة قطاعك لترى الأنظمة المناسبة له.
+            </p>
+            <div class="solutionsPage__heroActions">
+              <a class="btn btn--primary" href="/contact-us">اطلب استشارة للقطاع المناسب</a>
+            </div>
+          </div>
+
+          <%# Same layout and sizing contract as views/solutions.ejs: the primary
+              figure is this page's LCP element (eager, high priority); the two
+              stack figures stay lazy. All three sources are 1620x1080. %>
+          <div class="solutionsPage__heroMedia" aria-hidden="true">
+            <figure class="solutionsPage__heroPrimary">
+              <%- picture('/assets/solutions/residential.webp', { alt: '', sizes: imageSizes.solutionsHeroPrimary, loading: 'eager', fetchpriority: 'high', width: 1620, height: 1080 }) %>
+            </figure>
+            <div class="solutionsPage__heroStack">
+              <figure><%- picture('/assets/solutions/commence.webp', { alt: '', sizes: imageSizes.solutionsHeroStack, width: 1620, height: 1080 }) %></figure>
+              <figure><%- picture('/assets/solutions/health.webp', { alt: '', sizes: imageSizes.solutionsHeroStack, width: 1620, height: 1080 }) %></figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%# Reuses the homepage sector section (class + id) so the cards look
+          identical; #industries scopes the section-head styling. %>
+      <section class="section industriesShowcase" id="industries">
+        <div class="container">
+          <div class="section__head">
+            <h2>اختر قطاع مشروعك</h2>
+            <p>كل بطاقة تفتح صفحة القطاع: الأنظمة المناسبة له وأسئلة العملاء عنه.</p>
+          </div>
+
+          <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
+            <%- include('partials/industries-grid', { items: industryItems }) %>
+
+            <div class="industriesShowcase__hint" aria-hidden="true">
+              <span>اسحب أفقيًا لاستعراض القطاعات</span>
+              <span class="industriesShowcase__hintTrack"><i></i></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%- include('partials/final-cta', {
+        heading: 'لم تجد قطاع مشروعك؟',
+        subheading: 'أرسل لنا نوع المشروع ومساحته ونقترح لك الأنظمة المناسبة.',
+        mainAction: '<a class="btn btn--primary" href="/contact-us">ناقش مشروعك</a>',
+        cardHeading: 'استشارة فنية مجانية',
+        cardDesc: 'نرد عليك في نفس يوم العمل.'
+      }) %>
+    </main>
+
+    <%- include('partials/site-footer', { content }) %>
+  </body>
+</html>
