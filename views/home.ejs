@@ -166,7 +166,7 @@
             <p><%= content?.solutions?.subheading || 'أنظمة نركّبها في مشاريع المطورين العقاريين والشركات في المملكة.' %></p>
           </div>
 
-          <%- include('partials/solutions-grid', { items: __pageSolutions }) %>
+          <%- include('partials/solutions-grid', { items: __pageSolutions, lazyBg: true }) %>
         </div>
       </section>
 
@@ -228,7 +228,7 @@
 
           <div class="industriesShowcase__panel" aria-label="القطاعات المستهدفة">
             <% const industryItems = Array.isArray(pageIndustries) ? pageIndustries : []; %>
-            <%- include('partials/industries-grid', { items: industryItems }) %>
+            <%- include('partials/industries-grid', { items: industryItems, lazyBg: true }) %>
 
             <div class="industriesShowcase__hint" aria-hidden="true">
               <span>اسحب أفقيًا لاستعراض القطاعات</span>

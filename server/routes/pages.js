@@ -342,7 +342,7 @@ router.get("/blog", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/blog", {
-      title: "أتكس | المدونة — حلول إنترنت الأشياء في السعودية",
+      title: "مدونة أتكس | أدلة المنازل والفنادق والمباني الذكية",
       description: "مدونة أتكس: مقالات وأفضل الممارسات في حلول إنترنت الأشياء، المنازل الذكية، المباني الذكية، وإدارة الطاقة داخل المملكة العربية السعودية.",
       ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
     })),
@@ -533,7 +533,7 @@ router.get("/solutions", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/solutions", {
-      title: "أتكس | الأنظمة والحلول",
+      title: "أنظمة المنازل والمباني الذكية في جدة | حلول أتكس",
       description:
         "صفحة الأنظمة والحلول من أتكس: تفاصيل موسّعة لكل حل مع القدرات الأساسية، حالات الاستخدام، وصور داعمة للمشاريع داخل السعودية.",
       ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
@@ -639,6 +639,53 @@ router.get("/solutions/:slug", (req, res) => {
   });
 });
 
+// Sector hub: lists every sector page. Linked from each sector page's
+// breadcrumb and back button and from the 404 page.
+router.get("/industries", (req, res) => {
+  const industries = getIndustries();
+  const content = loadHomeContent();
+  const siteUrl = absoluteUrl("/");
+  const pageUrl = absoluteUrl("/industries");
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
+          { "@type": "ListItem", "position": 2, "name": "القطاعات", "item": pageUrl },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        "name": "القطاعات التي تخدمها أتكس",
+        "url": pageUrl,
+        "numberOfItems": industries.length,
+        "itemListElement": industries.map((i, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": i.title,
+          "url": absoluteUrl(`/industries/${i.slug}`),
+        })),
+      },
+    ],
+  };
+
+  return res.render("industries", {
+    content,
+    pageIndustries: industries,
+    structuredData,
+    ...baseRenderData(req),
+    meta: withMeta(req, applyPageSeo("/industries", {
+      title: "القطاعات التي نخدمها: سكني وتجاري وحكومي وصحي | أتكس",
+      description:
+        "تركّب أتكس الأنظمة الذكية لسبعة قطاعات في السعودية: السكني والتجاري والحكومي والصناعي والرعاية الصحية والتعليم والمدن الذكية. اختر قطاعك لترى الأنظمة المناسبة له.",
+      ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
+    })),
+  });
+});
+
 router.get("/industries/:slug", (req, res) => {
   const industries = getIndustries();
   const solutions = getSolutions();
@@ -673,7 +720,8 @@ router.get("/industries/:slug", (req, res) => {
         "@type": "BreadcrumbList",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "الرئيسية", "item": siteUrl },
-          { "@type": "ListItem", "position": 2, "name": industry.title, "item": pageUrl },
+          { "@type": "ListItem", "position": 2, "name": "القطاعات", "item": absoluteUrl("/industries") },
+          { "@type": "ListItem", "position": 3, "name": industry.title, "item": pageUrl },
         ],
       },
       {
@@ -722,7 +770,7 @@ router.get("/industries/:slug", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, {
-      title: `أتكس | ${industry.title}`,
+      title: industry.metaTitle || `أتكس | ${industry.title}`,
       description: industry.metaDescription || industry.intro,
       ogTitle: industry.metaTitle || industry.title,
       ogDescription: industry.metaDescription || industry.intro,
@@ -773,7 +821,7 @@ router.get("/products", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/products", {
-      title: "أتكس | المنتجات — الأنظمة الذكية",
+      title: "منتجات المنزل الذكي: أقفال وإنتركوم ومفاتيح ذكية | أتكس",
       description:
         "تشكيلة منتجات أتكس للأنظمة الذكية: الأقفال الذكية، أنظمة الإنتركوم وعائلة بابكوم، مفاتيح التحكم الذكية، شاشات التحكم، ولوحات الجرس داخل المملكة العربية السعودية.",
       ogImage: absoluteUrl("/assets/solutions/smart-building.webp"),
@@ -831,7 +879,7 @@ router.get("/contact-us", (req, res) => {
     structuredData,
     ...baseRenderData(req),
     meta: withMeta(req, applyPageSeo("/contact-us", {
-      title: "أتكس | تواصل معنا",
+      title: "تواصل مع أتكس في جدة | استشارة لمشروع منزل أو مبنى ذكي",
       description: "تواصل مع أتكس في جدة بشأن مشروع منزل أو فندق أو مبنى ذكي. أرسل التفاصيل عبر النموذج أو واتساب، ونرد عليك في نفس يوم العمل.",
     })),
   });

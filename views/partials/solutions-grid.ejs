@@ -1,3 +1,4 @@
+<% var __deferredBgs = []; %>
 <div class="grid grid--cards">
   <% (locals.items || []).forEach(function(c, idx){ %>
     <%
@@ -7,8 +8,9 @@
       var __card = /^\/assets\/solutions\/[^\/]+\.webp$/i.test(__full)
         ? __full.replace('/assets/solutions/', '/assets/solutions/cards/')
         : __full;
+      if (locals.lazyBg) __deferredBgs.push(__card);
     %>
-    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" style="--solution-bg:url('<%= __card %>')" aria-label="عرض تفاصيل <%= c.title %>">
+    <a class="card solutionCard" data-tilt href="/solutions/<%= c.slug %>" <% if (locals.lazyBg) { %>data-bg-var="--solution-bg" data-bg-src="<%= __card %>"<% } else { %>style="--solution-bg:url('<%= __card %>')"<% } %> aria-label="عرض تفاصيل <%= c.title %>">
       <span class="solutionCard__num" aria-hidden="true"><%= String(idx + 1).padStart(2, '0') %></span>
       <div class="solutionCard__body">
         <h3 class="card__title"><%= c.title %></h3>
@@ -17,3 +19,13 @@
     </a>
   <% }) %>
 </div>
+
+<%# Without JS the deferred photos would never be set: give each card its
+    photo back, using the paths the loop above already derived. %>
+<% if (__deferredBgs.length) { %>
+<noscript><style>
+  <% __deferredBgs.forEach(function(bg){ %>
+  .solutionCard[data-bg-src="<%= bg %>"] { --solution-bg: url('<%= bg %>'); }
+  <% }) %>
+</style></noscript>
+<% } %>

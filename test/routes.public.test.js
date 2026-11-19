@@ -12,7 +12,7 @@ const { describe, it, before, after } = require("node:test");
 const { startServer } = require("./helpers/server");
 const { getSolutions, getIndustries, getRecLandings } = require("../server/data/contentRegistry");
 
-const STATIC_PAGES = ["/", "/solutions", "/products", "/blog", "/contact-us", "/privacy", "/terms"];
+const STATIC_PAGES = ["/", "/solutions", "/industries", "/products", "/blog", "/contact-us", "/privacy", "/terms"];
 
 const SOLUTION_PAGES = getSolutions().map((s) => `/solutions/${s.slug}`);
 const INDUSTRY_PAGES = getIndustries().map((i) => `/industries/${i.slug}`);

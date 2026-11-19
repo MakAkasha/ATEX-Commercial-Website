@@ -7190,6 +7190,14 @@ body.consent-open .waBtn {
   .footer--v2 .footer__brandMeta { display: flex; }
   .footer--v2 .footer__col--address { display: none; }
   .footer--v2 .footer__bottomInner { justify-content: center; text-align: center; }
+  /* phones: each footer link gets a full 44px tap row (was 28px tall with a
+     12px gap), so neighbouring links are hard to hit by mistake. */
+  .footer--v2 .footer__links { gap: 0; }
+  .footer--v2 .footer__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 /* footer map (PC only) — replaces the CTA block on desktop.
