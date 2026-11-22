@@ -177,8 +177,8 @@ function getDefaultHomeContent() {
     version: HOME_SCHEMA_VERSION,
 
     topbar: {
-      supportText: "الدعم والمبيعات:",
-      phone: "+966580102121",
+      supportText: "الدعم وخدمة العملاء:",
+      phone: "0579880885",
       tagline: "حلول إنترنت الأشياء للمطورين العقاريين والشركات في المملكة",
       ctaText: "بوابة العملاء",
       ctaHref: "https://portal.atex.sa",
@@ -326,8 +326,8 @@ function getDefaultHomeContent() {
       heading: "لديك مشروع سكني أو فندقي أو تجاري؟",
       subheading: "أرسل لنا نوع المبنى وما تريد التحكم فيه، ونقترح عليك الأجهزة وطريقة الاتصال والربط مع خطة للتنفيذ.",
       email: "info@atex.sa",
-      phone: "+966580102121",
-      address: "جدة، المملكة العربية السعودية",
+      phone: "0579880885",
+      address: "مليباري سنتر للأعمال، الفيصلية، جدة",
       backToTopText: "العودة للأعلى",
     },
   };
