@@ -421,7 +421,7 @@ function getAttributionPayload() {
 /** ATEX's own published numbers, in wa.me form (digits, no +). */
 const CONTACT_NUMBERS = {
   966509330008: "sales",
-  966580102121: "service",
+  966579880885: "service",
 };
 
 /** 0509330008 / +966509330008 / 966509330008 all normalise to 966509330008. */

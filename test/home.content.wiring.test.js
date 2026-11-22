@@ -110,7 +110,7 @@ describe("topbar — stored content reaches the header", () => {
     const html = renderHeader({ topbar: { phone: "+966511111111" } });
     assert.match(html, /\+966511111111/);
     assert.match(html, /https:\/\/wa\.me\/966511111111/);
-    assert.doesNotMatch(html, /\+966580102121/);
+    assert.doesNotMatch(html, /\+966579880885/);
   });
 
   it("renders the stored portal label and URL in both header placements", () => {
@@ -140,7 +140,7 @@ describe("schema v4 — retired defaults move forward, admin edits do not", () =
     // pointed the WhatsApp link at it.
     const out = normalizeHomeContent({ topbar: { phone: "+966 11 000 0000" } });
     assert.equal(out.topbar.phone, getDefaultHomeContent().topbar.phone);
-    assert.equal(out.topbar.phone, "+966580102121");
+    assert.equal(out.topbar.phone, "0579880885");
   });
 
   const retired = {

@@ -28,10 +28,19 @@
           <!-- Info panel -->
           <aside class="contactPage__info" aria-label="معلومات التواصل">
             <ul class="contactPage__infoList">
+              <% const __supportPhone = content?.contact?.phone || '0579880885'; %>
+              <% const __supportDigits = String(__supportPhone).replace(/\D/g, '').replace(/^0+/, ''); %>
               <li>
                 <%- icon('whatsapp') %>
-                <a dir="ltr" href="https://wa.me/<%= (content?.contact?.phone || '+966580102121').replace(/\D/g,'') %>"
-                   target="_blank" rel="noopener noreferrer"><%= content?.contact?.phone || '+966580102121' %></a>
+                <span>المبيعات:
+                  <a dir="ltr" href="https://wa.me/966509330008"
+                     target="_blank" rel="noopener noreferrer">0509330008</a></span>
+              </li>
+              <li>
+                <%- icon('whatsapp') %>
+                <span>الدعم وخدمة العملاء:
+                  <a dir="ltr" href="https://wa.me/<%= __supportDigits.startsWith('966') ? __supportDigits : '966' + __supportDigits %>"
+                     target="_blank" rel="noopener noreferrer"><%= __supportPhone %></a></span>
               </li>
               <li>
                 <%- icon('envelope') %>

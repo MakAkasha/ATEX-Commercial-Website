@@ -182,14 +182,14 @@ router.get("/", (req, res) => {
         "@type": "LocalBusiness",
         "@id": `${siteUrl}#organization`,
         "name": "ATEX",
-        "alternateName": "اتكس",
+        "alternateName": "أتكس",
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
           "url": absoluteUrl("/assets/ATEX-logo.svg")
         },
         "image": absoluteUrl("/assets/ATEX-logo.svg"),
-        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
+        "description": "ATEX (أتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضاءة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الأنظمة الأمنية التقنية، أنظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "مليباري سنتر للأعمال، طريق ساري، الفيصلية",
@@ -207,19 +207,26 @@ router.get("/", (req, res) => {
           "https://www.instagram.com/atex_iot",
           "https://www.tiktok.com/@atex_iot"
         ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+966580102121",
-          "contactType": "sales"
-        }
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+966509330008",
+            "contactType": "sales"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+966579880885",
+            "contactType": "customer support"
+          }
+        ]
       },
       {
         "@type": "WebSite",
         "@id": `${siteUrl}#website`,
         "url": siteUrl,
         "name": "ATEX",
-        "alternateName": "اتكس",
-        "description": "حلول إنترنت الأشياء في السعودية: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
+        "alternateName": "أتكس",
+        "description": "حلول إنترنت الأشياء في السعودية: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضاءة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الأنظمة الأمنية التقنية، أنظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems",
         "inLanguage": "ar-SA",
         "publisher": {
           "@id": `${siteUrl}#organization`
@@ -229,9 +236,9 @@ router.get("/", (req, res) => {
         "@type": "WebPage",
         "@id": `${siteUrl}#webpage`,
         "url": siteUrl,
-        "name": "ATEX (اتكس) | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
-        "alternateName": "اتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية",
-        "description": "ATEX (اتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضائة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الانظمة الامنية التقنية، انظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia",
+        "name": "ATEX (أتكس) | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية في السعودية",
+        "alternateName": "أتكس | حلول إنترنت الأشياء - المنازل الذكية، الفنادق الذكية، المكاتب الذكية",
+        "description": "ATEX (أتكس) مزود سعودي لحلول إنترنت الأشياء: المنازل الذكية، الفنادق الذكية، المكاتب الذكية، المباني الذكية، إضاءة الواجهات الخارجية للمباني، نظام المكنسة المركزية، حلول شحن السيارات الكهربائية، الأنظمة الأمنية التقنية، أنظمة تقنية المعلومات. Smart Homes, Smart Hotels, Smart Offices, Smart Buildings, Building Exterior Lighting, Central Vacuum System, Electric Vehicle Charging, Security Systems, IT Systems in Saudi Arabia",
         "isPartOf": {
           "@id": `${siteUrl}#website`
         },
@@ -854,7 +861,7 @@ router.get("/contact-us", (req, res) => {
           "@type": "Organization",
           "name": "ATEX",
           "url": siteUrl,
-          "telephone": "+966580102121",
+          "telephone": "+966509330008",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "جدة",
@@ -863,8 +870,15 @@ router.get("/contact-us", (req, res) => {
           "contactPoint": [
             {
               "@type": "ContactPoint",
-              "telephone": "+966580102121",
+              "telephone": "+966509330008",
               "contactType": "sales",
+              "areaServed": "SA",
+              "availableLanguage": ["Arabic", "English"],
+            },
+            {
+              "@type": "ContactPoint",
+              "telephone": "+966579880885",
+              "contactType": "customer support",
               "areaServed": "SA",
               "availableLanguage": ["Arabic", "English"],
             },
